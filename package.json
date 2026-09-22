@@ -1,0 +1,12 @@
+{
+  "name": "content-hub",
+  "version": "2.1.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "build": "node scripts/build.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

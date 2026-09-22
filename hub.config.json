@@ -1,0 +1,30 @@
+{
+  "title": "คลังเนื้อหา ม.4 เทอม 2",
+  "subtitle": "รวมบทเรียนทั้งหมดไว้ในที่เดียว",
+  "groups": [
+    {"name":"ภาษา","color":"#6d5ce8"},
+    {"name":"คณิตและวิทยาศาสตร์","color":"#2d7ff9"},
+    {"name":"สังคมศาสตร์","color":"#ef8b2c"},
+    {"name":"ศิลปะ สุขภาพ และการงาน","color":"#16a37a"}
+  ],
+  "subjects": [
+    {"folder":"thai","name":"ภาษาไทย","icon":"📖","group":"ภาษา"},
+    {"folder":"english","name":"อังกฤษ","icon":"🔤","group":"ภาษา"},
+    {"folder":"english-readwrite","name":"อังกฤษ อ่าน-เขียน","icon":"✍️","group":"ภาษา"},
+    {"folder":"english-communication","name":"อังกฤษเพื่อการสื่อสาร","icon":"💬","group":"ภาษา"},
+    {"folder":"math","name":"คณิตศาสตร์","icon":"📐","group":"คณิตและวิทยาศาสตร์"},
+    {"folder":"physics","name":"ฟิสิกส์","icon":"⚛️","group":"คณิตและวิทยาศาสตร์"},
+    {"folder":"chemistry","name":"เคมี","icon":"🧪","group":"คณิตและวิทยาศาสตร์"},
+    {"folder":"biology","name":"ชีววิทยา","icon":"🧬","group":"คณิตและวิทยาศาสตร์"},
+    {"folder":"bio-science","name":"วิทยาศาสตร์ชีวภาพ","icon":"🌿","group":"คณิตและวิทยาศาสตร์"},
+    {"folder":"earth-space","name":"โลกและอวกาศ","icon":"🌍","group":"คณิตและวิทยาศาสตร์"},
+    {"folder":"computing","name":"วิทยาการคำนวณ","icon":"💻","group":"คณิตและวิทยาศาสตร์"},
+    {"folder":"social-studies","name":"สังคมศึกษา","icon":"🏛️","group":"สังคมศาสตร์"},
+    {"folder":"history","name":"ประวัติศาสตร์","icon":"📜","group":"สังคมศาสตร์"},
+    {"folder":"music","name":"ดนตรี","icon":"🎵","group":"ศิลปะ สุขภาพ และการงาน"},
+    {"folder":"career","name":"การงานอาชีพ","icon":"🛠️","group":"ศิลปะ สุขภาพ และการงาน"},
+    {"folder":"health","name":"สุขศึกษา","icon":"❤️","group":"ศิลปะ สุขภาพ และการงาน"},
+    {"folder":"pe","name":"พลศึกษา","icon":"⚽","group":"ศิลปะ สุขภาพ และการงาน"},
+    {"folder":"guidance","name":"แนะแนว","icon":"🧭","group":"ศิลปะ สุขภาพ และการงาน"}
+  ]
+}
