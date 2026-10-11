@@ -217,23 +217,122 @@ html,body{overflow-x:hidden;max-width:100%}
 .chap.cur{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 13%,var(--panel))}
 .tag{display:inline-block;margin-left:8px;font-style:normal;font-size:11.5px;font-weight:600;color:#fff;background:color-mix(in srgb,var(--acc) 80%,#000);border-radius:999px;padding:1px 9px;vertical-align:1px}
 
-/* ===== ใช้ง่ายขั้นสุด: ความคืบหน้า + ปุ่มใหญ่ ===== */
-.bar{display:block;width:100%;height:6px;border-radius:99px;background:#ffffff17;overflow:hidden}
-.bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--acc),#22d3ee);transition:width .4s}
-.bar.big{height:10px}
-.card .bar{margin-top:2px}
-.prog{margin:0 0 14px;padding:12px 14px;border-radius:16px;background:var(--panel);border:1px solid var(--line)}
-.prog-t{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);margin-bottom:8px}
-.prog-t b{color:var(--ink);font-size:16px}
-.chap.done i{background:linear-gradient(145deg,#22c55e,#15803d)}
-.chap.done span{color:#cfe0ff}
-.chap i .ic{width:22px;height:22px;stroke-width:2.6}
-.chs{margin:0 0 12px}
-.search input{padding:14px 0;font-size:16px}
-.chip{min-height:42px;font-size:15px;padding:6px 16px}
-.chip.star{min-width:48px}
-.card{min-height:150px}
-@media(max-width:640px){.search kbd{display:none}}
+
+
+/* ===== ความสวยระดับพรีเมียม (โครงเดิม ฟังก์ชันเดิม) ===== */
+body:before{background:
+ radial-gradient(700px 420px at 8% -8%,#2563eb59,transparent),
+ radial-gradient(560px 360px at 100% 2%,#06b6d440,transparent),
+ radial-gradient(520px 420px at 50% 112%,#7c3aed2b,transparent),
+ linear-gradient(#ffffff07 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,#ffffff07 1px,transparent 1px) 0 0/44px 44px}
+.top{background:#080d1bcc;backdrop-filter:blur(18px) saturate(1.4);border-bottom:1px solid transparent;border-image:linear-gradient(90deg,#3b82f666,#22d3ee66,#3b82f622) 1}
+.logo{font-weight:700;letter-spacing:1.5px}
+/* hero */
+.hero{padding:38px 0 8px}
+h1{font-weight:700;letter-spacing:-1.5px}
+h1 span{background:linear-gradient(90deg,#7db4ff,#22d3ee 60%,#a5f3fc);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 0 22px #22d3ee40)}
+.kicker{background:linear-gradient(90deg,#38bdf81f,#38bdf80a);border-color:#38bdf866;box-shadow:0 0 22px #38bdf81f}
+.kicker:before{animation:beat 2.4s ease-in-out infinite}
+@keyframes beat{50%{opacity:.35}}
+.pill{background:linear-gradient(135deg,#ffffff12,#ffffff05);border-color:#ffffff1f;backdrop-filter:blur(6px);padding:4px 14px}
+/* ต่อจากครั้งก่อน */
+.cont{border:1px solid transparent;background:linear-gradient(120deg,color-mix(in srgb,var(--acc) 24%,#0f1830),#0f1830) padding-box,linear-gradient(120deg,var(--acc),#22d3ee66 55%,#1e2d57) border-box;box-shadow:0 14px 34px color-mix(in srgb,var(--acc) 22%,transparent)}
+/* ค้นหา + ชิป */
+.search{background:linear-gradient(#111b36,#0f1830);border-color:#2a3d6e;border-radius:16px;box-shadow:inset 0 1px 0 #ffffff0d}
+.search:focus-within{border-color:#38bdf8;box-shadow:0 0 0 4px #38bdf829,0 8px 24px #2563eb40}
+.chip{background:linear-gradient(#111b36,#0f1830);border-color:#2a3d6e}
+.chip.on{background:linear-gradient(135deg,#3b82f6,#06b6d4);box-shadow:0 6px 18px #2563eb66,inset 0 1px 0 #ffffff55}
+.chip.star.on{box-shadow:0 0 18px #fbbf2466}
+/* หัวหมวด */
+.groups{gap:32px}
+.grp-h{gap:11px}
+.grp-h i{width:6px;height:24px;background:linear-gradient(var(--acc),color-mix(in srgb,var(--acc) 35%,#22d3ee));box-shadow:0 0 18px color-mix(in srgb,var(--acc) 70%,transparent)}
+.grp-h h3{flex:none;font-size:18px;font-weight:700;letter-spacing:.2px}
+.grp-h::after{content:"";flex:1;height:1px;order:1;background:linear-gradient(90deg,color-mix(in srgb,var(--acc) 55%,transparent),transparent)}
+.grp-h .n{order:2;margin-left:0;border:1px solid color-mix(in srgb,var(--acc) 40%,transparent);color:color-mix(in srgb,var(--acc) 40%,#fff);background:color-mix(in srgb,var(--acc) 12%,transparent);padding:1px 11px;border-radius:999px}
+/* การ์ดวิชา */
+.card{border:1px solid transparent;border-radius:22px;
+ background:radial-gradient(180px 130px at 0 0,color-mix(in srgb,var(--acc) 30%,transparent),transparent) padding-box,linear-gradient(155deg,#152248,#0e1630) padding-box,linear-gradient(150deg,color-mix(in srgb,var(--acc) 75%,#fff),color-mix(in srgb,var(--acc) 14%,#1e2d57) 45%,#1e2d57) border-box;
+ background-clip:padding-box,padding-box,border-box;
+ box-shadow:0 10px 26px #00000059,inset 0 1px 0 #ffffff12}
+.card::after{content:"";position:absolute;right:-34px;bottom:-34px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--acc) 26%,transparent),transparent 70%);pointer-events:none}
+.card>.ico,.card>b,.card>.tags{position:relative;z-index:1}
+.card:hover{transform:translateY(-4px);box-shadow:0 18px 38px color-mix(in srgb,var(--acc) 34%,#000)}
+.card b{font-weight:600;font-size:15.5px}
+.ico{background:linear-gradient(145deg,color-mix(in srgb,var(--acc) 34%,#0b1226),color-mix(in srgb,var(--acc) 10%,#0b1226))!important;border:1px solid color-mix(in srgb,var(--acc) 55%,transparent)!important;box-shadow:0 8px 20px color-mix(in srgb,var(--acc) 30%,transparent),inset 0 1px 0 #ffffff26!important}
+.code{font-weight:700;color:color-mix(in srgb,var(--acc) 55%,#fff)}
+.n{background:#ffffff08}
+.pin{background:#0000004d;border-color:#ffffff1f}
+/* หน้าวิชา */
+.banner{border:1px solid transparent;border-radius:26px;padding:18px;
+ background:radial-gradient(320px 200px at 0 0,color-mix(in srgb,var(--acc) 38%,transparent),transparent) padding-box,linear-gradient(155deg,#152248,#0e1630) padding-box,linear-gradient(140deg,color-mix(in srgb,var(--acc) 85%,#fff),color-mix(in srgb,var(--acc) 12%,#1e2d57) 50%,#1e2d57) border-box;
+ background-clip:padding-box,padding-box,border-box;box-shadow:0 16px 40px color-mix(in srgb,var(--acc) 20%,#000)}
+.banner .ico{width:62px;height:62px;border-radius:19px}
+.banner h1{letter-spacing:-.3px}
+.startcard{position:relative;overflow:hidden;background:linear-gradient(135deg,#2f6df0,#0ea5e9);box-shadow:0 12px 30px #2563eb66,inset 0 1px 0 #ffffff59}
+.startcard::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,#ffffff33 50%,transparent 65%);transform:translateX(-120%);animation:shine 5s ease-in-out infinite;pointer-events:none}
+@keyframes shine{0%,65%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+.row h2{font-weight:700}
+.chap{border:1px solid transparent;border-radius:18px;
+ background:linear-gradient(#121c3a,#0f1830) padding-box,linear-gradient(135deg,color-mix(in srgb,var(--acc) 38%,#1e2d57),#1e2d57 60%) border-box;
+ background-clip:padding-box,border-box;box-shadow:0 4px 14px #0000003d}
+.chap:hover{transform:translateX(3px);box-shadow:0 10px 26px color-mix(in srgb,var(--acc) 24%,#000)}
+.chap i{box-shadow:0 6px 16px color-mix(in srgb,var(--acc) 40%,transparent),inset 0 1px 0 #ffffff3d}
+/* ปุ่ม */
+#backBtn{background:linear-gradient(135deg,#4cc3f7,#2563eb)!important;box-shadow:0 8px 22px #2563eb73,inset 0 1px 0 #ffffff66!important}
+.vbar{background:linear-gradient(#18274f,#0f1830);border-bottom:1px solid #2a3d6e;backdrop-filter:blur(12px)}
+.vbar .t{background:linear-gradient(#ffffff0d,#ffffff04);border-color:#2a3d6e}
+.nav.next{background:linear-gradient(135deg,#2f6df0,#0ea5e9);box-shadow:0 8px 22px #2563eb73,inset 0 1px 0 #ffffff55}
+.nav.prev{background:linear-gradient(#1c2b57,#16224a);border-color:#3b82f699}
+.sheet{background:linear-gradient(#131f42,#0f1830);box-shadow:0 -20px 50px #0009}
+footer{letter-spacing:1px}
+
+/* ===== สวยเพิ่มอีกขั้น ===== */
+body:after{content:"";position:fixed;inset:-25%;z-index:-1;pointer-events:none;will-change:transform;
+ background:radial-gradient(380px 380px at 22% 30%,#3b82f629,transparent 70%),radial-gradient(340px 340px at 78% 62%,#22d3ee22,transparent 70%),radial-gradient(300px 300px at 40% 90%,#a855f71f,transparent 70%);
+ animation:drift 28s ease-in-out infinite alternate}
+@keyframes drift{from{transform:translate3d(-3%,-2%,0) scale(1)}to{transform:translate3d(4%,3%,0) scale(1.12)}}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:#2a3d6e;border-radius:9px}
+/* ส่วนหัว */
+h1{font-size:clamp(42px,11.5vw,76px);line-height:1;margin:16px 0 12px}
+.hero{position:relative}
+.hero:before{content:"";position:absolute;left:-40px;top:6px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,#3b82f640,transparent 70%);filter:blur(10px);z-index:-1;pointer-events:none}
+.logo span{text-shadow:0 0 18px #22d3ee80}
+.sico{flex:none;color:#7da2e0}
+.search:focus-within .sico{color:#38bdf8}
+/* ไอคอนหมวด */
+.grp-h i{display:none}
+.gi{flex:none;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;
+ background:linear-gradient(145deg,color-mix(in srgb,var(--acc) 40%,#0b1226),color-mix(in srgb,var(--acc) 12%,#0b1226));
+ border:1px solid color-mix(in srgb,var(--acc) 60%,transparent);box-shadow:0 8px 20px color-mix(in srgb,var(--acc) 32%,transparent),inset 0 1px 0 #ffffff2e}
+.gi .ic{width:20px;height:20px;color:#fff;stroke-width:2.2}
+.grp-h h3{font-size:19px}
+/* การ์ด: แสงวาบตอนกด/ชี้ + เส้นสีด้านล่าง */
+.card:before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(115deg,transparent 38%,#ffffff1f 50%,transparent 62%);transform:translateX(-130%);transition:transform .9s}
+.card:hover:before,.card:active:before{transform:translateX(130%)}
+.card .tags{margin-top:2px}
+.card.empty .ico{filter:saturate(.6)}
+.card:active{transform:scale(.97)}
+.ico .sic{filter:drop-shadow(0 3px 6px #0006)}
+/* ต่อจากครั้งก่อน: ลูกศรมีวงเรือง */
+.cont .go{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#38bdf826;border:1px solid #38bdf866;font-size:24px;line-height:1;box-shadow:0 0 18px #38bdf840}
+.cont b{font-size:17px}
+/* หน้าวิชา */
+.banner:after{content:"";position:absolute;right:-50px;top:-50px;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--acc) 30%,transparent),transparent 70%);pointer-events:none}
+.banner>*{position:relative;z-index:1}
+.banner>.pin{position:absolute}
+.startcard .play{background:#ffffff33;box-shadow:0 0 0 6px #ffffff14}
+.startcard b{font-size:17px}
+.chap u{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:color-mix(in srgb,var(--acc) 16%,transparent);color:color-mix(in srgb,var(--acc) 60%,#fff);font-size:22px;line-height:1;flex:none}
+.chap:hover u{background:var(--acc);color:#fff}
+.chap span{font-weight:500}
+/* ปุ่ม */
+.btn,.chip,.card,.chap,.startcard,.nav{transition:transform .2s,box-shadow .25s,border-color .2s,background .2s}
+#backBtn:active{transform:scale(.94)}
+.logo{text-shadow:0 0 22px #3b82f650}
+footer{background:linear-gradient(90deg,transparent,#3b82f61f,transparent);border-top:1px solid #1e2d5799;margin-top:20px}
+:focus-visible{outline:2px solid #38bdf8;outline-offset:3px;border-radius:12px}
+@media(prefers-reduced-motion:reduce){body:after,.startcard:after{animation:none!important}}
 </style>
 </head>
 <body>
@@ -253,7 +352,7 @@ html,body{overflow-x:hidden;max-width:100%}
     <button class="cont hidden" id="cont"></button>
   </section>
   <div class="tools">
-    <label class="search"><span>⌕</span><input id="q" type="search" placeholder="ค้นหาวิชา หรือรหัสวิชา" autocomplete="off"><button class="x hidden" id="clr" aria-label="ล้าง">×</button><kbd id="kbd">/</kbd></label>
+    <label class="search"><svg class="sico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="ค้นหาวิชา หรือรหัสวิชา" autocomplete="off"><button class="x hidden" id="clr" aria-label="ล้าง">×</button><kbd id="kbd">/</kbd></label>
     <div class="chips" id="chips"></div>
   </div>
   <div class="row"><h2>วิชาทั้งหมด</h2><span class="count" id="count"></span></div>
@@ -313,13 +412,6 @@ function togglePin(id){
   store.set('pins', JSON.stringify(pins));
 }
 
-/* ---------- บทที่เปิดอ่านแล้ว (ติ๊กถูกให้อัตโนมัติ) ---------- */
-let done = [];
-try { done = JSON.parse(store.get('done') || '[]'); } catch(e) {}
-const isDone = (sid, cid) => done.includes(sid + '/' + cid);
-const doneCount = s => s.chapters.filter(c => isDone(s.id, c.id)).length;
-function markDone(sid, cid){ const k = sid + '/' + cid; if (!done.includes(k)) { done.push(k); store.set('done', JSON.stringify(done)); } }
-
 /* ---------- หมวดวิชา (ดูจากตัวอักษรแรกของรหัสวิชา) ---------- */
 const CATS = [
   {k:'all', name:'ทั้งหมด'},
@@ -362,18 +454,16 @@ function renderChips(){
 }
 
 function cardHTML(s, i){
-  const n = s.chapters.length, dc = doneCount(s), pc = n ? Math.round(dc / n * 100) : 0;
   return `<button class="card ${s.chapters.length ? '' : 'empty'}" data-id="${esc(s.id)}" style="--acc:${catOf(s).color};animation-delay:${Math.min(i, 8) * 30}ms">
       <span class="ico">${subjIcon(s.icon, s.name)}</span>
       <span class="pin ${isPinned(s.id) ? 'on' : ''}" data-pin="${esc(s.id)}" role="button" aria-label="รายการโปรด">${isPinned(s.id) ? ico('star','fill') : ico('star')}</span>
       <b>${esc(s.name)}</b>
-      <span class="tags"><span class="code">${esc(s.code)}</span><span class="n">${n ? (dc ? dc + '/' + n : n) + ' บท' : 'เร็ว ๆ นี้'}</span></span>
-      ${n ? `<span class="bar"><i style="width:${pc}%"></i></span>` : ''}
+      <span class="tags"><span class="code">${esc(s.code)}</span><span class="n">${s.chapters.length ? s.chapters.length + ' บท' : 'เร็ว ๆ นี้'}</span></span>
     </button>`;
 }
 function groupHTML(name, color, items, star){
   return `<section class="grp" style="--acc:${color}">
-    <div class="grp-h"><i></i><h3>${star ? ico('star','fill') + ' ' : ''}${esc(name)}</h3><span class="n count">${items.length} วิชา</span></div>
+    <div class="grp-h"><span class="gi">${ico({"ภาษา":"book","คณิตศาสตร์":"sigma","วิทยาศาสตร์":"atom","สังคม":"globe","รายการโปรด":"star"}[name] || "spark", star ? "fill" : "")}</span><h3>${esc(name)}</h3><span class="n count">${items.length} วิชา</span></div>
     <div class="rail">${items.map(cardHTML).join('')}</div></section>`;
 }
 function renderGrid(){
@@ -415,12 +505,10 @@ function renderSubject(s){
   const last = (store.get('last') || '').split('/');
   const resume = last[0] === s.id ? s.chapters.find(c => c.id === last[1]) : null;
   const target = resume || s.chapters[0];
-  const n = s.chapters.length, dc = doneCount(s), pc = n ? Math.round(dc / n * 100) : 0;
   $('subjectView').style.setProperty('--acc', cat.color);
   $('subjectView').innerHTML = `
     <div class="banner"><span class="ico">${subjIcon(s.icon, s.name)}</span><div><h1>${esc(s.name)}</h1><div class="pills2"><span class="p-code">${esc(s.code)}</span><span class="p-n">${s.chapters.length} บทเรียน</span></div></div>
       <button class="pin ${isPinned(s.id) ? 'on' : ''}" id="spin" aria-label="รายการโปรด">${isPinned(s.id) ? ico('star','fill') : ico('star')}</button></div>
-    ${n ? `<div class="prog"><div class="prog-t"><span>เรียนแล้ว <b>${dc}</b> / ${n} บท</span><span>${pc}%</span></div><div class="bar big"><i style="width:${pc}%"></i></div></div>` : ''}
     ${s.chapters.length ? `
     <button class="startcard" data-id="${esc(target.id)}">
       <span class="play">${ico('play','fill')}</span>
@@ -428,12 +516,9 @@ function renderSubject(s){
       <span class="go">›</span>
     </button>
     <div class="row"><h2>บทเรียนทั้งหมด</h2><span class="count">${s.chapters.length} บท</span></div>
-    ${n > 8 ? `<label class="search chs"><span>⌕</span><input id="cq" type="search" placeholder="ค้นหาบทเรียน" autocomplete="off"></label>` : ''}
-    <div class="list">${s.chapters.map((c, i) => `<button class="chap ${resume && c.id === resume.id ? 'cur' : ''} ${isDone(s.id, c.id) ? 'done' : ''}" data-id="${esc(c.id)}" style="animation-delay:${Math.min(i, 12) * 30}ms"><i>${isDone(s.id, c.id) ? ico('check') : i + 1}</i><span>${esc(c.title)}${resume && c.id === resume.id ? '<em class="tag">ล่าสุด</em>' : ''}</span><u>›</u></button>`).join('')}</div>`
+    <div class="list">${s.chapters.map((c, i) => `<button class="chap ${resume && c.id === resume.id ? 'cur' : ''}" data-id="${esc(c.id)}" style="animation-delay:${Math.min(i, 12) * 30}ms"><i>${i + 1}</i><span>${esc(c.title)}${resume && c.id === resume.id ? '<em class="tag">ล่าสุด</em>' : ''}</span><u>›</u></button>`).join('')}</div>`
     : `<div class="msg">ยังไม่มีบทเรียนในวิชานี้<br>เร็ว ๆ นี้</div>`}`;
   $('spin').onclick = () => { togglePin(s.id); renderSubject(s); };
-  const cq = $('cq');
-  if (cq) cq.addEventListener('input', () => { const q = cq.value.trim().toLowerCase(); document.querySelectorAll('#subjectView .chap').forEach(b => b.classList.toggle('hidden', !!q && !b.textContent.toLowerCase().includes(q))); });
   $('crumb').textContent = s.name;
   show('subjectView');
 }
@@ -442,7 +527,7 @@ function renderSubject(s){
 function openSheet(s, i){
   $('sheet').style.setProperty('--acc', catOf(s).color);
   $('sheet').innerHTML = `<h3>${subjIcon(s.icon, s.name)} ${esc(s.name)}</h3>` + s.chapters.map((c, k) =>
-    `<button class="chap ${k === i ? 'cur' : ''} ${isDone(s.id, c.id) ? 'done' : ''}" data-go="/${esc(s.id)}/${esc(c.id)}"><i>${isDone(s.id, c.id) ? ico('check') : k + 1}</i><span>${esc(c.title)}</span></button>`).join('');
+    `<button class="chap ${k === i ? 'cur' : ''}" data-go="/${esc(s.id)}/${esc(c.id)}"><i>${k + 1}</i><span>${esc(c.title)}</span></button>`).join('');
   $('sheetBg').classList.remove('hidden');
   const cur = $('sheet').querySelector('.cur'); if (cur) cur.scrollIntoView({block:'center'});
 }
@@ -457,7 +542,6 @@ function renderChapter(s, i){
   const c = s.chapters[i];
   const url = k => `/${s.id}/${s.chapters[k].id}`;
   store.set('last', `${s.id}/${c.id}`);
-  markDone(s.id, c.id);
   closeSheet();
   $('vtitle').innerHTML = `<b>${esc(c.title)}</b><small>${esc(s.name)} · บท ${i + 1}/${s.chapters.length} ▾</small>`;
   $('vtitle').onclick = () => openSheet(s, i);
