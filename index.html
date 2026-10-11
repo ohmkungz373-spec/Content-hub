@@ -216,6 +216,24 @@ html,body{overflow-x:hidden;max-width:100%}
 .chap u{font-size:26px;color:color-mix(in srgb,var(--acc) 70%,#fff)}
 .chap.cur{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 13%,var(--panel))}
 .tag{display:inline-block;margin-left:8px;font-style:normal;font-size:11.5px;font-weight:600;color:#fff;background:color-mix(in srgb,var(--acc) 80%,#000);border-radius:999px;padding:1px 9px;vertical-align:1px}
+
+/* ===== ใช้ง่ายขั้นสุด: ความคืบหน้า + ปุ่มใหญ่ ===== */
+.bar{display:block;width:100%;height:6px;border-radius:99px;background:#ffffff17;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--acc),#22d3ee);transition:width .4s}
+.bar.big{height:10px}
+.card .bar{margin-top:2px}
+.prog{margin:0 0 14px;padding:12px 14px;border-radius:16px;background:var(--panel);border:1px solid var(--line)}
+.prog-t{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);margin-bottom:8px}
+.prog-t b{color:var(--ink);font-size:16px}
+.chap.done i{background:linear-gradient(145deg,#22c55e,#15803d)}
+.chap.done span{color:#cfe0ff}
+.chap i .ic{width:22px;height:22px;stroke-width:2.6}
+.chs{margin:0 0 12px}
+.search input{padding:14px 0;font-size:16px}
+.chip{min-height:42px;font-size:15px;padding:6px 16px}
+.chip.star{min-width:48px}
+.card{min-height:150px}
+@media(max-width:640px){.search kbd{display:none}}
 </style>
 </head>
 <body>
@@ -295,6 +313,13 @@ function togglePin(id){
   store.set('pins', JSON.stringify(pins));
 }
 
+/* ---------- บทที่เปิดอ่านแล้ว (ติ๊กถูกให้อัตโนมัติ) ---------- */
+let done = [];
+try { done = JSON.parse(store.get('done') || '[]'); } catch(e) {}
+const isDone = (sid, cid) => done.includes(sid + '/' + cid);
+const doneCount = s => s.chapters.filter(c => isDone(s.id, c.id)).length;
+function markDone(sid, cid){ const k = sid + '/' + cid; if (!done.includes(k)) { done.push(k); store.set('done', JSON.stringify(done)); } }
+
 /* ---------- หมวดวิชา (ดูจากตัวอักษรแรกของรหัสวิชา) ---------- */
 const CATS = [
   {k:'all', name:'ทั้งหมด'},
@@ -337,11 +362,13 @@ function renderChips(){
 }
 
 function cardHTML(s, i){
+  const n = s.chapters.length, dc = doneCount(s), pc = n ? Math.round(dc / n * 100) : 0;
   return `<button class="card ${s.chapters.length ? '' : 'empty'}" data-id="${esc(s.id)}" style="--acc:${catOf(s).color};animation-delay:${Math.min(i, 8) * 30}ms">
       <span class="ico">${subjIcon(s.icon, s.name)}</span>
       <span class="pin ${isPinned(s.id) ? 'on' : ''}" data-pin="${esc(s.id)}" role="button" aria-label="รายการโปรด">${isPinned(s.id) ? ico('star','fill') : ico('star')}</span>
       <b>${esc(s.name)}</b>
-      <span class="tags"><span class="code">${esc(s.code)}</span><span class="n">${s.chapters.length ? s.chapters.length + ' บท' : 'เร็ว ๆ นี้'}</span></span>
+      <span class="tags"><span class="code">${esc(s.code)}</span><span class="n">${n ? (dc ? dc + '/' + n : n) + ' บท' : 'เร็ว ๆ นี้'}</span></span>
+      ${n ? `<span class="bar"><i style="width:${pc}%"></i></span>` : ''}
     </button>`;
 }
 function groupHTML(name, color, items, star){
@@ -388,10 +415,12 @@ function renderSubject(s){
   const last = (store.get('last') || '').split('/');
   const resume = last[0] === s.id ? s.chapters.find(c => c.id === last[1]) : null;
   const target = resume || s.chapters[0];
+  const n = s.chapters.length, dc = doneCount(s), pc = n ? Math.round(dc / n * 100) : 0;
   $('subjectView').style.setProperty('--acc', cat.color);
   $('subjectView').innerHTML = `
     <div class="banner"><span class="ico">${subjIcon(s.icon, s.name)}</span><div><h1>${esc(s.name)}</h1><div class="pills2"><span class="p-code">${esc(s.code)}</span><span class="p-n">${s.chapters.length} บทเรียน</span></div></div>
       <button class="pin ${isPinned(s.id) ? 'on' : ''}" id="spin" aria-label="รายการโปรด">${isPinned(s.id) ? ico('star','fill') : ico('star')}</button></div>
+    ${n ? `<div class="prog"><div class="prog-t"><span>เรียนแล้ว <b>${dc}</b> / ${n} บท</span><span>${pc}%</span></div><div class="bar big"><i style="width:${pc}%"></i></div></div>` : ''}
     ${s.chapters.length ? `
     <button class="startcard" data-id="${esc(target.id)}">
       <span class="play">${ico('play','fill')}</span>
@@ -399,9 +428,12 @@ function renderSubject(s){
       <span class="go">›</span>
     </button>
     <div class="row"><h2>บทเรียนทั้งหมด</h2><span class="count">${s.chapters.length} บท</span></div>
-    <div class="list">${s.chapters.map((c, i) => `<button class="chap ${resume && c.id === resume.id ? 'cur' : ''}" data-id="${esc(c.id)}" style="animation-delay:${Math.min(i, 12) * 30}ms"><i>${i + 1}</i><span>${esc(c.title)}${resume && c.id === resume.id ? '<em class="tag">ล่าสุด</em>' : ''}</span><u>›</u></button>`).join('')}</div>`
+    ${n > 8 ? `<label class="search chs"><span>⌕</span><input id="cq" type="search" placeholder="ค้นหาบทเรียน" autocomplete="off"></label>` : ''}
+    <div class="list">${s.chapters.map((c, i) => `<button class="chap ${resume && c.id === resume.id ? 'cur' : ''} ${isDone(s.id, c.id) ? 'done' : ''}" data-id="${esc(c.id)}" style="animation-delay:${Math.min(i, 12) * 30}ms"><i>${isDone(s.id, c.id) ? ico('check') : i + 1}</i><span>${esc(c.title)}${resume && c.id === resume.id ? '<em class="tag">ล่าสุด</em>' : ''}</span><u>›</u></button>`).join('')}</div>`
     : `<div class="msg">ยังไม่มีบทเรียนในวิชานี้<br>เร็ว ๆ นี้</div>`}`;
   $('spin').onclick = () => { togglePin(s.id); renderSubject(s); };
+  const cq = $('cq');
+  if (cq) cq.addEventListener('input', () => { const q = cq.value.trim().toLowerCase(); document.querySelectorAll('#subjectView .chap').forEach(b => b.classList.toggle('hidden', !!q && !b.textContent.toLowerCase().includes(q))); });
   $('crumb').textContent = s.name;
   show('subjectView');
 }
@@ -410,7 +442,7 @@ function renderSubject(s){
 function openSheet(s, i){
   $('sheet').style.setProperty('--acc', catOf(s).color);
   $('sheet').innerHTML = `<h3>${subjIcon(s.icon, s.name)} ${esc(s.name)}</h3>` + s.chapters.map((c, k) =>
-    `<button class="chap ${k === i ? 'cur' : ''}" data-go="/${esc(s.id)}/${esc(c.id)}"><i>${k + 1}</i><span>${esc(c.title)}</span></button>`).join('');
+    `<button class="chap ${k === i ? 'cur' : ''} ${isDone(s.id, c.id) ? 'done' : ''}" data-go="/${esc(s.id)}/${esc(c.id)}"><i>${isDone(s.id, c.id) ? ico('check') : k + 1}</i><span>${esc(c.title)}</span></button>`).join('');
   $('sheetBg').classList.remove('hidden');
   const cur = $('sheet').querySelector('.cur'); if (cur) cur.scrollIntoView({block:'center'});
 }
@@ -425,6 +457,7 @@ function renderChapter(s, i){
   const c = s.chapters[i];
   const url = k => `/${s.id}/${s.chapters[k].id}`;
   store.set('last', `${s.id}/${c.id}`);
+  markDone(s.id, c.id);
   closeSheet();
   $('vtitle').innerHTML = `<b>${esc(c.title)}</b><small>${esc(s.name)} · บท ${i + 1}/${s.chapters.length} ▾</small>`;
   $('vtitle').onclick = () => openSheet(s, i);
