@@ -97,12 +97,19 @@ h1 span{background:linear-gradient(90deg,#60a5fa,#22d3ee);-webkit-background-cli
 .msg{color:var(--muted);text-align:center;padding:44px 12px;border:1px dashed var(--line);border-radius:18px;grid-column:1/-1}
 
 /* viewer */
-.viewer{display:flex;flex-direction:column;height:calc(100dvh - 57px)}
-.vbar{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--line);background:var(--panel)}
-.vbar .t{flex:1;min-width:0;text-align:center;font-size:14px;line-height:1.3;padding:4px 8px;border-radius:12px}
-.vbar .t:hover{background:var(--panel2)}
+.viewer{display:flex;flex-direction:column;height:100dvh}
+.vbar{position:relative;display:flex;align-items:center;gap:8px;padding:calc(8px + env(safe-area-inset-top,0px)) 10px 9px;background:linear-gradient(#111c3a,#0c1530);border-bottom:1px solid var(--line);box-shadow:0 6px 20px #0006;z-index:5}
+.vbar .vb{flex:none;width:42px;height:42px;border-radius:14px;display:grid;place-items:center;font-size:22px;line-height:1;border:1px solid var(--line);background:#ffffff0a;transition:.15s}
+.vbar .vb:active:not(:disabled){transform:scale(.92);background:#ffffff18}
+.vbar .vb:disabled{opacity:.25}
+.vbar .vb.back{font-size:24px;color:var(--cyan)}
+.vbar .nav{display:flex;gap:6px;flex:none}
+.vbar .t{flex:1;min-width:0;text-align:left;font-size:15px;line-height:1.25;padding:5px 10px;border-radius:12px;transition:.15s}
+.vbar .t:active{background:#ffffff12}
 .vbar .t b{display:block;font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.vbar .t small{display:block;color:var(--muted);font-size:12px}
+.vbar .t small{display:block;color:var(--muted);font-size:12px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.vprog{position:absolute;left:0;bottom:-1px;height:2px;width:0;background:linear-gradient(90deg,#3b82f6,#22d3ee);transition:width .35s ease;border-radius:2px}
+body.reading .top{display:none}
 .vframe{flex:1;background:#fff;position:relative}
 .vframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .spin{position:absolute;inset:0;display:grid;place-items:center;background:var(--bg);color:var(--muted);font-size:14px;z-index:2}
@@ -147,9 +154,13 @@ footer{text-align:center;color:#5d709b;font-size:13px;padding:24px}
 
 <section id="chapterView" class="viewer hidden">
   <div class="vbar">
-    <button class="btn icon-btn" id="prevBtn" aria-label="บทก่อนหน้า">‹</button>
+    <button class="vb back" id="vBack" aria-label="ย้อนกลับ">‹</button>
     <button class="t" id="vtitle" aria-label="เลือกบทเรียน"></button>
-    <button class="btn icon-btn" id="nextBtn" aria-label="บทถัดไป">›</button>
+    <div class="nav">
+      <button class="vb" id="prevBtn" aria-label="บทก่อนหน้า">‹</button>
+      <button class="vb" id="nextBtn" aria-label="บทถัดไป">›</button>
+    </div>
+    <div class="vprog" id="vprog"></div>
   </div>
   <div class="vframe" id="vframe"></div>
 </section>
@@ -194,6 +205,7 @@ function show(v){
   $('foot').classList.toggle('hidden', v === 'chapterView');
   $('backBtn').classList.toggle('hidden', v === 'home');
   $('logo').classList.toggle('hidden', v !== 'home' && matchMedia('(max-width:520px)').matches);
+  document.body.classList.toggle('reading', v === 'chapterView');
   if (v !== 'chapterView') window.scrollTo(0, 0);
 }
 
@@ -282,6 +294,7 @@ function renderChapter(s, i){
   closeSheet();
   $('vtitle').innerHTML = `<b>${esc(c.title)}</b><small>${esc(s.name)} · บท ${i + 1}/${s.chapters.length} ▾</small>`;
   $('vtitle').onclick = () => openSheet(s, i);
+  $('vprog').style.width = ((i + 1) / s.chapters.length * 100) + '%';
   $('prevBtn').disabled = i === 0;
   $('nextBtn').disabled = i === s.chapters.length - 1;
   $('prevBtn').onclick = () => go(url(i - 1));
@@ -322,6 +335,7 @@ $('chips').addEventListener('click', e => { const b = e.target.closest('.chip');
 $('subjectView').addEventListener('click', e => { const b = e.target.closest('[data-id]'); if (b) go(`/${curSubject()}/${b.dataset.id}`); });
 $('backBtn').onclick = () => go(location.pathname.split('/').filter(Boolean).length > 1 ? '/' + curSubject() : '/');
 $('logo').onclick = () => go('/');
+$('vBack').onclick = () => $('backBtn').click();
 $('q').addEventListener('input', renderGrid);
 $('clr').onclick = () => { $('q').value = ''; renderGrid(); $('q').focus(); };
 window.addEventListener('popstate', route);
