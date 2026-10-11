@@ -466,6 +466,7 @@ function show(v){
 /* ---------- หน้าแรก ---------- */
 function renderContinue(){
   const b = $('cont');
+  b.classList.add('hidden'); return;
   const last = (store.get('last') || '').split('/');
   const s = SUBJECTS.find(x => x.id === last[0]);
   const c = s && s.chapters.find(x => x.id === last[1]);
@@ -532,7 +533,7 @@ function renderHome(){
 function renderSubject(s){
   const cat = catOf(s);
   const last = (store.get('last') || '').split('/');
-  const resume = last[0] === s.id ? s.chapters.find(c => c.id === last[1]) : null;
+  const resume = null;
   const target = resume || s.chapters[0];
   $('subjectView').style.setProperty('--acc', cat.color);
   $('subjectView').innerHTML = `
