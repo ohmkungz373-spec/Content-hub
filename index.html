@@ -362,6 +362,25 @@ h1 span{filter:none}
 .nav:hover:not(:disabled){box-shadow:0 4px 12px #2563eb40}
 .vbar{box-shadow:0 2px 10px #0006}
 .sheet{box-shadow:0 -10px 30px #0006}
+
+/* ===== ความสวยเพิ่ม (แบบเรียบ ไม่มีแสงเรือง) ===== */
+.card{--st:inset 0 3px 0 color-mix(in srgb,var(--acc) 85%,transparent);box-shadow:var(--st)}
+.card:hover{box-shadow:var(--st),0 8px 18px #0006}
+.card b{font-size:16px;font-weight:600;letter-spacing:.1px}
+.wm{position:absolute;right:-12px;bottom:-14px;width:96px;height:96px;opacity:.1;transform:rotate(-14deg);pointer-events:none;z-index:0}
+.wm .sic{width:100%;height:100%;display:block}
+.banner .wm{right:-8px;bottom:-26px;width:150px;height:150px;opacity:.09;transform:rotate(-12deg)}
+.banner{box-shadow:inset 0 3px 0 color-mix(in srgb,var(--acc) 85%,transparent)}
+.chap{box-shadow:inset 4px 0 0 color-mix(in srgb,var(--acc) 75%,transparent)}
+.chap:hover{box-shadow:inset 4px 0 0 var(--acc),0 6px 16px #0006}
+.chap i{font-weight:700}
+.cdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:1px}
+.chip{display:inline-flex;align-items:center}
+.chip.on .cdot{box-shadow:0 0 0 2px #ffffff80}
+.row h2{display:flex;align-items:center;gap:8px}
+.row{border-bottom:1px solid #1e2d5799;padding-bottom:10px}
+.pill b{color:#7dd3fc}
+.kicker{font-weight:500;letter-spacing:.3px}
 </style>
 </head>
 <body>
@@ -480,11 +499,12 @@ function renderContinue(){
 function renderChips(){
   $('chips').innerHTML = CATS.map(c => c.k === 'pin'
     ? `<button class="chip star ${c.k === activeCat ? 'on' : ''}" data-k="pin" aria-label="รายการโปรด">${ico('star','fill')}</button>`
-    : `<button class="chip ${c.k === activeCat ? 'on' : ''}" data-k="${c.k}">${esc(c.name)}</button>`).join('');
+    : `<button class="chip ${c.k === activeCat ? 'on' : ''}" data-k="${c.k}">${c.color ? `<i class="cdot" style="background:${c.color}"></i>` : ''}${esc(c.name)}</button>`).join('');
 }
 
 function cardHTML(s, i){
   return `<button class="card ${s.chapters.length ? '' : 'empty'}" data-id="${esc(s.id)}" style="--acc:${catOf(s).color};animation-delay:${Math.min(i, 8) * 30}ms">
+      <span class="wm">${subjIcon(s.icon, s.name)}</span>
       <span class="ico">${subjIcon(s.icon, s.name)}</span>
       <span class="pin ${isPinned(s.id) ? 'on' : ''}" data-pin="${esc(s.id)}" role="button" aria-label="รายการโปรด">${isPinned(s.id) ? ico('star','fill') : ico('star')}</span>
       <b>${esc(s.name)}</b>
@@ -537,7 +557,7 @@ function renderSubject(s){
   const target = resume || s.chapters[0];
   $('subjectView').style.setProperty('--acc', cat.color);
   $('subjectView').innerHTML = `
-    <div class="banner"><span class="ico">${subjIcon(s.icon, s.name)}</span><div><h1>${esc(s.name)}</h1><div class="pills2"><span class="p-code">${esc(s.code)}</span><span class="p-n">${s.chapters.length} บทเรียน</span></div></div>
+    <div class="banner"><span class="wm">${subjIcon(s.icon, s.name)}</span><span class="ico">${subjIcon(s.icon, s.name)}</span><div><h1>${esc(s.name)}</h1><div class="pills2"><span class="p-code">${esc(s.code)}</span><span class="p-n">${s.chapters.length} บทเรียน</span></div></div>
       <button class="pin ${isPinned(s.id) ? 'on' : ''}" id="spin" aria-label="รายการโปรด">${isPinned(s.id) ? ico('star','fill') : ico('star')}</button></div>
     ${s.chapters.length ? `
     <button class="startcard" data-id="${esc(target.id)}">
