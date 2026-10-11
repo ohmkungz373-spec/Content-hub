@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a1020">
+<title>CONTENT HUB | เนื้อหา ม.4 เทอม 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#080d1b;--panel:#0f1830;--panel2:#16224a;--line:#1e2d57;--ink:#eaf0ff;--muted:#8499c4;--blue:#3b82f6;--cyan:#38bdf8;--acc:#3b82f6;color-scheme:dark}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"IBM Plex Sans Thai",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;min-height:100dvh}
+body:before{content:"";position:fixed;inset:0;z-index:-1;
+  background:radial-gradient(620px 360px at 10% -6%,#2563eb55,transparent),radial-gradient(520px 320px at 100% 4%,#06b6d438,transparent),
+  linear-gradient(#ffffff06 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,#ffffff06 1px,transparent 1px) 0 0/44px 44px}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+.hidden{display:none!important}
+.top{position:sticky;top:0;z-index:30;background:#080d1be8;backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1100px;margin:auto;padding:8px 14px;display:flex;align-items:center;gap:10px;min-height:56px}
+.logo{font-weight:700;letter-spacing:1px;white-space:nowrap;font-size:16px;cursor:pointer}
+.logo span{color:var(--cyan)}
+.crumb{flex:1;min-width:0;color:var(--muted);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:8px 14px;font-size:14px;font-weight:500;transition:.15s;min-height:40px}
+.btn:hover:not(:disabled){border-color:var(--blue);box-shadow:0 0 16px #3b82f655}
+.btn:active:not(:disabled){transform:scale(.97)}
+.btn:disabled{opacity:.3;cursor:not-allowed}
+.btn.primary{background:linear-gradient(135deg,var(--acc),color-mix(in srgb,var(--acc) 55%,#0ea5e9));border-color:transparent;font-weight:600;color:#fff;box-shadow:0 8px 24px color-mix(in srgb,var(--acc) 35%,transparent)}
+.icon-btn{width:40px;padding:0;font-size:18px}
+.wrap{max-width:1100px;margin:auto;padding:0 14px 70px}
+
+/* hero */
+.hero{padding:34px 0 6px}
+.kicker{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--cyan);border:1px solid #38bdf84d;background:#38bdf812;border-radius:999px;padding:3px 13px}
+.kicker:before{content:"";width:7px;height:7px;border-radius:50%;background:#22d3ee;box-shadow:0 0 10px #22d3ee}
+h1{font-size:clamp(38px,9vw,64px);line-height:1.05;margin:14px 0 8px;letter-spacing:-1px;font-weight:700}
+h1 span{background:linear-gradient(90deg,#60a5fa,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent}
+.pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{font-size:13px;color:var(--muted);border:1px solid var(--line);background:#ffffff08;border-radius:999px;padding:3px 12px}
+.pill b{color:var(--ink)}
+.cont{display:flex;align-items:center;gap:12px;width:100%;text-align:left;margin-top:20px;padding:14px;border-radius:18px;border:1px solid color-mix(in srgb,var(--acc) 50%,transparent);background:linear-gradient(120deg,color-mix(in srgb,var(--acc) 22%,var(--panel)),var(--panel));transition:.15s}
+.cont:hover{box-shadow:0 8px 28px color-mix(in srgb,var(--acc) 30%,transparent)}
+.cont small{color:var(--cyan);font-size:12px;display:block}
+.cont b{display:block;line-height:1.3}
+.cont .go{margin-left:auto;font-size:26px;color:var(--cyan)}
+
+/* tools */
+.tools{position:sticky;top:56px;z-index:20;background:linear-gradient(#080d1bf2 80%,transparent);padding:14px 0 6px;margin-top:6px}
+.search{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:0 12px;transition:.15s}
+.search:focus-within{border-color:var(--blue);box-shadow:0 0 18px #3b82f655}
+.search input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--ink);font:inherit;padding:12px 0}
+.search kbd{font:12px/1 inherit;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:3px 7px}
+.search .x{color:var(--muted);font-size:22px;padding:0 4px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 0 4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:5px 14px;font-size:14px;color:var(--muted);transition:.15s}
+.chip.on{background:linear-gradient(135deg,#2563eb,#0ea5e9);border-color:transparent;color:#fff;font-weight:600}
+.row{display:flex;justify-content:space-between;align-items:baseline;margin:12px 0 10px}
+.row h2{margin:0;font-size:18px}.count{color:var(--muted);font-size:14px}
+
+/* subject cards (2 คอลัมน์บนมือถือ) */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:640px){.grid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}}
+.card{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:10px;min-height:136px;text-align:left;padding:14px;border-radius:20px;overflow:hidden;
+  border:1px solid color-mix(in srgb,var(--acc) 28%,var(--line));
+  background:radial-gradient(160px 120px at 0 0,color-mix(in srgb,var(--acc) 26%,transparent),transparent),var(--panel);
+  transition:.2s;animation:in .4s both}
+.card:hover{transform:translateY(-3px);border-color:var(--acc);box-shadow:0 12px 30px color-mix(in srgb,var(--acc) 30%,transparent)}
+.card:active{transform:scale(.97)}
+@keyframes in{from{opacity:0;transform:translateY(10px)}}
+.ico{flex:none;width:48px;height:48px;border-radius:15px;display:grid;place-items:center;font-size:25px;
+  background:linear-gradient(145deg,color-mix(in srgb,var(--acc) 55%,#0f1830),color-mix(in srgb,var(--acc) 18%,#0f1830));box-shadow:inset 0 1px 0 #ffffff25}
+.card b{font-size:15.5px;line-height:1.3;font-weight:600;margin-top:auto}
+.tags{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.code{font-size:11.5px;color:color-mix(in srgb,var(--acc) 60%,#fff);font-weight:600;letter-spacing:.3px}
+.n{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 8px}
+.card.empty{opacity:.62}
+.pin{position:absolute;right:6px;top:6px;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:19px;color:#ffffff66;transition:.15s}
+.pin:hover{background:#ffffff14;color:#fff}
+.pin.on{color:#fbbf24;text-shadow:0 0 12px #fbbf2499}
+
+/* subject page */
+.banner{position:relative;display:flex;align-items:center;gap:14px;margin:18px 0 14px;padding:18px;border-radius:22px;border:1px solid color-mix(in srgb,var(--acc) 40%,var(--line));
+  background:radial-gradient(260px 160px at 0 0,color-mix(in srgb,var(--acc) 35%,transparent),transparent),var(--panel)}
+.banner .ico{width:64px;height:64px;font-size:34px;border-radius:19px}
+.banner h1{font-size:clamp(22px,5.5vw,34px);margin:0;line-height:1.2;letter-spacing:0}
+.banner .pin{top:10px;right:10px}
+.start{width:100%;margin-bottom:14px;padding:13px;font-size:16px;border-radius:14px}
+.list{display:grid;gap:8px}
+.chap{display:flex;gap:12px;align-items:center;text-align:left;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 14px;transition:.15s;min-height:60px;animation:in .35s both}
+.chap:hover{border-color:var(--acc);box-shadow:0 6px 22px color-mix(in srgb,var(--acc) 25%,transparent)}
+.chap i{flex:none;font-style:normal;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:15px;font-weight:700;color:#fff;background:linear-gradient(145deg,color-mix(in srgb,var(--acc) 70%,#0f1830),color-mix(in srgb,var(--acc) 30%,#0f1830))}
+.chap span{flex:1;line-height:1.4}
+.chap u{text-decoration:none;color:var(--muted);font-size:22px}
+.msg{color:var(--muted);text-align:center;padding:44px 12px;border:1px dashed var(--line);border-radius:18px;grid-column:1/-1}
+
+/* viewer */
+.viewer{display:flex;flex-direction:column;height:calc(100dvh - 57px)}
+.vbar{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--line);background:var(--panel)}
+.vbar .t{flex:1;min-width:0;text-align:center;font-size:14px;line-height:1.3;padding:4px 8px;border-radius:12px}
+.vbar .t:hover{background:var(--panel2)}
+.vbar .t b{display:block;font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.vbar .t small{display:block;color:var(--muted);font-size:12px}
+.vframe{flex:1;background:#fff;position:relative}
+.vframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.spin{position:absolute;inset:0;display:grid;place-items:center;background:var(--bg);color:var(--muted);font-size:14px;z-index:2}
+.spin:before{content:"";width:34px;height:34px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--cyan);animation:r .8s linear infinite;margin-bottom:-60px}
+@keyframes r{to{transform:rotate(360deg)}}
+.sheet-bg{position:fixed;inset:0;z-index:50;background:#000a;backdrop-filter:blur(3px);display:flex;align-items:flex-end;justify-content:center}
+.sheet{width:100%;max-width:560px;max-height:75dvh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-bottom:0;border-radius:24px 24px 0 0;padding:16px 14px;animation:up .25s}
+@keyframes up{from{transform:translateY(50px);opacity:0}}
+.sheet h3{margin:2px 4px 12px;font-size:16px}
+.sheet .chap{margin-bottom:8px;animation:none}
+.sheet .chap.cur{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 16%,var(--panel))}
+footer{text-align:center;color:#5d709b;font-size:13px;padding:24px}
+@media(max-width:520px){.logo{font-size:14px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.ic{width:1.15em;height:1.15em;flex:none;vertical-align:-.2em;display:inline-block}
+.ic.fill{fill:currentColor}
+.ico{color:#fff}.ico .ic{width:56%;height:56%}
+.pin .ic{width:21px;height:21px}.pin.on{text-shadow:none;filter:drop-shadow(0 0 8px #fbbf2499)}
+.btn .ic,.cont small .ic{width:1em;height:1em;vertical-align:-.12em}
+/* ดาว: เด่นชัด */
+.chip.star{width:46px;padding:0;display:grid;place-items:center;color:#fbbf24;background:#fbbf2420;border-color:#fbbf2480}
+.chip.star .ic{width:22px;height:22px}
+.chip.star.on{background:linear-gradient(135deg,#f59e0b,#fcd34d);color:#451a03;border-color:transparent;box-shadow:0 0 20px #fbbf2480}
+.pin{width:44px;height:44px;top:5px;right:5px;background:#00000045;border:1.5px solid #fbbf2466;color:#fbbf24b3}
+.pin:hover{background:#fbbf2426;color:#fbbf24}
+.pin:active{transform:scale(.88)}
+.pin .ic{width:25px;height:25px}
+.pin.on{background:#fbbf2426;border-color:#fbbf24;color:#fbbf24;box-shadow:0 0 16px #fbbf2466}
+.pin.on .ic{filter:drop-shadow(0 0 6px #fbbf24aa)}
+.banner .pin{top:10px;right:10px}
+/* โลโก้วิชาแบบสี */
+.sic{display:block;width:100%;height:100%}
+.ico{background:color-mix(in srgb,var(--acc) 14%,#0b1226)!important;border:1px solid color-mix(in srgb,var(--acc) 45%,transparent);box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.ico .sic{width:72%;height:72%}
+.sheet h3 .sic{display:inline-block;width:1.4em;height:1.4em;vertical-align:-.35em}
+
+/* ===== หน้ารวมแบบแบ่งหมวด: 1 หมวด = 1 บรรทัด เลื่อนซ้าย-ขวา ===== */
+.groups{display:grid;gap:26px}
+.grp-h{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+.grp-h i{flex:none;width:5px;height:22px;border-radius:3px;background:var(--acc);box-shadow:0 0 14px color-mix(in srgb,var(--acc) 60%,transparent)}
+.grp-h h3{margin:0;font-size:17px;font-weight:600}
+.grp-h .n{margin-left:auto;font-size:13px}
+.rail{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x proximity;padding:2px 14px 10px;margin:0 -14px;scroll-padding-left:14px;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.rail .card{flex:none;width:156px;min-height:150px;scroll-snap-align:start}
+.rail .card b{font-size:15px}
+@media(min-width:640px){.rail{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;overflow:visible;padding:2px 0;margin:0}.rail .card{width:auto}}
+.card:focus-visible,.chip:focus-visible,.chap:focus-visible,.btn:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.chips{position:relative}
+.tools{box-shadow:0 10px 18px -14px #000}
+
+/* ===== ปุ่มย้อนกลับ (แดง) ===== */
+#backBtn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#ef4444,#dc2626);border:0;color:#fff;font-weight:700;padding:8px 16px 8px 11px;border-radius:12px;box-shadow:0 6px 18px #ef444459,inset 0 1px 0 #ffffff40}
+#backBtn:hover{box-shadow:0 8px 24px #ef444499,inset 0 1px 0 #ffffff40}
+#backBtn:active{transform:scale(.95)}
+#backBtn .ic{width:20px;height:20px;stroke-width:2.8}
+/* ===== ปุ่มก่อนหน้า / ถัดไป ===== */
+.vbar{gap:8px;padding:10px;background:linear-gradient(#16224a,#0f1830);box-shadow:0 6px 20px #0008;position:relative;z-index:3}
+.nav{display:inline-flex;align-items:center;justify-content:center;gap:5px;flex:none;min-width:48px;height:46px;padding:0 14px;border-radius:14px;font-weight:700;font-size:14px;color:#fff;border:1px solid transparent;transition:.15s}
+.nav .ic{width:20px;height:20px;stroke-width:2.8}
+.nav.next{background:linear-gradient(135deg,#2563eb,#0ea5e9);box-shadow:0 6px 20px #2563eb66,inset 0 1px 0 #ffffff40}
+.nav.prev{background:#1e2d57;border-color:#3b82f688}
+.nav:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 24px #38bdf866}
+.nav:active:not(:disabled){transform:scale(.94)}
+.nav:disabled{opacity:.28;box-shadow:none;background:#16224a;border-color:var(--line)}
+.vbar .t{background:#ffffff0a;border:1px solid var(--line);padding:5px 10px;min-height:46px}
+.vbar .t b{font-size:15px}
+@media(max-width:430px){.nav span{display:none}.nav{width:48px;padding:0}}
+
+/* ===== แนวตั้ง: แต่ละหมวดเรียงลงมา การ์ด 2 คอลัมน์ ===== */
+html,body{overflow-x:hidden;max-width:100%}
+.rail,.rail.x{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;overflow:visible;scroll-snap-type:none;padding:2px 0;margin:0}
+.rail .card{width:auto;min-height:140px}
+@media(min-width:640px){.rail{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}}
+/* ===== ปุ่มดาว: เบาลง ไม่สว่างจ้า ===== */
+.pin{width:36px;height:36px;top:8px;right:8px;background:#ffffff0d;border:1px solid #ffffff1f;color:#ffffff59;box-shadow:none}
+.pin .ic{width:19px;height:19px}
+.pin:hover{background:#ffffff14;color:#fbbf24b3}
+.pin.on{background:#fbbf2414;border-color:#fbbf2447;color:#fbbf24b8;box-shadow:none}
+.pin.on .ic,.banner .pin.on .ic{filter:none}
+.banner .pin{top:10px;right:10px}
+.chip.star{background:#ffffff0d;border-color:#ffffff1f;color:#fbbf24a6}
+.chip.star.on{background:#fbbf2426;color:#fbbf24;border-color:#fbbf2459;box-shadow:none}
+
+/* ===== ปุ่มย้อนกลับ: ฟ้า (ทับสีแดงเดิม) ===== */
+#backBtn{background:linear-gradient(135deg,#38bdf8,#2563eb)!important;color:#fff!important;border:0!important;box-shadow:0 6px 18px #2563eb66,inset 0 1px 0 #ffffff55!important}
+#backBtn:hover{box-shadow:0 8px 26px #38bdf899,inset 0 1px 0 #ffffff55!important}
+
+/* ===== หน้าวิชา: ใช้ง่ายขึ้น ===== */
+#backBtn{min-height:38px;padding:6px 14px 6px 10px!important;font-size:14px}
+.banner{gap:14px;margin:14px 0 14px;padding:14px;border-radius:20px}
+.banner .ico{width:56px;height:56px;border-radius:17px}
+.banner h1{font-size:clamp(20px,5.4vw,28px);padding-right:48px}
+.pills2{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.p-code,.p-n{font-size:12.5px;font-weight:600;border-radius:999px;padding:2px 11px}
+.p-code{color:color-mix(in srgb,var(--acc) 55%,#fff);background:color-mix(in srgb,var(--acc) 18%,transparent);border:1px solid color-mix(in srgb,var(--acc) 45%,transparent)}
+.p-n{color:var(--muted);border:1px solid var(--line);background:#ffffff08}
+.startcard{display:flex;align-items:center;gap:12px;width:100%;min-height:70px;margin:0 0 20px;padding:12px 16px 12px 12px;border-radius:18px;text-align:left;color:#fff;background:linear-gradient(135deg,#2563eb,#0ea5e9);box-shadow:0 10px 26px #2563eb59,inset 0 1px 0 #ffffff40;transition:.15s}
+.startcard:hover{box-shadow:0 12px 32px #38bdf866,inset 0 1px 0 #ffffff40}
+.startcard:active{transform:scale(.98)}
+.startcard .play{flex:none;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:#ffffff2b}
+.startcard .play .ic{width:20px;height:20px}
+.startcard .tx{flex:1;min-width:0}
+.startcard small{display:block;font-size:12.5px;opacity:.9}
+.startcard b{display:block;font-size:16.5px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.startcard .go{font-size:28px;line-height:1;opacity:.9}
+.list{gap:10px}
+.chap{min-height:68px;padding:12px 14px;border-radius:18px}
+.chap i{width:42px;height:42px;border-radius:13px;font-size:16px}
+.chap span{font-size:16px;font-weight:500}
+.chap u{font-size:26px;color:color-mix(in srgb,var(--acc) 70%,#fff)}
+.chap.cur{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 13%,var(--panel))}
+.tag{display:inline-block;margin-left:8px;font-style:normal;font-size:11.5px;font-weight:600;color:#fff;background:color-mix(in srgb,var(--acc) 80%,#000);border-radius:999px;padding:1px 9px;vertical-align:1px}
+
+
+
+/* ===== ความสวยระดับพรีเมียม (โครงเดิม ฟังก์ชันเดิม) ===== */
+body:before{background:
+ radial-gradient(700px 420px at 8% -8%,#2563eb59,transparent),
+ radial-gradient(560px 360px at 100% 2%,#06b6d440,transparent),
+ radial-gradient(520px 420px at 50% 112%,#7c3aed2b,transparent),
+ linear-gradient(#ffffff07 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,#ffffff07 1px,transparent 1px) 0 0/44px 44px}
+.top{background:#080d1bcc;backdrop-filter:blur(18px) saturate(1.4);border-bottom:1px solid transparent;border-image:linear-gradient(90deg,#3b82f666,#22d3ee66,#3b82f622) 1}
+.logo{font-weight:700;letter-spacing:1.5px}
+/* hero */
+.hero{padding:38px 0 8px}
+h1{font-weight:700;letter-spacing:-1.5px}
+h1 span{background:linear-gradient(90deg,#7db4ff,#22d3ee 60%,#a5f3fc);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 0 22px #22d3ee40)}
+.kicker{background:linear-gradient(90deg,#38bdf81f,#38bdf80a);border-color:#38bdf866;box-shadow:0 0 22px #38bdf81f}
+.kicker:before{animation:beat 2.4s ease-in-out infinite}
+@keyframes beat{50%{opacity:.35}}
+.pill{background:linear-gradient(135deg,#ffffff12,#ffffff05);border-color:#ffffff1f;backdrop-filter:blur(6px);padding:4px 14px}
+/* ต่อจากครั้งก่อน */
+.cont{border:1px solid transparent;background:linear-gradient(120deg,color-mix(in srgb,var(--acc) 24%,#0f1830),#0f1830) padding-box,linear-gradient(120deg,var(--acc),#22d3ee66 55%,#1e2d57) border-box;box-shadow:0 14px 34px color-mix(in srgb,var(--acc) 22%,transparent)}
+/* ค้นหา + ชิป */
+.search{background:linear-gradient(#111b36,#0f1830);border-color:#2a3d6e;border-radius:16px;box-shadow:inset 0 1px 0 #ffffff0d}
+.search:focus-within{border-color:#38bdf8;box-shadow:0 0 0 4px #38bdf829,0 8px 24px #2563eb40}
+.chip{background:linear-gradient(#111b36,#0f1830);border-color:#2a3d6e}
+.chip.on{background:linear-gradient(135deg,#3b82f6,#06b6d4);box-shadow:0 6px 18px #2563eb66,inset 0 1px 0 #ffffff55}
+.chip.star.on{box-shadow:0 0 18px #fbbf2466}
+/* หัวหมวด */
+.groups{gap:32px}
+.grp-h{gap:11px}
+.grp-h i{width:6px;height:24px;background:linear-gradient(var(--acc),color-mix(in srgb,var(--acc) 35%,#22d3ee));box-shadow:0 0 18px color-mix(in srgb,var(--acc) 70%,transparent)}
+.grp-h h3{flex:none;font-size:18px;font-weight:700;letter-spacing:.2px}
+.grp-h::after{content:"";flex:1;height:1px;order:1;background:linear-gradient(90deg,color-mix(in srgb,var(--acc) 55%,transparent),transparent)}
+.grp-h .n{order:2;margin-left:0;border:1px solid color-mix(in srgb,var(--acc) 40%,transparent);color:color-mix(in srgb,var(--acc) 40%,#fff);background:color-mix(in srgb,var(--acc) 12%,transparent);padding:1px 11px;border-radius:999px}
+/* การ์ดวิชา */
+.card{border:1px solid transparent;border-radius:22px;
+ background:radial-gradient(180px 130px at 0 0,color-mix(in srgb,var(--acc) 30%,transparent),transparent) padding-box,linear-gradient(155deg,#152248,#0e1630) padding-box,linear-gradient(150deg,color-mix(in srgb,var(--acc) 75%,#fff),color-mix(in srgb,var(--acc) 14%,#1e2d57) 45%,#1e2d57) border-box;
+ background-clip:padding-box,padding-box,border-box;
+ box-shadow:0 10px 26px #00000059,inset 0 1px 0 #ffffff12}
+.card::after{content:"";position:absolute;right:-34px;bottom:-34px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--acc) 26%,transparent),transparent 70%);pointer-events:none}
+.card>.ico,.card>b,.card>.tags{position:relative;z-index:1}
+.card:hover{transform:translateY(-4px);box-shadow:0 18px 38px color-mix(in srgb,var(--acc) 34%,#000)}
+.card b{font-weight:600;font-size:15.5px}
+.ico{background:linear-gradient(145deg,color-mix(in srgb,var(--acc) 34%,#0b1226),color-mix(in srgb,var(--acc) 10%,#0b1226))!important;border:1px solid color-mix(in srgb,var(--acc) 55%,transparent)!important;box-shadow:0 8px 20px color-mix(in srgb,var(--acc) 30%,transparent),inset 0 1px 0 #ffffff26!important}
+.code{font-weight:700;color:color-mix(in srgb,var(--acc) 55%,#fff)}
+.n{background:#ffffff08}
+.pin{background:#0000004d;border-color:#ffffff1f}
+/* หน้าวิชา */
+.banner{border:1px solid transparent;border-radius:26px;padding:18px;
+ background:radial-gradient(320px 200px at 0 0,color-mix(in srgb,var(--acc) 38%,transparent),transparent) padding-box,linear-gradient(155deg,#152248,#0e1630) padding-box,linear-gradient(140deg,color-mix(in srgb,var(--acc) 85%,#fff),color-mix(in srgb,var(--acc) 12%,#1e2d57) 50%,#1e2d57) border-box;
+ background-clip:padding-box,padding-box,border-box;box-shadow:0 16px 40px color-mix(in srgb,var(--acc) 20%,#000)}
+.banner .ico{width:62px;height:62px;border-radius:19px}
+.banner h1{letter-spacing:-.3px}
+.startcard{position:relative;overflow:hidden;background:linear-gradient(135deg,#2f6df0,#0ea5e9);box-shadow:0 12px 30px #2563eb66,inset 0 1px 0 #ffffff59}
+.startcard::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,#ffffff33 50%,transparent 65%);transform:translateX(-120%);animation:shine 5s ease-in-out infinite;pointer-events:none}
+@keyframes shine{0%,65%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+.row h2{font-weight:700}
+.chap{border:1px solid transparent;border-radius:18px;
+ background:linear-gradient(#121c3a,#0f1830) padding-box,linear-gradient(135deg,color-mix(in srgb,var(--acc) 38%,#1e2d57),#1e2d57 60%) border-box;
+ background-clip:padding-box,border-box;box-shadow:0 4px 14px #0000003d}
+.chap:hover{transform:translateX(3px);box-shadow:0 10px 26px color-mix(in srgb,var(--acc) 24%,#000)}
+.chap i{box-shadow:0 6px 16px color-mix(in srgb,var(--acc) 40%,transparent),inset 0 1px 0 #ffffff3d}
+/* ปุ่ม */
+#backBtn{background:linear-gradient(135deg,#4cc3f7,#2563eb)!important;box-shadow:0 8px 22px #2563eb73,inset 0 1px 0 #ffffff66!important}
+.vbar{background:linear-gradient(#18274f,#0f1830);border-bottom:1px solid #2a3d6e;backdrop-filter:blur(12px)}
+.vbar .t{background:linear-gradient(#ffffff0d,#ffffff04);border-color:#2a3d6e}
+.nav.next{background:linear-gradient(135deg,#2f6df0,#0ea5e9);box-shadow:0 8px 22px #2563eb73,inset 0 1px 0 #ffffff55}
+.nav.prev{background:linear-gradient(#1c2b57,#16224a);border-color:#3b82f699}
+.sheet{background:linear-gradient(#131f42,#0f1830);box-shadow:0 -20px 50px #0009}
+footer{letter-spacing:1px}
+
+/* ===== สวยเพิ่มอีกขั้น ===== */
+body:after{content:"";position:fixed;inset:-25%;z-index:-1;pointer-events:none;will-change:transform;
+ background:radial-gradient(380px 380px at 22% 30%,#3b82f629,transparent 70%),radial-gradient(340px 340px at 78% 62%,#22d3ee22,transparent 70%),radial-gradient(300px 300px at 40% 90%,#a855f71f,transparent 70%);
+ animation:drift 28s ease-in-out infinite alternate}
+@keyframes drift{from{transform:translate3d(-3%,-2%,0) scale(1)}to{transform:translate3d(4%,3%,0) scale(1.12)}}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:#2a3d6e;border-radius:9px}
+/* ส่วนหัว */
+h1{font-size:clamp(42px,11.5vw,76px);line-height:1;margin:16px 0 12px}
+.hero{position:relative}
+.hero:before{content:"";position:absolute;left:-40px;top:6px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,#3b82f640,transparent 70%);filter:blur(10px);z-index:-1;pointer-events:none}
+.logo span{text-shadow:0 0 18px #22d3ee80}
+.sico{flex:none;color:#7da2e0}
+.search:focus-within .sico{color:#38bdf8}
+/* ไอคอนหมวด */
+.grp-h i{display:none}
+.gi{flex:none;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;
+ background:linear-gradient(145deg,color-mix(in srgb,var(--acc) 40%,#0b1226),color-mix(in srgb,var(--acc) 12%,#0b1226));
+ border:1px solid color-mix(in srgb,var(--acc) 60%,transparent);box-shadow:0 8px 20px color-mix(in srgb,var(--acc) 32%,transparent),inset 0 1px 0 #ffffff2e}
+.gi .ic{width:20px;height:20px;color:#fff;stroke-width:2.2}
+.grp-h h3{font-size:19px}
+/* การ์ด: แสงวาบตอนกด/ชี้ + เส้นสีด้านล่าง */
+.card:before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(115deg,transparent 38%,#ffffff1f 50%,transparent 62%);transform:translateX(-130%);transition:transform .9s}
+.card:hover:before,.card:active:before{transform:translateX(130%)}
+.card .tags{margin-top:2px}
+.card.empty .ico{filter:saturate(.6)}
+.card:active{transform:scale(.97)}
+.ico .sic{filter:drop-shadow(0 3px 6px #0006)}
+/* ต่อจากครั้งก่อน: ลูกศรมีวงเรือง */
+.cont .go{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#38bdf826;border:1px solid #38bdf866;font-size:24px;line-height:1;box-shadow:0 0 18px #38bdf840}
+.cont b{font-size:17px}
+/* หน้าวิชา */
+.banner:after{content:"";position:absolute;right:-50px;top:-50px;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--acc) 30%,transparent),transparent 70%);pointer-events:none}
+.banner>*{position:relative;z-index:1}
+.banner>.pin{position:absolute}
+.startcard .play{background:#ffffff33;box-shadow:0 0 0 6px #ffffff14}
+.startcard b{font-size:17px}
+.chap u{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:color-mix(in srgb,var(--acc) 16%,transparent);color:color-mix(in srgb,var(--acc) 60%,#fff);font-size:22px;line-height:1;flex:none}
+.chap:hover u{background:var(--acc);color:#fff}
+.chap span{font-weight:500}
+/* ปุ่ม */
+.btn,.chip,.card,.chap,.startcard,.nav{transition:transform .2s,box-shadow .25s,border-color .2s,background .2s}
+#backBtn:active{transform:scale(.94)}
+.logo{text-shadow:0 0 22px #3b82f650}
+footer{background:linear-gradient(90deg,transparent,#3b82f61f,transparent);border-top:1px solid #1e2d5799;margin-top:20px}
+:focus-visible{outline:2px solid #38bdf8;outline-offset:3px;border-radius:12px}
+@media(prefers-reduced-motion:reduce){body:after,.startcard:after{animation:none!important}}
+
+/* ===== ลดแสงเรือง/เงา ===== */
+body:after,.hero:before,.card:after,.banner:after{display:none}
+h1 span{filter:none}
+.logo,.logo span{text-shadow:none}
+.kicker{box-shadow:none}
+.kicker:before{box-shadow:none}
+.cont{box-shadow:none}
+.cont .go{box-shadow:none}
+.chip.on,.chip.star.on{box-shadow:none}
+.search:focus-within{box-shadow:0 0 0 3px #38bdf826}
+.grp-h i{box-shadow:none}
+.gi{box-shadow:inset 0 1px 0 #ffffff1f}
+.card{box-shadow:inset 0 1px 0 #ffffff0f}
+.card:hover{box-shadow:0 8px 18px #0006}
+.ico{box-shadow:inset 0 1px 0 #ffffff1f!important}
+.ico .sic{filter:none}
+.banner{box-shadow:none}
+.startcard{box-shadow:0 4px 12px #2563eb40,inset 0 1px 0 #ffffff40}
+.startcard .play{box-shadow:none}
+.chap{box-shadow:none}
+.chap:hover{box-shadow:0 6px 16px #0006}
+.chap i{box-shadow:inset 0 1px 0 #ffffff33}
+#backBtn{box-shadow:0 3px 10px #2563eb40,inset 0 1px 0 #ffffff55!important}
+#backBtn:hover{box-shadow:0 4px 12px #2563eb59,inset 0 1px 0 #ffffff55!important}
+.nav.next{box-shadow:0 3px 10px #2563eb40,inset 0 1px 0 #ffffff40}
+.nav:hover:not(:disabled){box-shadow:0 4px 12px #2563eb40}
+.vbar{box-shadow:0 2px 10px #0006}
+.sheet{box-shadow:0 -10px 30px #0006}
+
+/* ===== ความสวยเพิ่ม (แบบเรียบ ไม่มีแสงเรือง) ===== */
+.card{--st:inset 0 3px 0 color-mix(in srgb,var(--acc) 85%,transparent);box-shadow:var(--st)}
+.card:hover{box-shadow:var(--st),0 8px 18px #0006}
+.card b{font-size:16px;font-weight:600;letter-spacing:.1px}
+.wm{position:absolute;right:-12px;bottom:-14px;width:96px;height:96px;opacity:.1;transform:rotate(-14deg);pointer-events:none;z-index:0}
+.wm .sic{width:100%;height:100%;display:block}
+.banner .wm{right:-8px;bottom:-26px;width:150px;height:150px;opacity:.09;transform:rotate(-12deg)}
+.banner{box-shadow:inset 0 3px 0 color-mix(in srgb,var(--acc) 85%,transparent)}
+.chap{box-shadow:inset 4px 0 0 color-mix(in srgb,var(--acc) 75%,transparent)}
+.chap:hover{box-shadow:inset 4px 0 0 var(--acc),0 6px 16px #0006}
+.chap i{font-weight:700}
+.cdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:1px}
+.chip{display:inline-flex;align-items:center}
+.chip.on .cdot{box-shadow:0 0 0 2px #ffffff80}
+.row h2{display:flex;align-items:center;gap:8px}
+.row{border-bottom:1px solid #1e2d5799;padding-bottom:10px}
+.pill b{color:#7dd3fc}
+.kicker{font-weight:500;letter-spacing:.3px}
+
+/* ===== แก้แถบค้นหา: เต็มขอบจอ ไม่เป็นกล่องเหลี่ยม ===== */
+.tools{margin-left:-14px;margin-right:-14px;padding-left:14px;padding-right:14px;border-radius:0;border:0;box-shadow:none;
+ background:linear-gradient(#080d1bf5 0%,#080d1bdd 72%,#080d1b00 100%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+
+/* ===== ออกแบบหน้าวิชาใหม่ทั้งหมด ===== */
+.banner{position:relative;overflow:hidden;display:flex;align-items:center;gap:16px;padding:20px 18px;border-radius:24px;
+ border:1px solid color-mix(in srgb,var(--acc) 45%,transparent);box-shadow:none;background-clip:border-box;
+ background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 42%,#0c1430),color-mix(in srgb,var(--acc) 10%,#0c1430))}
+.banner:before{content:"";display:block;position:absolute;right:-46px;top:-64px;width:190px;height:190px;border-radius:50%;background:color-mix(in srgb,var(--acc) 20%,transparent);pointer-events:none}
+.banner:after{content:"";display:block;position:absolute;right:34px;bottom:-78px;width:130px;height:130px;border-radius:50%;background:color-mix(in srgb,var(--acc) 12%,transparent);pointer-events:none}
+.banner .wm{display:none}
+.banner .ico{width:66px;height:66px;border-radius:21px;background:#ffffff1f!important;border:1px solid #ffffff38!important;box-shadow:none!important}
+.banner h1{font-size:clamp(22px,6vw,30px);line-height:1.2;margin:0 0 2px;letter-spacing:-.3px}
+.pills2{margin-top:9px}
+.p-code{background:#00000030;border-color:#ffffff38;color:#fff}
+.p-n{background:#ffffff14;border-color:#ffffff2e;color:#e4ecff}
+.startcard{min-height:66px;border-radius:20px;background:linear-gradient(135deg,#2f6df0,#0ea5e9);box-shadow:0 4px 12px #2563eb40,inset 0 1px 0 #ffffff40}
+.startcard:after{display:none}
+.startcard .play{width:44px;height:44px;background:#ffffff2e;box-shadow:none}
+.startcard small{letter-spacing:.3px}
+.startcard .go{font-size:30px}
+.row{border:0;padding:0;margin:26px 2px 12px}
+.row h2{font-size:19px;font-weight:700}
+.row .count{padding:2px 13px;border-radius:99px;background:#ffffff0d;border:1px solid #2a3d6e;color:#a9bbe0;font-size:13px}
+.list{gap:10px}
+.chap{min-height:70px;border-radius:18px;border:1px solid #243560;box-shadow:none;background:linear-gradient(#111b36,#0f1830);background-clip:border-box}
+.chap:hover{transform:translateY(-1px);border-color:color-mix(in srgb,var(--acc) 60%,#243560);box-shadow:none;background:linear-gradient(#142042,#111b36)}
+.chap i{width:44px;height:44px;border-radius:14px;background:color-mix(in srgb,var(--acc) 22%,#0f1830);border:1px solid color-mix(in srgb,var(--acc) 55%,transparent);color:color-mix(in srgb,var(--acc) 40%,#fff);box-shadow:none;font-size:17px}
+.chap u{width:auto;height:auto;background:none;color:#7f93bf;font-size:28px}
+.chap:hover u{background:none;color:#fff}
+footer{background:none;border:0;margin-top:44px;color:#4d6190}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <button class="btn hidden" id="backBtn" aria-label="ย้อนกลับ"></button>
+    <div class="logo" id="logo">◆ CONTENT <span>HUB</span></div>
+    <div class="crumb" id="crumb"></div>
+  </div>
+</header>
+
+<main id="home" class="wrap">
+  <section class="hero">
+    <span class="kicker" id="tagline">เนื้อหา ม.4 เทอม 2</span>
+    <h1>CONTENT <span>HUB</span></h1>
+    <div class="pills"><span class="pill"><b id="sSub">0</b> วิชา</span><span class="pill"><b id="sChap">0</b> บทเรียน</span></div>
+    <button class="cont hidden" id="cont"></button>
+  </section>
+  <div class="tools">
+    <label class="search"><svg class="sico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="ค้นหาวิชา หรือรหัสวิชา" autocomplete="off"><button class="x hidden" id="clr" aria-label="ล้าง">×</button><kbd id="kbd">/</kbd></label>
+    <div class="chips" id="chips"></div>
+  </div>
+  <div class="row"><h2>วิชาทั้งหมด</h2><span class="count" id="count"></span></div>
+  <div class="groups" id="grid"></div>
+</main>
+
+<main id="subjectView" class="wrap hidden"></main>
+
+<section id="chapterView" class="viewer hidden">
+  <div class="vbar">
+    <button class="nav prev" id="prevBtn" aria-label="บทก่อนหน้า"></button>
+    <button class="t" id="vtitle" aria-label="เลือกบทเรียน"></button>
+    <button class="nav next" id="nextBtn" aria-label="บทถัดไป"></button>
+  </div>
+  <div class="vframe" id="vframe"></div>
+</section>
+
+<div class="sheet-bg hidden" id="sheetBg"><div class="sheet" id="sheet"></div></div>
+<footer id="foot">◆ CONTENT HUB</footer>
+
+<script>
+let SUBJECTS = [];
+/* ---------- ไอคอน SVG (แทนอีโมจิ) — ใช้สีตามข้อความ (currentColor) ---------- */
+const ICONS = {"book":"<path d=\"M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z\"/><path d=\"M4 21.5v-16\"/><path d=\"M9 8h7\"/>","calc":"<rect x=\"5\" y=\"3\" width=\"14\" height=\"18\" rx=\"2.5\"/><path d=\"M8.5 7.5h7\"/><path d=\"M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01\"/>","chart":"<path d=\"M3 3v18h18\"/><path d=\"M7 8c1.2 7.5 3 10 5 10s3.8-2.5 5-10\"/>","sigma":"<path d=\"M18 5H7l6 7-6 7h11\"/>","atom":"<circle cx=\"12\" cy=\"12\" r=\"1.6\"/><ellipse cx=\"12\" cy=\"12\" rx=\"10\" ry=\"4\"/><ellipse cx=\"12\" cy=\"12\" rx=\"10\" ry=\"4\" transform=\"rotate(60 12 12)\"/><ellipse cx=\"12\" cy=\"12\" rx=\"10\" ry=\"4\" transform=\"rotate(120 12 12)\"/>","flask":"<path d=\"M9 3h6\"/><path d=\"M10 3v6L4.6 19a1.5 1.5 0 0 0 1.3 2.2h12.2a1.5 1.5 0 0 0 1.3-2.2L14 9V3\"/><path d=\"M7.5 15h9\"/>","globe":"<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M3 12h18\"/><path d=\"M12 3c3.2 3 3.2 15 0 18M12 3c-3.2 3-3.2 15 0 18\"/>","code":"<path d=\"M8 8l-4 4 4 4M16 8l4 4-4 4M14 5l-4 14\"/>","star":"<path d=\"M12 3l2.8 5.8 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 3 1.1-6.2L3 9.7l6.2-.9z\"/>","play":"<path d=\"M7 4.5l12 7.5-12 7.5z\"/>","spark":"<path d=\"M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z\"/><path d=\"M19 17v4M17 19h4\"/>","home":"<path d=\"M4 11l8-7 8 7\"/><path d=\"M6 9.5V20h12V9.5\"/><path d=\"M10 20v-5h4v5\"/>","quiz":"<rect x=\"5\" y=\"4\" width=\"14\" height=\"17\" rx=\"2.5\"/><path d=\"M9 4V3h6v1\"/><path d=\"M9 13l2.2 2.2L15.5 11\"/>","bulb":"<path d=\"M9 18h6M10 21h4\"/><path d=\"M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2v.1h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z\"/>","check":"<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M8 12.5l2.7 2.7L16 9.5\"/>","cross":"<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9 9l6 6M15 9l-6 6\"/>","trophy":"<path d=\"M8 4h8v5a4 4 0 0 1-8 0z\"/><path d=\"M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4\"/><path d=\"M12 13v4M8 21h8M9.5 17h5\"/>","target":"<circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"5\"/><circle cx=\"12\" cy=\"12\" r=\"1\"/>","refresh":"<path d=\"M20 11A8 8 0 0 0 5.6 7M4 4v4h4\"/><path d=\"M4 13a8 8 0 0 0 14.4 4M20 20v-4h-4\"/>","left":"<path d=\"M19 12H5M11 6l-6 6 6 6\"/>","right":"<path d=\"M5 12h14M13 6l6 6-6 6\"/>","list":"<path d=\"M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01\"/>"};
+const EMOJI_ICON = {"📖":"book","📚":"book","🧮":"calc","📈":"chart","📊":"chart","⚛️":"atom","⚛":"atom","🔬":"flask","🧪":"flask","🌍":"globe","🌏":"globe","🌎":"globe","💻":"code"};
+const _esc = s => String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ico = (n,c) => '<svg class="ic'+(c?" "+c:"")+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(ICONS[n]||ICONS.book)+'</svg>';
+// icon ใส่เป็นชื่อ (book, calc, chart, sigma, atom, flask, globe, code) หรือเขียน <svg>…</svg> เองก็ได้
+const iconOf = v => { v=String(v==null?"":v).trim(); if(v.startsWith("<svg")) return v; return ico(ICONS[v]?v:(EMOJI_ICON[v]||"book")); };
+/* ---------- โลโก้วิชาแบบสี (SVG) — เลือกให้ตรงกับวิชาอัตโนมัติจากชื่อ หรือระบุ icon เอง ---------- */
+const SUBJ_ICONS = {"globe":"<circle cx=\"32\" cy=\"32\" r=\"27\" fill=\"#2f8cf0\"/><path d=\"M14 22c3-6 10-9 15-8 3 1 2 4 0 6-3 3-1 5-4 8-3 2-5-1-8 1-3 2-4 6-5 9-3-4-3-11 2-16z\" fill=\"#4ade80\"/><path d=\"M36 12c6-1 12 2 16 7-3 0-4 3-7 3-4 0-3 4-7 4-3 0-5-3-4-6 1-3 0-6 2-8z\" fill=\"#4ade80\"/><path d=\"M34 34c5-2 11 0 13 5 2 5-2 11-7 13-5 1-6-4-6-8s-1-8 0-10z\" fill=\"#4ade80\"/><path d=\"M13 16a27 27 0 0 1 13-9\" stroke=\"#fff\" stroke-opacity=\".55\" stroke-width=\"3\" stroke-linecap=\"round\" fill=\"none\"/><circle cx=\"32\" cy=\"32\" r=\"27\" fill=\"none\" stroke=\"#1b5fc4\" stroke-width=\"2\"/>","atom":"<g fill=\"none\" stroke-width=\"3\"><ellipse cx=\"32\" cy=\"32\" rx=\"27\" ry=\"10\" stroke=\"#38bdf8\"/><ellipse cx=\"32\" cy=\"32\" rx=\"27\" ry=\"10\" stroke=\"#a78bfa\" transform=\"rotate(60 32 32)\"/><ellipse cx=\"32\" cy=\"32\" rx=\"27\" ry=\"10\" stroke=\"#f472b6\" transform=\"rotate(120 32 32)\"/></g><circle cx=\"32\" cy=\"32\" r=\"6.5\" fill=\"#fbbf24\"/><circle cx=\"59\" cy=\"32\" r=\"3.8\" fill=\"#38bdf8\"/><circle cx=\"18.5\" cy=\"8.6\" r=\"3.8\" fill=\"#a78bfa\"/><circle cx=\"18.5\" cy=\"55.4\" r=\"3.8\" fill=\"#f472b6\"/>","flask":"<path d=\"M27 6V24L13 50c-2 4 0 8 4 8h30c4 0 6-4 4-8L37 24V6\" fill=\"#93c5fd\" fill-opacity=\".18\" stroke=\"#93c5fd\" stroke-width=\"3.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M26 6h12\" stroke=\"#93c5fd\" stroke-width=\"4\" stroke-linecap=\"round\"/><path d=\"M20 40H44L51 52c1.5 3 0 6-3.500 6H16.500c-3.500 0-5-3-3.500-6z\" fill=\"#34d399\"/><circle cx=\"28\" cy=\"48\" r=\"2.5\" fill=\"#bbf7d0\"/><circle cx=\"37\" cy=\"52\" r=\"2\" fill=\"#bbf7d0\"/><circle cx=\"33\" cy=\"30\" r=\"2\" fill=\"#bfdbfe\"/><circle cx=\"30\" cy=\"22\" r=\"1.6\" fill=\"#bfdbfe\"/>","calc":"<rect x=\"12\" y=\"6\" width=\"40\" height=\"52\" rx=\"7\" fill=\"#6366f1\"/><rect x=\"17\" y=\"12\" width=\"30\" height=\"14\" rx=\"3.5\" fill=\"#c7d2fe\"/><path d=\"M23 19h12\" stroke=\"#6366f1\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"20\" cy=\"34\" r=\"3.6\" fill=\"#f472b6\"/><circle cx=\"32\" cy=\"34\" r=\"3.6\" fill=\"#fbbf24\"/><circle cx=\"44\" cy=\"34\" r=\"3.6\" fill=\"#34d399\"/><circle cx=\"20\" cy=\"43\" r=\"3.6\" fill=\"#fbbf24\"/><circle cx=\"32\" cy=\"43\" r=\"3.6\" fill=\"#34d399\"/><circle cx=\"44\" cy=\"43\" r=\"3.6\" fill=\"#f472b6\"/><circle cx=\"20\" cy=\"52\" r=\"3.6\" fill=\"#34d399\"/><circle cx=\"32\" cy=\"52\" r=\"3.6\" fill=\"#f472b6\"/><circle cx=\"44\" cy=\"52\" r=\"3.6\" fill=\"#fbbf24\"/>","chart":"<path d=\"M10 8v46h46\" fill=\"none\" stroke=\"#94a3b8\" stroke-width=\"3.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M15 48L55 18\" fill=\"none\" stroke=\"#38bdf8\" stroke-width=\"3.5\" stroke-linecap=\"round\"/><path d=\"M16 12C21 46 31 52 38 40S50 18 56 12\" fill=\"none\" stroke=\"#f472b6\" stroke-width=\"3.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"12\" r=\"3.5\" fill=\"#fbbf24\"/><circle cx=\"40\" cy=\"37\" r=\"3.5\" fill=\"#fbbf24\"/><circle cx=\"56\" cy=\"12\" r=\"3.5\" fill=\"#fbbf24\"/>","book":"<rect x=\"12\" y=\"6\" width=\"42\" height=\"52\" rx=\"5\" fill=\"#3b82f6\"/><rect x=\"12\" y=\"6\" width=\"10\" height=\"52\" rx=\"4\" fill=\"#1d4ed8\"/><rect x=\"28\" y=\"30\" width=\"20\" height=\"4.5\" rx=\"2.2\" fill=\"#fde68a\"/><rect x=\"28\" y=\"39\" width=\"14\" height=\"3.5\" rx=\"1.7\" fill=\"#bfdbfe\"/><path d=\"M40 6v17l5-4 5 4V6z\" fill=\"#f43f5e\"/><path d=\"M16 59h38\" stroke=\"#e2e8f0\" stroke-width=\"3\" stroke-linecap=\"round\"/>","code":"<rect x=\"4\" y=\"8\" width=\"56\" height=\"48\" rx=\"9\" fill=\"#1e293b\" stroke=\"#64748b\" stroke-width=\"2\"/><circle cx=\"13\" cy=\"16\" r=\"2.3\" fill=\"#f87171\"/><circle cx=\"20\" cy=\"16\" r=\"2.3\" fill=\"#fbbf24\"/><circle cx=\"27\" cy=\"16\" r=\"2.3\" fill=\"#4ade80\"/><path d=\"M24 28L14 37l10 9\" fill=\"none\" stroke=\"#34d399\" stroke-width=\"5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M40 28l10 9-10 9\" fill=\"none\" stroke=\"#f472b6\" stroke-width=\"5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M35.500 24l-7 26\" stroke=\"#fbbf24\" stroke-width=\"4\" stroke-linecap=\"round\"/>","bio":"<g fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M41.1 9.9H22.9\" stroke=\"#fde68a\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M46 15.1H18\" stroke=\"#fde68a\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M33.1 22.9H30.9\" stroke=\"#fde68a\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M21.4 28.1H42.6\" stroke=\"#fde68a\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M21.4 35.9H42.6\" stroke=\"#fde68a\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M33.1 41.1H30.9\" stroke=\"#fde68a\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M46 48.9H18\" stroke=\"#fde68a\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M41.1 54.1H22.9\" stroke=\"#fde68a\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M32 6 L35.3 7.3 L38.4 8.6 L41.1 9.9 L43.3 11.2 L44.9 12.5 L45.8 13.8 L46 15.1 L45.3 16.4 L43.9 17.7 L41.9 19 L39.3 20.3 L36.3 21.6 L33.1 22.9 L29.8 24.2 L26.6 25.5 L23.8 26.8 L21.4 28.1 L19.5 29.4 L18.4 30.7 L18 32 L18.4 33.3 L19.5 34.6 L21.4 35.9 L23.8 37.2 L26.6 38.5 L29.8 39.8 L33.1 41.1 L36.3 42.4 L39.3 43.7 L41.9 45 L43.9 46.3 L45.3 47.6 L46 48.9 L45.8 50.2 L44.9 51.5 L43.3 52.8 L41.1 54.1 L38.4 55.4 L35.3 56.7 L32 58\" stroke=\"#34d399\" stroke-width=\"4.5\"/><path d=\"M32 6 L28.7 7.3 L25.6 8.6 L22.9 9.9 L20.7 11.2 L19.1 12.5 L18.2 13.8 L18 15.1 L18.7 16.4 L20.1 17.7 L22.1 19 L24.7 20.3 L27.7 21.6 L30.9 22.9 L34.2 24.2 L37.4 25.5 L40.2 26.8 L42.6 28.1 L44.5 29.4 L45.6 30.7 L46 32 L45.6 33.3 L44.5 34.6 L42.6 35.9 L40.2 37.2 L37.4 38.5 L34.2 39.8 L30.9 41.1 L27.7 42.4 L24.7 43.7 L22.1 45 L20.1 46.3 L18.7 47.6 L18 48.9 L18.2 50.2 L19.1 51.5 L20.7 52.8 L22.9 54.1 L25.6 55.4 L28.7 56.7 L32 58\" stroke=\"#f472b6\" stroke-width=\"4.5\"/></g>","history":"<path d=\"M5 24L32 8l27 16z\" fill=\"#f59e0b\"/><rect x=\"8\" y=\"26\" width=\"48\" height=\"4\" rx=\"1\" fill=\"#fbbf24\"/><g fill=\"#fde68a\"><rect x=\"12\" y=\"32\" width=\"7\" height=\"18\" rx=\"1.500\"/><rect x=\"24.500\" y=\"32\" width=\"7\" height=\"18\" rx=\"1.500\"/><rect x=\"37\" y=\"32\" width=\"7\" height=\"18\" rx=\"1.500\"/><rect x=\"49\" y=\"32\" width=\"5\" height=\"18\" rx=\"1.500\"/></g><rect x=\"7\" y=\"50\" width=\"50\" height=\"5\" rx=\"1.500\" fill=\"#d97706\"/><rect x=\"3\" y=\"55\" width=\"58\" height=\"5\" rx=\"1.500\" fill=\"#b45309\"/>","music":"<path d=\"M25 14L51 8V16L25 22Z\" fill=\"#f472b6\"/><path d=\"M25 46V16M51 40V10\" stroke=\"#f472b6\" stroke-width=\"4\" stroke-linecap=\"round\"/><ellipse cx=\"18\" cy=\"47\" rx=\"8.500\" ry=\"6.500\" fill=\"#a78bfa\" transform=\"rotate(-15 18 47)\"/><ellipse cx=\"44\" cy=\"41\" rx=\"8.500\" ry=\"6.500\" fill=\"#a78bfa\" transform=\"rotate(-15 44 41)\"/>","art":"<path d=\"M32 6C16 6 5 17 5 31s11 27 26 27c5 0 6-3 5-6s0-6 4-6h8c7 0 11-4 11-10C59 15 48 6 32 6z\" fill=\"#fcd34d\"/><circle cx=\"19\" cy=\"25\" r=\"5\" fill=\"#ef4444\"/><circle cx=\"32\" cy=\"16\" r=\"5\" fill=\"#3b82f6\"/><circle cx=\"46\" cy=\"22\" r=\"5\" fill=\"#22c55e\"/><circle cx=\"18\" cy=\"41\" r=\"5\" fill=\"#a855f7\"/><ellipse cx=\"44\" cy=\"46\" rx=\"5.500\" ry=\"4.500\" fill=\"#1e293b\"/>","sport":"<circle cx=\"32\" cy=\"32\" r=\"26\" fill=\"#fb923c\"/><g fill=\"none\" stroke=\"#7c2d12\" stroke-width=\"2.6\" stroke-linecap=\"round\"><path d=\"M32 6V58M6 32H58\"/><path d=\"M12 12C23 22 23 42 12 52\"/><path d=\"M52 12C41 22 41 42 52 52\"/></g><circle cx=\"32\" cy=\"32\" r=\"26\" fill=\"none\" stroke=\"#7c2d12\" stroke-width=\"2.6\"/>","health":"<path d=\"M32 57C10 41 5 29 5 21 5 13 11 7 19 7c6 0 10 3 13 8 3-5 7-8 13-8 8 0 14 6 14 14 0 8-5 20-27 36z\" fill=\"#f43f5e\"/><path d=\"M12 33h12l5-10 7 19 5-9h11\" fill=\"none\" stroke=\"#fff\" stroke-width=\"3.500\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>","thai":"<path d=\"M10 8h44a6 6 0 0 1 6 6v28a6 6 0 0 1-6 6H30L17 59V48h-7a6 6 0 0 1-6-6V14a6 6 0 0 1 6-6z\" fill=\"#f472b6\"/><text x=\"32\" y=\"36\" text-anchor=\"middle\" font-family=\"IBM Plex Sans Thai,Tahoma,Arial,sans-serif\" font-weight=\"700\" font-size=\"34\" fill=\"#fff\">ก</text>","english":"<path d=\"M10 8h44a6 6 0 0 1 6 6v28a6 6 0 0 1-6 6H30L17 59V48h-7a6 6 0 0 1-6-6V14a6 6 0 0 1 6-6z\" fill=\"#38bdf8\"/><text x=\"32\" y=\"36\" text-anchor=\"middle\" font-family=\"IBM Plex Sans Thai,Tahoma,Arial,sans-serif\" font-weight=\"700\" font-size=\"32\" fill=\"#fff\">A</text>","planet":"<g fill=\"#fff\"><circle cx=\"9\" cy=\"12\" r=\"1.800\"/><circle cx=\"55\" cy=\"10\" r=\"2.200\"/><circle cx=\"52\" cy=\"54\" r=\"1.600\"/></g><ellipse cx=\"32\" cy=\"32\" rx=\"29\" ry=\"9\" transform=\"rotate(-22 32 32)\" fill=\"none\" stroke=\"#fde68a\" stroke-width=\"4\"/><circle cx=\"32\" cy=\"32\" r=\"15\" fill=\"#fb923c\"/><path d=\"M19 28c8 3 18 3 26 0M18 36c9 4 19 4 28 0\" fill=\"none\" stroke=\"#c2410c\" stroke-opacity=\".5\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M3 32a29 9 0 0 0 58 0\" transform=\"rotate(-22 32 32)\" fill=\"none\" stroke=\"#fde68a\" stroke-width=\"4\"/>","coin":"<circle cx=\"32\" cy=\"32\" r=\"26\" fill=\"#fbbf24\"/><circle cx=\"32\" cy=\"32\" r=\"19\" fill=\"none\" stroke=\"#f59e0b\" stroke-width=\"3\"/><text x=\"32\" y=\"42\" text-anchor=\"middle\" font-family=\"IBM Plex Sans Thai,Tahoma,Arial,sans-serif\" font-weight=\"700\" font-size=\"28\" fill=\"#b45309\">฿</text>","tools":"<path d=\"M51.6 27.9 L58.8 28.4 L58.8 35.6 L51.6 36.1 L48.7 43 L53.5 48.4 L48.4 53.5 L43 48.7 L36.1 51.6 L35.6 58.8 L28.4 58.8 L27.9 51.6 L21 48.7 L15.6 53.5 L10.5 48.4 L15.3 43 L12.4 36.1 L5.2 35.6 L5.2 28.4 L12.4 27.9 L15.3 21 L10.5 15.6 L15.6 10.5 L21 15.3 L27.9 12.4 L28.4 5.2 L35.6 5.2 L36.1 12.4 L43 15.3 L48.4 10.5 L53.5 15.6 L48.7 21Z M32 22a10 10 0 1 0 .01 0Z\" fill=\"#60a5fa\" fill-rule=\"evenodd\"/><circle cx=\"32\" cy=\"32\" r=\"10\" fill=\"none\" stroke=\"#fbbf24\" stroke-width=\"4\"/>"};
+const SUBJ_KEYS = {"globe":["ภูมิศาสตร์","ภูมิภาค","สังคม","พลเมือง","geograph","world","earth"],"planet":["ดาราศาสตร์","อวกาศ","โลกและ","space","astro"],"bio":["ชีว","พันธุ","bio","สิ่งมีชีวิต"],"flask":["เคมี","chem","วิทยาศาสตร์","science"],"atom":["ฟิสิกส์","physic","ไฟฟ้า"],"chart":["ฟังก์ชัน","สถิติ","กราฟ","function","statistic"],"calc":["คณิต","math","เลข","แคลคูลัส"],"code":["คอมพิวเตอร์","เทคโนโลยี","โปรแกรม","code","computer","ดิจิทัล"],"history":["ประวัติศาสตร์","history","ศาสนา","วัฒนธรรม"],"thai":["ภาษาไทย","วรรณ","ไทย"],"english":["อังกฤษ","english","ภาษา","language"],"music":["ดนตรี","music","นาฏศิลป์"],"art":["ศิลปะ","art","วาด","ทัศนศิลป์"],"sport":["พละ","กีฬา","พลศึกษา","sport"],"health":["สุขศึกษา","สุขภาพ","health"],"coin":["เศรษฐ","การเงิน","บัญชี","econom","ธุรกิจ"],"tools":["การงาน","อาชีพ","ช่าง","งานบ้าน","tool"]};
+const SUBJ_EMOJI = {"🌍":"globe","🌏":"globe","🌎":"globe","🌐":"globe","⚛️":"atom","⚛":"atom","🧪":"flask","🔬":"bio","🧬":"bio","🧮":"calc","➗":"calc","📐":"calc","📈":"chart","📊":"chart","📖":"book","📚":"book","📕":"book","💻":"code","🖥️":"code","🏛️":"history","🎵":"music","🎶":"music","🎨":"art","⚽":"sport","🏀":"sport","❤️":"health","🪐":"planet","🚀":"planet","💰":"coin","🛠️":"tools","🔧":"tools","🇹🇭":"thai","🔤":"english"};
+const subjIconKey = (v,name) => {
+  v=String(v==null?"":v).trim();
+  if(SUBJ_ICONS[v]) return v;
+  const t=String(name||"").toLowerCase();
+  for(const k in SUBJ_KEYS){ if(SUBJ_KEYS[k].some(w=>t.includes(w))) return k; }
+  return SUBJ_EMOJI[v]||"book";
+};
+// icon: ชื่อโลโก้ (globe planet atom flask bio calc chart code history thai english music art sport health coin tools book) หรือ <svg>…</svg> เอง; ถ้าไม่ระบุ/ไม่รู้จัก จะเดาจากชื่อวิชา
+const subjIcon = (v,name) => { v=String(v==null?"":v).trim(); if(v.startsWith("<svg")) return v; return '<svg class="sic" viewBox="0 0 64 64" aria-hidden="true">'+SUBJ_ICONS[subjIconKey(v,name)]+'</svg>'; };
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store = {
+  get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+  set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+};
+
+/* ---------- วิชารายการโปรด ---------- */
+let pins = [];
+try { pins = JSON.parse(store.get('pins') || '[]'); } catch(e) {}
+const isPinned = id => pins.includes(id);
+function togglePin(id){
+  pins = isPinned(id) ? pins.filter(x => x !== id) : [...pins, id];
+  store.set('pins', JSON.stringify(pins));
+}
+
+/* ---------- หมวดวิชา (ดูจากตัวอักษรแรกของรหัสวิชา) ---------- */
+const CATS = [
+  {k:'all', name:'ทั้งหมด'},
+  {k:'pin', name:'รายการโปรด'},
+  {k:'lang', name:'ภาษา', color:'#f59e0b', test:c => 'ทอ'.includes(c)},
+  {k:'math', name:'คณิตศาสตร์', color:'#a78bfa', test:c => c === 'ค'},
+  {k:'sci',  name:'วิทยาศาสตร์', color:'#22c55e', test:c => c === 'ว'},
+  {k:'soc',  name:'สังคม', color:'#f97316', test:c => c === 'ส'},
+  {k:'other',name:'สุขภาพ/ศิลปะ/การงาน', color:'#ec4899', test:c => 'พศง'.includes(c)}
+];
+const catOf = s => CATS.slice(2).find(c => c.test((s.code || '')[0] || '')) || CATS[CATS.length - 1];
+let activeCat = 'all';
+
+const views = ['home','subjectView','chapterView'];
+function show(v){
+  views.forEach(x => $(x).classList.toggle('hidden', x !== v));
+  $('foot').classList.toggle('hidden', v === 'chapterView');
+  $('backBtn').classList.toggle('hidden', v === 'home');
+  $('logo').classList.toggle('hidden', v !== 'home' && matchMedia('(max-width:520px)').matches);
+  if (v !== 'chapterView') window.scrollTo(0, 0);
+}
+
+/* ---------- หน้าแรก ---------- */
+function renderContinue(){
+  const b = $('cont');
+  b.classList.add('hidden'); return;
+  const last = (store.get('last') || '').split('/');
+  const s = SUBJECTS.find(x => x.id === last[0]);
+  const c = s && s.chapters.find(x => x.id === last[1]);
+  if (!c) { b.classList.add('hidden'); return; }
+  b.style.setProperty('--acc', catOf(s).color);
+  b.innerHTML = `<span class="ico">${subjIcon(s.icon, s.name)}</span><span><small>${ico('play','fill')} เรียนต่อจากครั้งก่อน</small><b>${esc(c.title)}</b><small style="color:var(--muted)">${esc(s.name)}</small></span><span class="go">›</span>`;
+  b.onclick = () => go(`/${s.id}/${c.id}`);
+  b.classList.remove('hidden');
+}
+
+function renderChips(){
+  $('chips').innerHTML = CATS.map(c => c.k === 'pin'
+    ? `<button class="chip star ${c.k === activeCat ? 'on' : ''}" data-k="pin" aria-label="รายการโปรด">${ico('star','fill')}</button>`
+    : `<button class="chip ${c.k === activeCat ? 'on' : ''}" data-k="${c.k}">${c.color ? `<i class="cdot" style="background:${c.color}"></i>` : ''}${esc(c.name)}</button>`).join('');
+}
+
+function cardHTML(s, i){
+  return `<button class="card ${s.chapters.length ? '' : 'empty'}" data-id="${esc(s.id)}" style="--acc:${catOf(s).color};animation-delay:${Math.min(i, 8) * 30}ms">
+      <span class="wm">${subjIcon(s.icon, s.name)}</span>
+      <span class="ico">${subjIcon(s.icon, s.name)}</span>
+      <span class="pin ${isPinned(s.id) ? 'on' : ''}" data-pin="${esc(s.id)}" role="button" aria-label="รายการโปรด">${isPinned(s.id) ? ico('star','fill') : ico('star')}</span>
+      <b>${esc(s.name)}</b>
+      <span class="tags"><span class="code">${esc(s.code)}</span><span class="n">${s.chapters.length ? s.chapters.length + ' บท' : 'เร็ว ๆ นี้'}</span></span>
+    </button>`;
+}
+function groupHTML(name, color, items, star){
+  return `<section class="grp" style="--acc:${color}">
+    <div class="grp-h"><span class="gi">${ico({"ภาษา":"book","คณิตศาสตร์":"sigma","วิทยาศาสตร์":"atom","สังคม":"globe","รายการโปรด":"star"}[name] || "spark", star ? "fill" : "")}</span><h3>${esc(name)}</h3><span class="n count">${items.length} วิชา</span></div>
+    <div class="rail">${items.map(cardHTML).join('')}</div></section>`;
+}
+function renderGrid(){
+  const q = $('q').value.trim().toLowerCase();
+  $('clr').classList.toggle('hidden', !q);
+  $('kbd').classList.toggle('hidden', !!q);
+  const match = s => !q || (s.name + ' ' + s.code).toLowerCase().includes(q);
+  let out = '', total = 0;
+  if (activeCat === 'pin') {
+    const l = SUBJECTS.filter(s => isPinned(s.id) && match(s));
+    total = l.length;
+    out = l.length ? groupHTML('รายการโปรด', '#fbbf24', l, true) : '';
+  } else {
+    const favs = activeCat === 'all' && !q ? SUBJECTS.filter(s => isPinned(s.id)) : [];
+    if (favs.length) out += groupHTML('รายการโปรด', '#fbbf24', favs, true);
+    CATS.slice(2).forEach(c => {
+      if (activeCat !== 'all' && activeCat !== c.k) return;
+      const l = SUBJECTS.filter(s => catOf(s).k === c.k && match(s));
+      if (!l.length) return;
+      total += l.length;
+      out += groupHTML(c.name, c.color, l);
+    });
+  }
+  $('grid').innerHTML = out || `<div class="msg">${activeCat === 'pin' && !q ? 'ยังไม่ได้กดดาววิชาไหนเลย<br>กดดาวที่การ์ดวิชาเพื่อเก็บไว้ตรงนี้' : 'ไม่พบวิชาที่ค้นหา<br>ลองพิมพ์ชื่ออื่น หรือเลือก "ทั้งหมด"'}</div>`;
+  $('count').textContent = `${total} วิชา`;
+}
+
+function renderHome(){
+  $('sSub').textContent = SUBJECTS.length;
+  $('sChap').textContent = SUBJECTS.reduce((n, s) => n + s.chapters.length, 0);
+  renderContinue(); renderChips(); renderGrid();
+  $('crumb').textContent = '';
+  show('home');
+}
+
+/* ---------- หน้าวิชา ---------- */
+function renderSubject(s){
+  const cat = catOf(s);
+  const last = (store.get('last') || '').split('/');
+  const resume = null;
+  const target = resume || s.chapters[0];
+  $('subjectView').style.setProperty('--acc', cat.color);
+  $('subjectView').innerHTML = `
+    <div class="banner"><span class="ico">${subjIcon(s.icon, s.name)}</span><div><h1>${esc(s.name)}</h1><div class="pills2"><span class="p-code">${esc(s.code)}</span><span class="p-n">${s.chapters.length} บทเรียน</span></div></div>
+      <button class="pin ${isPinned(s.id) ? 'on' : ''}" id="spin" aria-label="รายการโปรด">${isPinned(s.id) ? ico('star','fill') : ico('star')}</button></div>
+    ${s.chapters.length ? `
+    <button class="startcard" data-id="${esc(target.id)}">
+      <span class="play">${ico('play','fill')}</span>
+      <span class="tx"><small>${resume ? 'เรียนต่อจากครั้งก่อน' : 'เริ่มเรียน'}</small><b>${esc(target.title)}</b></span>
+      <span class="go">›</span>
+    </button>
+    <div class="row"><h2>บทเรียนทั้งหมด</h2><span class="count">${s.chapters.length} บท</span></div>
+    <div class="list">${s.chapters.map((c, i) => `<button class="chap ${resume && c.id === resume.id ? 'cur' : ''}" data-id="${esc(c.id)}" style="animation-delay:${Math.min(i, 12) * 30}ms"><i>${i + 1}</i><span>${esc(c.title)}${resume && c.id === resume.id ? '<em class="tag">ล่าสุด</em>' : ''}</span><u>›</u></button>`).join('')}</div>`
+    : `<div class="msg">ยังไม่มีบทเรียนในวิชานี้<br>เร็ว ๆ นี้</div>`}`;
+  $('spin').onclick = () => { togglePin(s.id); renderSubject(s); };
+  $('crumb').textContent = s.name;
+  show('subjectView');
+}
+
+/* ---------- หน้าอ่านบทเรียน ---------- */
+function openSheet(s, i){
+  $('sheet').style.setProperty('--acc', catOf(s).color);
+  $('sheet').innerHTML = `<h3>${subjIcon(s.icon, s.name)} ${esc(s.name)}</h3>` + s.chapters.map((c, k) =>
+    `<button class="chap ${k === i ? 'cur' : ''}" data-go="/${esc(s.id)}/${esc(c.id)}"><i>${k + 1}</i><span>${esc(c.title)}</span></button>`).join('');
+  $('sheetBg').classList.remove('hidden');
+  const cur = $('sheet').querySelector('.cur'); if (cur) cur.scrollIntoView({block:'center'});
+}
+const closeSheet = () => $('sheetBg').classList.add('hidden');
+$('sheetBg').addEventListener('click', e => {
+  const b = e.target.closest('[data-go]');
+  if (b) { closeSheet(); go(b.dataset.go); }
+  else if (e.target === $('sheetBg')) closeSheet();
+});
+
+function renderChapter(s, i){
+  const c = s.chapters[i];
+  const url = k => `/${s.id}/${s.chapters[k].id}`;
+  store.set('last', `${s.id}/${c.id}`);
+  closeSheet();
+  $('vtitle').innerHTML = `<b>${esc(c.title)}</b><small>${esc(s.name)} · บท ${i + 1}/${s.chapters.length} ▾</small>`;
+  $('vtitle').onclick = () => openSheet(s, i);
+  $('prevBtn').disabled = i === 0;
+  $('nextBtn').disabled = i === s.chapters.length - 1;
+  $('prevBtn').onclick = () => go(url(i - 1));
+  $('nextBtn').onclick = () => go(url(i + 1));
+  // สร้าง iframe ใหม่ทุกครั้ง → ไม่สร้าง history ซ้อน ปุ่มย้อนกลับของมือถือจึงทำงานปกติ
+  const f = document.createElement('iframe');
+  const spin = document.createElement('div');
+  spin.className = 'spin'; spin.textContent = 'กำลังโหลดบทเรียน...';
+  f.title = c.title;
+  f.addEventListener('load', () => spin.remove());
+  f.src = `/content/${encodeURIComponent(s.id)}/${encodeURIComponent(c.file)}`;
+  $('vframe').replaceChildren(f, spin);
+  $('crumb').textContent = '';
+  show('chapterView');
+}
+
+/* ---------- ระบบหน้า (URL) ---------- */
+function go(path){ history.pushState(null, '', path); route(); }
+function route(){
+  closeSheet();
+  const parts = location.pathname.split('/').filter(Boolean).map(decodeURIComponent);
+  const s = SUBJECTS.find(x => x.id === parts[0]);
+  if (!s) return renderHome();
+  if (parts[1]) {
+    const i = s.chapters.findIndex(c => c.id === parts[1]);
+    if (i >= 0) return renderChapter(s, i);
+  }
+  renderSubject(s);
+}
+
+const curSubject = () => location.pathname.split('/').filter(Boolean)[0];
+$('grid').addEventListener('click', e => {
+  const p = e.target.closest('[data-pin]');
+  if (p) { e.stopPropagation(); togglePin(p.dataset.pin); renderGrid(); return; }
+  const b = e.target.closest('.card'); if (b) go('/' + b.dataset.id);
+});
+$('chips').addEventListener('click', e => { const b = e.target.closest('.chip'); if (b) { activeCat = b.dataset.k; renderChips(); renderGrid(); } });
+$('subjectView').addEventListener('click', e => { const b = e.target.closest('[data-id]'); if (b) go(`/${curSubject()}/${b.dataset.id}`); });
+$('backBtn').onclick = () => go(location.pathname.split('/').filter(Boolean).length > 1 ? '/' + curSubject() : '/');
+$('logo').onclick = () => go('/');
+$('q').addEventListener('input', renderGrid);
+$('clr').onclick = () => { $('q').value = ''; renderGrid(); $('q').focus(); };
+window.addEventListener('popstate', route);
+window.addEventListener('keydown', e => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (e.key === 'Escape') closeSheet();
+  if (tag === 'input') return;
+  if (e.key === '/' && !$('home').classList.contains('hidden')) { e.preventDefault(); $('q').focus(); }
+  if (!$('chapterView').classList.contains('hidden')) {
+    if (e.key === 'ArrowLeft' && !$('prevBtn').disabled) $('prevBtn').click();
+    if (e.key === 'ArrowRight' && !$('nextBtn').disabled) $('nextBtn').click();
+  }
+});
+
+$('backBtn').innerHTML = ico('left') + 'ย้อนกลับ';
+$('prevBtn').innerHTML = ico('left') + '<span>ก่อนหน้า</span>';
+$('nextBtn').innerHTML = '<span>ถัดไป</span>' + ico('right');
+fetch('/subjects.json').then(r => r.json()).then(d => {
+  SUBJECTS = d.subjects || [];
+  const cfg = d.config || {};
+  if (cfg.tagline) $('tagline').textContent = cfg.tagline;
+  document.title = `${cfg.siteTitle || 'CONTENT HUB'} | ${cfg.tagline || ''}`;
+  route();
+}).catch(() => { $('grid').innerHTML = '<div class="msg">โหลดรายการวิชาไม่สำเร็จ ลองรีเฟรชหน้านี้</div>'; });
+</script>
+</body>
+</html>
