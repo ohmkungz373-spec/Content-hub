@@ -138,12 +138,45 @@ footer{text-align:center;color:#5d709b;font-size:13px;padding:24px}
 .ico{background:color-mix(in srgb,var(--acc) 14%,#0b1226)!important;border:1px solid color-mix(in srgb,var(--acc) 45%,transparent);box-shadow:0 4px 14px rgba(0,0,0,.3)}
 .ico .sic{width:72%;height:72%}
 .sheet h3 .sic{display:inline-block;width:1.4em;height:1.4em;vertical-align:-.35em}
+
+/* ===== หน้ารวมแบบแบ่งหมวด: 1 หมวด = 1 บรรทัด เลื่อนซ้าย-ขวา ===== */
+.groups{display:grid;gap:26px}
+.grp-h{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+.grp-h i{flex:none;width:5px;height:22px;border-radius:3px;background:var(--acc);box-shadow:0 0 14px color-mix(in srgb,var(--acc) 60%,transparent)}
+.grp-h h3{margin:0;font-size:17px;font-weight:600}
+.grp-h .n{margin-left:auto;font-size:13px}
+.rail{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x proximity;padding:2px 14px 10px;margin:0 -14px;scroll-padding-left:14px;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.rail .card{flex:none;width:156px;min-height:150px;scroll-snap-align:start}
+.rail .card b{font-size:15px}
+@media(min-width:640px){.rail{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;overflow:visible;padding:2px 0;margin:0}.rail .card{width:auto}}
+.card:focus-visible,.chip:focus-visible,.chap:focus-visible,.btn:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.chips{position:relative}
+.tools{box-shadow:0 10px 18px -14px #000}
+
+/* ===== ปุ่มย้อนกลับ (แดง) ===== */
+#backBtn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#ef4444,#dc2626);border:0;color:#fff;font-weight:700;padding:8px 16px 8px 11px;border-radius:12px;box-shadow:0 6px 18px #ef444459,inset 0 1px 0 #ffffff40}
+#backBtn:hover{box-shadow:0 8px 24px #ef444499,inset 0 1px 0 #ffffff40}
+#backBtn:active{transform:scale(.95)}
+#backBtn .ic{width:20px;height:20px;stroke-width:2.8}
+/* ===== ปุ่มก่อนหน้า / ถัดไป ===== */
+.vbar{gap:8px;padding:10px;background:linear-gradient(#16224a,#0f1830);box-shadow:0 6px 20px #0008;position:relative;z-index:3}
+.nav{display:inline-flex;align-items:center;justify-content:center;gap:5px;flex:none;min-width:48px;height:46px;padding:0 14px;border-radius:14px;font-weight:700;font-size:14px;color:#fff;border:1px solid transparent;transition:.15s}
+.nav .ic{width:20px;height:20px;stroke-width:2.8}
+.nav.next{background:linear-gradient(135deg,#2563eb,#0ea5e9);box-shadow:0 6px 20px #2563eb66,inset 0 1px 0 #ffffff40}
+.nav.prev{background:#1e2d57;border-color:#3b82f688}
+.nav:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 24px #38bdf866}
+.nav:active:not(:disabled){transform:scale(.94)}
+.nav:disabled{opacity:.28;box-shadow:none;background:#16224a;border-color:var(--line)}
+.vbar .t{background:#ffffff0a;border:1px solid var(--line);padding:5px 10px;min-height:46px}
+.vbar .t b{font-size:15px}
+@media(max-width:430px){.nav span{display:none}.nav{width:48px;padding:0}}
 </style>
 </head>
 <body>
 <header class="top">
   <div class="top-in">
-    <button class="btn hidden" id="backBtn" aria-label="ย้อนกลับ">‹ กลับ</button>
+    <button class="btn hidden" id="backBtn" aria-label="ย้อนกลับ"></button>
     <div class="logo" id="logo">◆ CONTENT <span>HUB</span></div>
     <div class="crumb" id="crumb"></div>
   </div>
@@ -161,16 +194,16 @@ footer{text-align:center;color:#5d709b;font-size:13px;padding:24px}
     <div class="chips" id="chips"></div>
   </div>
   <div class="row"><h2>วิชาทั้งหมด</h2><span class="count" id="count"></span></div>
-  <div class="grid" id="grid"></div>
+  <div class="groups" id="grid"></div>
 </main>
 
 <main id="subjectView" class="wrap hidden"></main>
 
 <section id="chapterView" class="viewer hidden">
   <div class="vbar">
-    <button class="btn icon-btn" id="prevBtn" aria-label="บทก่อนหน้า">‹</button>
+    <button class="nav prev" id="prevBtn" aria-label="บทก่อนหน้า"></button>
     <button class="t" id="vtitle" aria-label="เลือกบทเรียน"></button>
-    <button class="btn icon-btn" id="nextBtn" aria-label="บทถัดไป">›</button>
+    <button class="nav next" id="nextBtn" aria-label="บทถัดไป"></button>
   </div>
   <div class="vframe" id="vframe"></div>
 </section>
@@ -258,23 +291,42 @@ function renderChips(){
     : `<button class="chip ${c.k === activeCat ? 'on' : ''}" data-k="${c.k}">${esc(c.name)}</button>`).join('');
 }
 
-function renderGrid(){
-  const q = $('q').value.trim().toLowerCase();
-  $('clr').classList.toggle('hidden', !q);
-  $('kbd').classList.toggle('hidden', !!q);
-  let list = SUBJECTS.filter(s =>
-    (activeCat === 'all' || (activeCat === 'pin' ? isPinned(s.id) : catOf(s).k === activeCat)) &&
-    (!q || (s.name + ' ' + s.code).toLowerCase().includes(q)));
-  list = [...list].sort((a, b) => isPinned(b.id) - isPinned(a.id));
-  $('grid').innerHTML = list.length ? list.map((s, i) => `
-    <button class="card ${s.chapters.length ? '' : 'empty'}" data-id="${esc(s.id)}" style="--acc:${catOf(s).color};animation-delay:${Math.min(i, 12) * 30}ms">
+function cardHTML(s, i){
+  return `<button class="card ${s.chapters.length ? '' : 'empty'}" data-id="${esc(s.id)}" style="--acc:${catOf(s).color};animation-delay:${Math.min(i, 8) * 30}ms">
       <span class="ico">${subjIcon(s.icon, s.name)}</span>
       <span class="pin ${isPinned(s.id) ? 'on' : ''}" data-pin="${esc(s.id)}" role="button" aria-label="รายการโปรด">${isPinned(s.id) ? ico('star','fill') : ico('star')}</span>
       <b>${esc(s.name)}</b>
       <span class="tags"><span class="code">${esc(s.code)}</span><span class="n">${s.chapters.length ? s.chapters.length + ' บท' : 'เร็ว ๆ นี้'}</span></span>
-    </button>`).join('')
-    : `<div class="msg">${activeCat === 'pin' && !q ? 'ยังไม่ได้กดดาววิชาไหนเลย<br>กดดาวที่การ์ดวิชาเพื่อเก็บไว้ตรงนี้' : 'ไม่พบวิชาที่ค้นหา<br>ลองพิมพ์ชื่ออื่น หรือเลือก "ทั้งหมด"'}</div>`;
-  $('count').textContent = `${list.length} วิชา`;
+    </button>`;
+}
+function groupHTML(name, color, items, star){
+  return `<section class="grp" style="--acc:${color}">
+    <div class="grp-h"><i></i><h3>${star ? ico('star','fill') + ' ' : ''}${esc(name)}</h3><span class="n count">${items.length} วิชา</span></div>
+    <div class="rail">${items.map(cardHTML).join('')}</div></section>`;
+}
+function renderGrid(){
+  const q = $('q').value.trim().toLowerCase();
+  $('clr').classList.toggle('hidden', !q);
+  $('kbd').classList.toggle('hidden', !!q);
+  const match = s => !q || (s.name + ' ' + s.code).toLowerCase().includes(q);
+  let out = '', total = 0;
+  if (activeCat === 'pin') {
+    const l = SUBJECTS.filter(s => isPinned(s.id) && match(s));
+    total = l.length;
+    out = l.length ? groupHTML('รายการโปรด', '#fbbf24', l, true) : '';
+  } else {
+    const favs = activeCat === 'all' && !q ? SUBJECTS.filter(s => isPinned(s.id)) : [];
+    if (favs.length) out += groupHTML('รายการโปรด', '#fbbf24', favs, true);
+    CATS.slice(2).forEach(c => {
+      if (activeCat !== 'all' && activeCat !== c.k) return;
+      const l = SUBJECTS.filter(s => catOf(s).k === c.k && match(s));
+      if (!l.length) return;
+      total += l.length;
+      out += groupHTML(c.name, c.color, l);
+    });
+  }
+  $('grid').innerHTML = out || `<div class="msg">${activeCat === 'pin' && !q ? 'ยังไม่ได้กดดาววิชาไหนเลย<br>กดดาวที่การ์ดวิชาเพื่อเก็บไว้ตรงนี้' : 'ไม่พบวิชาที่ค้นหา<br>ลองพิมพ์ชื่ออื่น หรือเลือก "ทั้งหมด"'}</div>`;
+  $('count').textContent = `${total} วิชา`;
 }
 
 function renderHome(){
@@ -380,6 +432,9 @@ window.addEventListener('keydown', e => {
   }
 });
 
+$('backBtn').innerHTML = ico('left') + 'ย้อนกลับ';
+$('prevBtn').innerHTML = ico('left') + '<span>ก่อนหน้า</span>';
+$('nextBtn').innerHTML = '<span>ถัดไป</span>' + ico('right');
 fetch('/subjects.json').then(r => r.json()).then(d => {
   SUBJECTS = d.subjects || [];
   const cfg = d.config || {};
