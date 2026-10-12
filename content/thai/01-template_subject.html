@@ -1617,6 +1617,165 @@ html[data-theme="light"] .qx-review-list .qx-rv .qx-rv-explanation-heading{color
 .qx-ring .fg{filter:none!important;box-shadow:none!important}
 .qx-ring .bg{filter:none!important}
 
+
+/* ===== รอบนี้: เลือกโหมดสวย · คำอธิบายใหม่ · ปัดปิดลื่น ===== */
+/* ปุ่มเลือกโหมด */
+.qx-m2s{display:grid;grid-template-columns:1fr;gap:14px;margin-top:16px}
+@media(min-width:640px){.qx-m2s{grid-template-columns:1fr 1fr}}
+.quiz .qx-m2{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:6px;width:100%;padding:18px 18px 16px;border:0!important;border-radius:26px!important;color:#fff!important;cursor:pointer;isolation:isolate;transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .2s,filter .2s}
+.quiz .qx-m2.prac{background:linear-gradient(135deg,#f59e0b 0%,#f97316 55%,#ec4899 120%)!important;box-shadow:0 16px 34px rgba(249,115,22,.38),inset 0 1px 0 rgba(255,255,255,.35)!important}
+.quiz .qx-m2.exam{background:linear-gradient(135deg,#2563eb 0%,#4f46e5 55%,#7c3aed 120%)!important;box-shadow:0 16px 34px rgba(79,70,229,.4),inset 0 1px 0 rgba(255,255,255,.3)!important}
+.quiz .qx-m2::before{content:"";position:absolute;right:-46px;top:-46px;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.34),transparent 68%);z-index:-1}
+.quiz .qx-m2::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.28) 50%,transparent 65%);transform:translateX(-120%);animation:qxM2Shine 4.2s ease-in-out infinite;z-index:-1;pointer-events:none}
+.quiz .qx-m2.exam::after{animation-delay:1.6s}
+@keyframes qxM2Shine{0%,55%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+.quiz .qx-m2:hover{transform:translateY(-3px);filter:brightness(1.05)}
+.quiz .qx-m2:active{transform:scale(.975)}
+.qx-m2-top{display:flex;align-items:center;justify-content:space-between;width:100%}
+.qx-m2-ico{width:52px;height:52px;border-radius:17px;display:grid;place-items:center;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.35);backdrop-filter:blur(2px)}
+.qx-m2-ico .hi{width:28px;height:28px}
+.quiz .qx-m2 .qx-m2-badge{font-size:12px;font-weight:900;padding:5px 12px;border-radius:99px;background:#fff;color:#ea580c!important;text-shadow:none;box-shadow:0 4px 12px rgba(0,0,0,.18)}
+.qx-m2-t{font-size:23px;line-height:1.2;font-weight:900;margin-top:6px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.18)}
+.qx-m2-d{font-size:14px;line-height:1.5;color:rgba(255,255,255,.92);font-weight:600}
+.qx-m2-meta{display:flex;gap:8px;margin:6px 0 4px;flex-wrap:wrap}
+.qx-m2-meta i{font-style:normal;font-size:13px;font-weight:800;padding:5px 12px;border-radius:99px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff}
+.qx-m2-go{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:8px;min-height:50px;border-radius:16px;background:#fff;font-size:16.5px;font-weight:900;box-shadow:0 8px 20px rgba(0,0,0,.18)}
+.quiz .qx-m2.prac .qx-m2-go{color:#ea580c!important}
+.quiz .qx-m2.exam .qx-m2-go{color:#4338ca!important}
+.qx-m2-go .hi{width:20px;height:20px;transition:transform .2s}
+.quiz .qx-m2:hover .qx-m2-go .hi{transform:translateX(4px)}
+/* ปุ่มเลือกโหมดใหม่ */
+.quiz .qx-link.qx-swap{display:flex;align-items:center;justify-content:center;gap:9px;width:max-content;max-width:100%;min-height:50px;margin:16px auto 0;padding:0 24px;border-radius:99px!important;border:1.5px solid color-mix(in srgb,#3b82f6 45%,var(--line))!important;background:linear-gradient(135deg,color-mix(in srgb,#3b82f6 14%,var(--panel)),color-mix(in srgb,#8b5cf6 12%,var(--panel)))!important;color:var(--ink)!important;font-size:15.5px;font-weight:800;box-shadow:0 6px 16px rgba(59,130,246,.18)!important;transition:transform .15s,box-shadow .15s,border-color .15s}
+.quiz .qx-link.qx-swap .hi{width:20px;height:20px;color:#3b82f6}
+.quiz .qx-link.qx-swap:hover{transform:translateY(-2px);border-color:#3b82f6!important;box-shadow:0 10px 22px rgba(59,130,246,.28)!important}
+.quiz .qx-link.qx-swap:active{transform:scale(.96)}
+/* คำอธิบายในเฉลย */
+.qx-review-list .qx-exp{margin-top:14px;border-radius:16px;overflow:hidden;border:1px solid rgba(167,139,250,.32);background:linear-gradient(160deg,rgba(139,92,246,.12),rgba(99,102,241,.05))}
+.qx-review-list .qx-rv.ok .qx-exp{border-color:rgba(34,197,94,.3);background:linear-gradient(160deg,rgba(34,197,94,.11),rgba(20,184,166,.04))}
+.qx-exp-h{display:flex;align-items:center;gap:9px;padding:10px 14px;border-bottom:1px solid rgba(167,139,250,.2)}
+.qx-review-list .qx-rv.ok .qx-exp-h{border-color:rgba(34,197,94,.2)}
+.qx-exp-ico{flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:10px;background:rgba(250,204,21,.18);border:1px solid rgba(250,204,21,.3)}
+.qx-exp-ico .hi{width:18px;height:18px}
+.qx-exp-h b{font-size:14px;font-weight:900;color:#a78bfa;letter-spacing:.2px}
+.qx-review-list .qx-rv.ok .qx-exp-h b{color:#22c55e}
+.qx-exp-t{padding:12px 15px 14px;font-size:15px;line-height:1.85;color:var(--ink);overflow-wrap:anywhere}
+html[data-theme="light"] .qx-exp-h b{color:#6d28d9}
+html[data-theme="light"] .qx-review-list .qx-rv.ok .qx-exp-h b{color:#15803d}
+html[data-theme="light"] .qx-review-list .qx-exp{background:linear-gradient(160deg,#faf5ff,#fff)}
+html[data-theme="light"] .qx-review-list .qx-rv.ok .qx-exp{background:linear-gradient(160deg,#f0fdf4,#fff)}
+/* ปัดปิดลื่น */
+.qx-review-sheet{will-change:transform;touch-action:pan-y;overscroll-behavior:contain}
+.qx-review-list{overscroll-behavior-y:contain}
+@media(prefers-reduced-motion:reduce){.quiz .qx-m2::after{animation:none}}
+
+/* ===== คอมแพ็กต์: ลดขนาด UI ทั้งเว็บให้พอดีตา ===== */
+header{height:56px!important;padding:0 max(4%,14px)!important}
+.logo{font-size:15px!important}
+.home-top,.menu{width:40px!important;height:38px!important;border-radius:12px!important}
+.home-top{font-size:20px!important}
+.menu{gap:4px!important}.menu span{width:19px!important;height:2.5px!important}
+main{padding:76px 4% 40px!important}
+.hero{margin-bottom:16px!important}
+.badge{font-size:12px!important;padding:5px 13px!important}
+.hero h1{font-size:clamp(24px,5.4vw,40px)!important;margin:9px 0 4px!important}
+.hero p{font-size:13.5px!important}
+.progress-wrap{margin-top:12px!important}
+.progress-label{font-size:11.5px!important;margin-bottom:4px!important}
+.progress{height:6px!important}
+.page{padding:20px 16px!important;border-radius:22px!important}
+.topic-head{gap:12px!important;margin-bottom:6px!important}
+.topic-no{width:42px!important;height:42px!important;min-width:42px!important;border-radius:13px!important;font-size:18px!important}
+h2{font-size:23px!important}
+.subtitle{font-size:13px!important;margin:2px 0 12px!important}
+.intro{font-size:15px!important;padding:11px 14px!important;border-radius:14px!important}
+h3{font-size:17px!important;margin:16px 0 7px!important}
+li{font-size:15px!important;margin:5px 0!important}
+.sec-card{padding:14px 15px!important;border-radius:16px!important}
+.sec-card h3:before{width:7px!important;height:20px!important}
+.note{padding:13px 14px!important;margin-top:16px!important;border-radius:14px!important;font-size:14.5px!important}
+.formula{padding:14px 14px 12px!important;border-radius:16px!important}
+.formula .f-eq{font-size:15.5px!important;padding:9px 12px!important}
+.nav{margin-top:20px!important;gap:10px!important}
+.nav button{padding:11px!important;font-size:14px!important;border-radius:13px!important}
+/* Quiz: หน้าเลือกโหมด */
+.qx-hero{padding:16px 14px 14px!important;border-radius:20px!important}
+.qx-hero-ico{width:50px!important;height:50px!important;border-radius:16px!important;margin-bottom:8px!important}
+.qx-hero-ico .hi{width:26px!important;height:26px!important}
+.qx-hero h4{font-size:18px!important}
+.qx-hero p{font-size:13px!important}
+.qx-chips{margin-top:9px!important}
+.quiz .qx-chip,.qx-chip{font-size:12px!important;padding:4px 11px!important}
+.qx-m2s{gap:10px!important;margin-top:12px!important}
+.quiz .qx-m2{padding:14px 14px 12px!important;border-radius:20px!important;gap:3px!important}
+.qx-m2-ico{width:40px!important;height:40px!important;border-radius:13px!important}
+.qx-m2-ico .hi{width:22px!important;height:22px!important}
+.qx-m2-badge{font-size:11px!important;padding:3px 10px!important}
+.qx-m2-t{font-size:19px!important;margin-top:3px!important}
+.qx-m2-d{font-size:12.5px!important}
+.qx-m2-meta{margin:3px 0 2px!important}
+.qx-m2-meta i{font-size:12px!important;padding:3px 10px!important}
+.qx-m2-go{min-height:42px!important;font-size:14.5px!important;border-radius:13px!important;margin-top:5px!important}
+.qx-m2-go .hi{width:17px!important;height:17px!important}
+.quiz .qx-link.qx-swap{min-height:42px!important;font-size:14px!important;padding:0 18px!important;margin-top:12px!important}
+/* Quiz: ทำข้อสอบ */
+.qx-top{padding:10px 12px 8px!important;border-radius:18px!important;margin-bottom:9px!important}
+.qx-meta>b{font-size:19px!important}.qx-meta>b span{font-size:13px!important}
+.qx-tag{font-size:11.5px!important;padding:3px 9px!important}
+.qx-time{font-size:13.5px!important}
+.qx-bar{height:7px!important;margin:8px 0 6px!important}
+.qx-barrow{font-size:12px!important;margin-bottom:6px!important}
+.quiz .qx-dot{width:34px!important;height:34px!important;font-size:13px!important;border-radius:10px!important}
+.qx-dots{gap:6px!important}
+.qx-card{padding:16px 13px 14px!important;border-radius:20px!important}
+.qx-q{font-size:16.5px!important;line-height:1.55!important;margin:3px 0 10px!important}
+.qx-opts{gap:8px!important}
+.quiz .qx-opt{min-height:50px!important;padding:8px 11px!important;gap:10px!important;font-size:15px!important;border-radius:14px!important;border-width:1.5px!important}
+.qx-l{width:32px!important;height:32px!important;font-size:14px!important;border-radius:10px!important}
+.qx-ic .hi{width:21px!important;height:21px!important}
+.qx-fb{margin-top:12px!important;padding:11px 12px!important;border-radius:14px!important}
+.qx-fb-h{font-size:15.5px!important}.qx-fb-a{font-size:14px!important}
+.qx-why{font-size:14px!important;padding:10px 12px!important;line-height:1.7!important}
+.qx-hint{font-size:12px!important;margin-top:10px!important}
+.qx-dock{padding:9px 2px calc(9px + env(safe-area-inset-bottom))!important;margin-top:10px!important}
+.quiz .qx-btn{min-height:46px!important;font-size:14.5px!important;border-radius:13px!important}
+.quiz .qx-btn.submit{min-height:50px!important;font-size:16px!important;margin-top:8px!important;border-radius:14px!important}
+.quiz .qx-btn.submit.lock{font-size:14px!important}
+.quiz .qx-btn.submit .hi{width:19px!important;height:19px!important}
+.quiz .qx-link:not(.qx-swap){min-height:38px!important;font-size:13px!important}
+/* Quiz: สรุปผล */
+.qx-res{padding:18px 12px 12px!important;border-radius:20px!important}
+.qx-ring{width:132px!important;height:132px!important}
+.qx-ring-t b{font-size:30px!important}.qx-ring-t span{font-size:12px!important}
+.qx-stars .hi{width:28px!important;height:28px!important}
+.qx-res-m{font-size:15.5px!important;margin:4px 0 8px!important}.qx-res-m .hi{width:24px!important;height:24px!important}
+.qx-stats{gap:6px!important;margin:12px 0 4px!important}
+.qx-stats>div{padding:8px 3px!important;border-radius:13px!important}
+.qx-stats b{font-size:16px!important}.qx-stats span{font-size:11px!important}
+.quiz .qx-result-actions .qx-review-trigger{min-height:46px!important;padding:6px 12px!important;border-radius:13px!important}
+.quiz .qx-result-actions .qx-btn:not(.qx-review-trigger){min-height:46px!important;font-size:14.5px!important}
+.qx-review-trigger-ico{width:30px!important;height:30px!important;border-radius:10px!important}
+.qx-review-trigger-copy b{font-size:15px!important}
+/* ป็อปอัพเฉลย */
+.qx-review-head{padding:14px 14px 12px!important}
+.qx-review-head h4{font-size:19px!important;margin:3px 0 4px!important}
+.qx-review-head p{font-size:11.5px!important}
+.qx-review-kicker{font-size:10px!important}
+.qx-review-summary{margin-top:8px!important;padding:4px 9px!important;font-size:12px!important}
+.qx-review-summary-score{font-size:13px!important}
+.qx-review-close{width:36px!important;height:36px!important;font-size:22px!important}
+.qx-review-filter{padding:6px 11px!important;font-size:12px!important}
+.qx-review-list{padding:10px 12px 14px!important;gap:9px!important}
+.qx-review-list .qx-rv{padding:11px 12px!important;border-radius:14px!important}
+.qx-review-list .qx-rv-q{font-size:14.5px!important}
+.qx-review-list .qx-no{width:28px!important;height:28px!important;font-size:11px!important}
+.qx-rv-status{font-size:10.5px!important}
+.qx-rv-answer-row{padding:8px 10px!important}
+.qx-rv-label{font-size:10.5px!important}.qx-rv-answer{font-size:13px!important}
+.qx-exp{margin-top:10px!important}
+.qx-exp-h{padding:7px 11px!important}.qx-exp-ico{width:26px!important;height:26px!important}
+.qx-exp-h b{font-size:13px!important}
+.qx-exp-t{font-size:14px!important;padding:9px 12px 11px!important;line-height:1.75!important}
+@media(min-width:900px){main{max-width:880px!important}}
 @media(prefers-reduced-motion:reduce){.qx-bar i::after,.quiz .qx-btn.submit.ready{animation:none!important}}
 </style>
 </head>
@@ -1927,6 +2086,7 @@ function showTopic(i){
 
 /* ---------- Quiz 2.0 : โหมดฝึก / โหมดสอบ / สรุปผล ---------- */
 HI_P.clock=['#38bdf8','<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'];
+HI_P.grid=['currentColor','<rect x="4" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.8"/>'];
 HI_P.pause=['currentColor','<path d="M9 6v12M15 6v12"/>'];
 const QL=["A","B","C","D"];
 const QZ={view:"intro",mode:"practice",shuffle:true,items:[],i:0,sec:0,tm:null,streak:0,maxStreak:0,submitted:false,only:null,filter:"all",confirm:false,res:null,auto:true,stopped:false,autoT:null,cd:false,_bar:0};
@@ -1981,15 +2141,21 @@ function qzIntro(){
      ${st.attempts?`<span class="qx-chip">ทำแล้ว ${st.attempts} ครั้ง</span>`:""}
     </div>
    </div>
-   <div class="qx-modes">
-    <button type="button" class="qx-mode" onclick="qzStart('practice')">
-      <span class="qx-mode-ico a">${hi("bulb",{c:"#fff"})}</span>
-      <span class="qx-mode-t"><b>โหมดฝึก ${st.attempts?"":'<u>แนะนำ</u>'}</b><small>สุ่ม ${P} ข้อ · เฉลยทันที · ไม่กดดัน</small></span>
-      <span class="qx-cnt"><b>${P}</b>ข้อ<small>~${mp} นาที</small></span></button>
-    <button type="button" class="qx-mode" onclick="qzStart('exam')">
-      <span class="qx-mode-ico b">${hi("target",{c:"#fff"})}</span>
-      <span class="qx-mode-t"><b>โหมดสอบจริง</b><small>ครบทุกข้อ · จับเวลา · ส่งตอนท้าย</small></span>
-      <span class="qx-cnt"><b>${N}</b>ข้อ<small>~${me} นาที</small></span></button>
+   <div class="qx-m2s">
+    <button type="button" class="qx-m2 prac" onclick="qzStart('practice')">
+      <span class="qx-m2-top"><span class="qx-m2-ico">${hi("bulb",{c:"#fff"})}</span>${st.attempts?"":'<span class="qx-m2-badge">แนะนำ</span>'}</span>
+      <b class="qx-m2-t">โหมดฝึก</b>
+      <span class="qx-m2-d">เฉลยทันทีหลังตอบ · ไม่จับเวลากดดัน</span>
+      <span class="qx-m2-meta"><i>${P} ข้อ</i><i>~${mp} นาที</i></span>
+      <span class="qx-m2-go">เริ่มฝึกเลย ${hi("right",{c:"currentColor"})}</span>
+    </button>
+    <button type="button" class="qx-m2 exam" onclick="qzStart('exam')">
+      <span class="qx-m2-top"><span class="qx-m2-ico">${hi("target",{c:"#fff"})}</span></span>
+      <b class="qx-m2-t">โหมดสอบจริง</b>
+      <span class="qx-m2-d">ครบทุกข้อ · จับเวลา · ส่งตอนท้าย</span>
+      <span class="qx-m2-meta"><i>${N} ข้อ</i><i>~${me} นาที</i></span>
+      <span class="qx-m2-go">เริ่มสอบเลย ${hi("right",{c:"currentColor"})}</span>
+    </button>
    </div>
   </div>`;
 }
@@ -2098,7 +2264,7 @@ function qzPlay(anim){
       ${fb}
     </div>
     ${ctrl}
-    <button type="button" class="qx-link" onclick="qzQuit()">← เลือกโหมดใหม่</button>
+    <button type="button" class="qx-link qx-swap" onclick="qzQuit()">${hi("grid",{c:"currentColor"})} เลือกโหมดใหม่</button>
     ${QZ.confirm?qzConfirmHtml():""}
   </div>`;
   const bi=document.getElementById("qxBarI");
@@ -2222,7 +2388,7 @@ function qzResult(){
      <button type="button" class="qx-btn pri qx-review-trigger" onclick="qzOpenReview()"><span class="qx-review-trigger-ico">${hi("check",{c:"#fff"})}</span><span class="qx-review-trigger-copy"><b>ดูเฉลยคำตอบ</b><small>ตรวจคำตอบและคำอธิบายทุกข้อ</small></span><span class="qx-review-trigger-arrow" aria-hidden="true">›</span></button>
      <button type="button" class="qx-btn" onclick="qzStart('${QZ.mode}')">${hi("refresh",{c:"currentColor"})} ทำใหม่</button>
     </div>
-    <button type="button" class="qx-link" onclick="qzQuit()">← เลือกโหมดใหม่</button>
+    <button type="button" class="qx-link qx-swap" onclick="qzQuit()">${hi("grid",{c:"currentColor"})} เลือกโหมดใหม่</button>
    </div>
   </div>`;
 }
@@ -2236,7 +2402,7 @@ function qzReviewHtml(){
         <div class="qx-rv-answer-row yours ${x.pick==null?"unanswered":(ok?"selected-ok":"selected-bad")}"><span class="qx-rv-label">คำตอบของคุณ</span><span class="qx-rv-answer"><b>${yourAnswer}</b></span></div>
         <div class="qx-rv-answer-row correct"><span class="qx-rv-label">เฉลยที่ถูกต้อง</span><span class="qx-rv-answer"><b>${ci>=0?QL[ci]+". "+x.opts[ci].t:"-"}</b></span></div>
       </div>
-      ${x.why?`<details><summary><span class="qx-rv-bulb">${hi("bulb")}</span><span class="qx-rv-summary-text">ดูคำอธิบายข้อนี้</span><span class="qx-rv-chevron" aria-hidden="true">⌄</span></summary><div class="qx-rv-explanation"><div class="qx-rv-explanation-heading">เหตุผล / วิธีคิด</div><div class="qx-rv-explanation-text">${x.why}</div></div></details>`:""}
+      ${x.why?`<div class="qx-exp"><div class="qx-exp-h"><span class="qx-exp-ico">${hi("bulb")}</span><b>คำอธิบาย</b></div><div class="qx-exp-t">${x.why}</div></div>`:""}
     </article>`;
   }).join("");
 }
@@ -2253,7 +2419,6 @@ function qzOpenReview(){
         <button type="button" class="qx-review-filter" aria-pressed="true" onclick="qzReviewFilter('all',this)">ทั้งหมด <span class="count">${R.T}</span></button>
         <button type="button" class="qx-review-filter" aria-pressed="false" onclick="qzReviewFilter('correct',this)">ตอบถูก <span class="count">${QZ.items.filter(x=>x.pick!=null&&qzOk(x)).length}</span></button>
         <button type="button" class="qx-review-filter" aria-pressed="false" onclick="qzReviewFilter('wrong',this)">ตอบผิด <span class="count">${QZ.items.filter(x=>x.pick!=null&&!qzOk(x)).length}</span></button>
-        <button type="button" class="qx-review-filter" aria-pressed="false" onclick="qzReviewFilter('skip',this)">ไม่ตอบ <span class="count">${QZ.items.filter(x=>x.pick==null).length}</span></button>
       </div>
       <div class="qx-review-list">${qzReviewHtml()}</div>
     </section>
@@ -2267,21 +2432,39 @@ function qzOpenReview(){
     const sync=()=>{if(label) label.textContent=d.open?"ซ่อนคำอธิบาย":"ดูคำอธิบายข้อนี้";};
     d.addEventListener("toggle",sync); sync();
   });
-  // มือถือ: ปัดลงจากแถบจับหรือหัวหน้าต่างเพื่อปิด โดยไม่รบกวนการเลื่อนรายการคำตอบ
+  // ปัดลงปิด: จับตรงไหนของหน้าต่างก็ได้ (ในรายการต้องเลื่อนถึงบนสุดก่อน) ตามนิ้วแบบลื่น ๆ + ปล่อยเร็ว ๆ ก็ปิด
   if(sheet){
-    let startY=null,startX=null,lastY=null,lastX=null,dragging=false;
-    const resetDrag=()=>{startY=startX=lastY=lastX=null;dragging=false;sheet.style.transition="transform .22s ease";sheet.style.transform="";if(modal)modal.style.background="";setTimeout(()=>{if(sheet.isConnected)sheet.style.transition="";},240);};
+    const list=modal.querySelector(".qx-review-list");
+    let y0=0,x0=0,dy=0,t0=0,st=0,last=0,vy=0;   // st: 0 ไม่ลาก · 1 รอดูทิศทาง · 2 กำลังลาก
+    const dim=v=>{ modal.style.background="rgba(3,8,22,"+Math.max(.1,.78*(1-v/(sheet.offsetHeight*.9)))+")"; };
     sheet.addEventListener("touchstart",e=>{
-      if(!window.matchMedia("(max-width: 560px)").matches||!e.touches||e.touches.length!==1)return;
-      if(!e.target.closest(".qx-review-drag,.qx-review-head")||e.target.closest("button,a"))return;
-      const t=e.touches[0];startY=lastY=t.clientY;startX=lastX=t.clientX;dragging=true;
+      if(e.touches.length!==1){ st=0; return; }
+      const t=e.touches[0]; y0=t.clientY; x0=t.clientX; dy=0; t0=last=Date.now(); vy=0;
+      st=(!list.contains(e.target)||list.scrollTop<=0)?1:0;
     },{passive:true});
     sheet.addEventListener("touchmove",e=>{
-      if(!dragging||!e.touches||!e.touches.length)return;const t=e.touches[0];lastY=t.clientY;lastX=t.clientX;
-      const dy=lastY-startY,dx=lastX-startX;if(dy>0&&Math.abs(dy)>Math.abs(dx)){sheet.style.transition="none";sheet.style.transform=`translateY(${Math.min(dy,220)}px)`;modal.style.background=`rgba(3,8,22,${Math.max(.24,.78-dy/330)})`;}
-    },{passive:true});
-    const endDrag=()=>{if(!dragging)return;const dy=(lastY??startY)-startY,dx=(lastX??startX)-startX;if(dy>95&&Math.abs(dy)>Math.abs(dx)*1.15){qzCloseReview();return;}resetDrag();};
-    sheet.addEventListener("touchend",endDrag,{passive:true});sheet.addEventListener("touchcancel",resetDrag,{passive:true});
+      if(!st) return;
+      const t=e.touches[0], ddy=t.clientY-y0, ddx=t.clientX-x0;
+      if(st===1){
+        if(ddy>6&&ddy>Math.abs(ddx)){ st=2; sheet.style.transition="none"; }
+        else if(ddy<-6||Math.abs(ddx)>10){ st=0; return; }
+        else return;
+      }
+      const now=Date.now(); vy=(ddy-dy)/Math.max(1,now-last); last=now;
+      dy=Math.max(0,ddy);
+      if(e.cancelable) e.preventDefault();
+      sheet.style.transform="translate3d(0,"+dy+"px,0)"; dim(dy);
+    },{passive:false});
+    const end=()=>{
+      if(st!==2){ st=0; return; } st=0;
+      sheet.style.transition="transform .26s cubic-bezier(.2,.8,.2,1)";
+      if(dy>sheet.offsetHeight*.22||vy>.55){
+        sheet.style.transform="translate3d(0,105%,0)"; modal.style.transition="background .26s"; modal.style.background="rgba(3,8,22,0)";
+        setTimeout(qzCloseReview,240);
+      } else { sheet.style.transform=""; modal.style.background=""; }
+    };
+    sheet.addEventListener("touchend",end,{passive:true});
+    sheet.addEventListener("touchcancel",end,{passive:true});
   }
 }
 function qzReviewFilter(kind,button){
