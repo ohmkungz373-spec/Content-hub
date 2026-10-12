@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0a1020">
-<script>try{var _t=localStorage.getItem("hub-theme")||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.setAttribute("data-theme",_t)}catch(e){document.documentElement.setAttribute("data-theme","dark")}</script>
+<script>try{var _t=localStorage.getItem("hub-theme")||"light";document.documentElement.setAttribute("data-theme",_t)}catch(e){document.documentElement.setAttribute("data-theme","light")}</script>
 <title>CONTENT HUB | เนื้อหา ม.4 เทอม 2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -611,6 +611,38 @@ header.top #backBtn .bk-ic .ic{width:16px;height:16px;stroke-width:2.8}
 header.top #backBtn:hover,html[data-theme="light"] header.top #backBtn:hover{filter:none;border-color:#38bdf8!important;box-shadow:0 4px 14px #2563eb33!important}
 header.top #backBtn:hover .bk-ic{transform:translateX(-2px);background:linear-gradient(135deg,#3b82f6,#06b6d4)}
 header.top #backBtn:active{transform:scale(.95)}
+.noanim,.noanim *{animation:none!important}
+
+/* ===== โหมดมืดแบบถนอมสายตา ===== */
+html:not([data-theme="light"]){
+  --bg:#121826;--s0:#171e30;--s1:#1b2338;--s2:#202a42;--s3:#27324d;
+  --panel:var(--s1);--panel2:#27324d;--line:#2c3856;--line2:#3b4a6e;
+  --ink:#e4e9f4;--muted:#a3b0cc;--blue:#5b9bf8;--cyan:#5cc8f5}
+/* พื้นหลัง: ลดแสงจ้าและเส้นตาราง หยุดการเคลื่อนไหว */
+html:not([data-theme="light"]) body:before{background:
+  radial-gradient(700px 420px at 8% -8%,#3b6fd426,transparent),
+  radial-gradient(560px 360px at 100% 2%,#22a6c41c,transparent),
+  linear-gradient(#ffffff08 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,#ffffff08 1px,transparent 1px) 0 0/44px 44px}
+html:not([data-theme="light"]) body:after{display:none}
+/* ข้อความอ่านง่ายขึ้น */
+html:not([data-theme="light"]) .row .count,html:not([data-theme="light"]) .p-n{color:#cdd6ea}
+html:not([data-theme="light"]) .p-code{color:#eef2fb}
+html:not([data-theme="light"]) .chap u,html:not([data-theme="light"]) .sico{color:#9db0d8}
+html:not([data-theme="light"]) footer{color:#7f8fb3}
+html:not([data-theme="light"]) .pill b{color:#8fd8f7}
+html:not([data-theme="light"]) h1 span{background:linear-gradient(90deg,#8ab8ff,#5cc8f5);-webkit-background-clip:text;background-clip:text;filter:none}
+html:not([data-theme="light"]) .kicker{box-shadow:none;color:#8fd8f7}
+/* การ์ด: เส้นขอบชัดขึ้น เงาและแสงเรืองเบาลง */
+html:not([data-theme="light"]) .card{box-shadow:var(--st),0 2px 8px #0000002e}
+html:not([data-theme="light"]) .card:hover{box-shadow:var(--st),0 8px 22px #00000050}
+html:not([data-theme="light"]) .ico{box-shadow:0 4px 10px #0000003a,inset 0 1px 0 #ffffff1a!important}
+html:not([data-theme="light"]) .grp-h i{box-shadow:none}
+html:not([data-theme="light"]) .chip{color:#c4cee6}
+html:not([data-theme="light"]) .chip.on{color:#fff;box-shadow:0 4px 12px #2563eb40,inset 0 1px 0 #ffffff40}
+html:not([data-theme="light"]) .search input::placeholder{color:#8794b3}
+html:not([data-theme="light"]) .search:focus-within{box-shadow:0 0 0 3px #5cc8f526}
+html:not([data-theme="light"]) .startcard::after{display:none}
+html:not([data-theme="light"]) #subjBox{box-shadow:0 -12px 36px #0007}
 </style>
 </head>
 <body>
@@ -750,7 +782,8 @@ function groupHTML(name, color, items, star){
     <div class="grp-h"><span class="gi">${ico({"ภาษา":"book","คณิตศาสตร์":"sigma","วิทยาศาสตร์":"atom","สังคม":"globe","รายการโปรด":"star"}[name] || "spark", star ? "fill" : "")}</span><h3>${esc(name)}</h3><span class="n count">${items.length} วิชา</span></div>
     <div class="rail">${items.map(cardHTML).join('')}</div></section>`;
 }
-function renderGrid(){
+function renderGrid(keepAnim){
+  $('grid').classList.toggle('noanim', !!keepAnim);
   const q = $('q').value.trim().toLowerCase();
   $('clr').classList.toggle('hidden', !q);
   $('kbd').classList.toggle('hidden', !!q);
@@ -1014,7 +1047,7 @@ function route(){
 const curSubject = () => location.pathname.split('/').filter(Boolean)[0];
 $('grid').addEventListener('click', e => {
   const p = e.target.closest('[data-pin]');
-  if (p) { e.stopPropagation(); togglePin(p.dataset.pin); renderGrid(); return; }
+  if (p) { e.stopPropagation(); togglePin(p.dataset.pin); renderGrid(true); return; }
   const b = e.target.closest('.card'); if (b) go('/' + b.dataset.id, {m:1});
 });
 $('chips').addEventListener('click', e => { const b = e.target.closest('.chip'); if (b) { activeCat = b.dataset.k; renderChips(); renderGrid(); } });
@@ -1061,7 +1094,7 @@ function applyTheme(t){
   });
 }
 document.addEventListener('load', e => { if (e.target && e.target.tagName === 'IFRAME') { try { e.target.contentWindow.postMessage({ hubTheme: document.documentElement.getAttribute('data-theme') }, '*'); } catch(err) {} } }, true);
-applyTheme(document.documentElement.getAttribute('data-theme') || 'dark');
+applyTheme(document.documentElement.getAttribute('data-theme') || 'light');
 function noTrans(on){
   const docs = [document];
   document.querySelectorAll('iframe').forEach(f => { try { if (f.contentDocument) docs.push(f.contentDocument); } catch(e) {} });
