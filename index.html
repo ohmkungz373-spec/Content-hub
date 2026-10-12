@@ -447,6 +447,7 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb{background:#c3d0ea}
 #subjBox{position:relative;width:100%;max-width:560px;max-height:88dvh;overflow:auto;overscroll-behavior:contain;padding:8px 14px 20px;background:linear-gradient(var(--s3),var(--s1));border:1px solid var(--line2);border-bottom:0;border-radius:28px 28px 0 0;box-shadow:0 -20px 60px #000a;animation:up .28s cubic-bezier(.2,.8,.2,1)}
 #subjBox .mtop{position:relative;display:flex;justify-content:center;align-items:center;height:34px}
 #subjBox .grab{display:block;width:44px;height:5px;border-radius:9px;background:var(--line2)}
+#subjBox .mtop{touch-action:none}
 #subjBox .mclose{position:absolute;right:0;top:0;width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--ink) 7%,transparent);border:1px solid var(--line);color:var(--ink)}
 #subjBox .mclose:hover{border-color:var(--cyan)}
 #subjBox .mclose svg{width:16px;height:16px}
@@ -462,6 +463,32 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb{background:#c3d0ea}
 }
 html[data-theme="light"] #subjBox{box-shadow:0 -8px 30px #1b2a5026}
 html[data-theme="light"] #subjBg{background:#0b1b4066}
+
+/* ===== โหมดสว่าง: ปรับให้อ่านง่าย (ตัวอักษรเข้มขึ้น ปุ่มสีเข้มขึ้นให้ตัวขาวชัด) ===== */
+html[data-theme="light"]{--muted:#46567c}
+html[data-theme="light"] .code,html[data-theme="light"] .chap i,html[data-theme="light"] .grp-h .n,html[data-theme="light"] .gi .ic{color:color-mix(in srgb,var(--acc) 50%,#000)}
+html[data-theme="light"] .chap u{color:color-mix(in srgb,var(--acc) 55%,#000)}
+html[data-theme="light"] .chap span,html[data-theme="light"] .card b{font-weight:600}
+html[data-theme="light"] .chap{border-color:color-mix(in srgb,var(--acc) 35%,var(--line2))}
+html[data-theme="light"] .chap.cur{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 14%,#fff)}
+html[data-theme="light"] .tag{background:color-mix(in srgb,var(--acc) 55%,#000)}
+html[data-theme="light"] .card.empty{opacity:.8}
+html[data-theme="light"] .search input::placeholder{color:#5f6f95}
+html[data-theme="light"] footer{color:#5f6f95}
+html[data-theme="light"] .cont small,html[data-theme="light"] .cont .go{color:#0369a1}
+html[data-theme="light"] .cont small[style]{color:var(--muted)!important}
+html[data-theme="light"] .pin.on,html[data-theme="light"] .chip.star,html[data-theme="light"] .chip.star.on{color:#b45309}
+html[data-theme="light"] .pin{color:#0b1b40a6}
+html[data-theme="light"] .chip.on{background:linear-gradient(135deg,#2563eb,#0e7490);color:#fff;box-shadow:0 6px 16px #2563eb55}
+html[data-theme="light"] .nav.next{background:linear-gradient(135deg,#1d4ed8,#0369a1);box-shadow:0 6px 16px #1d4ed855}
+html[data-theme="light"] .nav.prev{color:var(--ink);background:#fff;border-color:var(--line2)}
+html[data-theme="light"] #backBtn{background:linear-gradient(135deg,#2563eb,#1e40af)!important;box-shadow:0 6px 16px #1d4ed855!important}
+html[data-theme="light"] .startcard{background:linear-gradient(135deg,#1d4ed8,#0369a1);box-shadow:0 10px 24px #1d4ed84d,inset 0 1px 0 #ffffff40}
+html[data-theme="light"] .startcard small{opacity:1}
+html[data-theme="light"] .vbar{background:#fff;border-bottom-color:var(--line2);box-shadow:0 4px 14px #1b2a501a}
+html[data-theme="light"] .vbar .t{background:var(--panel2);border-color:var(--line2)}
+html[data-theme="light"] #subjBox .mclose{background:var(--panel2);border-color:var(--line2)}
+html[data-theme="light"] #subjBox .grab{background:#b4c2e0}
 </style>
 </head>
 <body>
@@ -568,13 +595,13 @@ function show(v){
 /* ---------- หน้าแรก ---------- */
 function renderContinue(){
   const b = $('cont');
-  b.classList.add('hidden'); return;
+  b.classList.add('hidden');
   const last = (store.get('last') || '').split('/');
   const s = SUBJECTS.find(x => x.id === last[0]);
   const c = s && s.chapters.find(x => x.id === last[1]);
   if (!c) { b.classList.add('hidden'); return; }
   b.style.setProperty('--acc', catOf(s).color);
-  b.innerHTML = `<span class="ico">${subjIcon(s.icon, s.name)}</span><span><small>${ico('play','fill')} เรียนต่อจากครั้งก่อน</small><b>${esc(c.title)}</b><small style="color:var(--muted)">${esc(s.name)}</small></span><span class="go">›</span>`;
+  b.innerHTML = `<span class="ico">${subjIcon(s.icon, s.name)}</span><span><small>${ico('play','fill')} เรียนล่าสุด · กดเพื่อเรียนต่อ</small><b>${esc(c.title)}</b><small style="color:var(--muted)">${esc(s.name)}</small></span><span class="go">›</span>`;
   b.onclick = () => go(`/${s.id}/${c.id}`);
   b.classList.remove('hidden');
 }
@@ -703,21 +730,25 @@ function renderSubjModal(s){
   const box = $('subjBox');
   box.style.setProperty('--acc', catOf(s).color);
   const first = s.chapters[0];
+  const lastKey = (store.get('last') || '').split('/');
+  const resume = lastKey[0] === s.id ? s.chapters.find(c => c.id === lastKey[1]) : null;
+  const target = resume || first;
   box.innerHTML = `
     <div class="mtop"><i class="grab"></i><button class="mclose" data-close="1" aria-label="ปิด">${X_ICON}</button></div>
     <div class="banner"><span class="ico">${subjIcon(s.icon, s.name)}</span><div><h1>${esc(s.name)}</h1><div class="pills2"><span class="p-code">${esc(s.code)}</span><span class="p-n">${s.chapters.length} บทเรียน</span></div></div>
       <button class="pin ${isPinned(s.id) ? 'on' : ''}" data-mpin="1" aria-label="รายการโปรด">${isPinned(s.id) ? ico('star','fill') : ico('star')}</button></div>
     ${s.chapters.length ? `
-    <button class="startcard" data-id="${esc(first.id)}">
+    <button class="startcard" data-id="${esc(target.id)}">
       <span class="play">${ico('play','fill')}</span>
-      <span class="tx"><small>เริ่มเรียน</small><b>${esc(first.title)}</b></span>
+      <span class="tx"><small>${resume ? 'เรียนต่อจากครั้งก่อน' : 'เริ่มเรียน'}</small><b>${esc(target.title)}</b></span>
       <span class="go">›</span>
     </button>
     <div class="row"><h2>บทเรียนทั้งหมด</h2><span class="count">${s.chapters.length} บท</span></div>
-    <div class="list">${s.chapters.map((c, i) => `<button class="chap" data-id="${esc(c.id)}"><i>${i + 1}</i><span>${esc(c.title)}</span><u>›</u></button>`).join('')}</div>`
+    <div class="list">${s.chapters.map((c, i) => `<button class="chap ${resume && c.id === resume.id ? 'cur' : ''}" data-id="${esc(c.id)}"><i>${i + 1}</i><span>${esc(c.title)}${resume && c.id === resume.id ? '<em class="tag">ล่าสุด</em>' : ''}</span><u>›</u></button>`).join('')}</div>`
     : `<div class="msg">ยังไม่มีบทเรียนในวิชานี้<br>เร็ว ๆ นี้</div>`}`;
 }
 function openSubjModal(s){
+  $('subjBox').style.transition = ''; $('subjBox').style.transform = '';
   renderSubjModal(s);
   $('subjBg').classList.remove('hidden');
   $('subjBox').scrollTop = 0;
@@ -726,6 +757,7 @@ function openSubjModal(s){
 }
 function hideSubjModal(){
   $('subjBg').classList.add('hidden');
+  $('subjBox').style.transition = ''; $('subjBox').style.transform = '';
   document.body.style.overflow = '';
   mSubj = null;
 }
@@ -741,6 +773,40 @@ $('subjBg').addEventListener('click', e => {
   if (b && mSubj) go(`/${mSubj.id}/${b.dataset.id}`);   // เข้าเนื้อหา = หน้าเต็ม
 });
 
+
+// ปัดลงเพื่อปิด popup (มือถือ): ลากจากขีดด้านบน หรือลากลงตอนรายการอยู่บนสุด
+(function(){
+  const box = $('subjBox');
+  let sy = 0, dy = 0, drag = false, t0 = 0, fromHandle = false;
+  const mobile = () => matchMedia('(max-width:639px)').matches;
+  box.addEventListener('touchstart', e => {
+    if (!mobile() || e.touches.length !== 1) { sy = 0; return; }
+    sy = e.touches[0].clientY; dy = 0; drag = false; t0 = Date.now();
+    fromHandle = !!e.target.closest('.mtop');
+  }, {passive:true});
+  box.addEventListener('touchmove', e => {
+    if (!sy) return;
+    const y = e.touches[0].clientY;
+    if (!drag) {
+      if (!fromHandle && box.scrollTop > 0) { sy = y; return; }   // กำลังเลื่อนรายการอยู่
+      if (y - sy > 6) { drag = true; box.style.transition = 'none'; } else return;
+    }
+    dy = Math.max(0, y - sy);
+    box.style.transform = `translateY(${dy}px)`;
+    e.preventDefault();
+  }, {passive:false});
+  const end = () => {
+    if (!drag) { sy = 0; return; }
+    const v = dy / Math.max(1, Date.now() - t0);
+    box.style.transition = 'transform .22s ease';
+    if (dy > 110 || v > 0.6) { box.style.transform = 'translateY(100%)'; setTimeout(closeSubj, 190); }
+    else box.style.transform = 'translateY(0)';
+    sy = 0; drag = false;
+  };
+  box.addEventListener('touchend', end);
+  box.addEventListener('touchcancel', end);
+})();
+
 /* ---------- ระบบหน้า (URL) ---------- */
 function go(path, st){ history.pushState(st || null, '', path); route(); }
 function route(){
@@ -750,7 +816,7 @@ function route(){
   const homeUp = !$('home').classList.contains('hidden') && $('grid').children.length > 0;
   if (!s) {
     hideSubjModal();
-    if (homeUp) { renderGrid(); $('crumb').textContent = ''; return; }   // กลับมาจาก popup: ไม่เด้งขึ้นบนสุด
+    if (homeUp) { renderGrid(); renderContinue(); $('crumb').textContent = ''; return; }   // กลับมาจาก popup: ไม่เด้งขึ้นบนสุด
     return renderHome();
   }
   if (parts[1]) {
