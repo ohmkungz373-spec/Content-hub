@@ -730,7 +730,9 @@ function applyTheme(t){
   const b = $('themeBtn'); b.innerHTML = t === 'light' ? MOON : SUN;
   b.setAttribute('aria-label', t === 'light' ? 'เปลี่ยนเป็นโหมดมืด' : 'เปลี่ยนเป็นโหมดสว่าง');
   b.title = b.getAttribute('aria-label');
+  const f = document.querySelector('iframe'); if (f && f.contentWindow) { try { f.contentWindow.postMessage({ hubTheme: t }, '*'); } catch(e) {} }
 }
+document.addEventListener('load', e => { if (e.target && e.target.tagName === 'IFRAME') { try { e.target.contentWindow.postMessage({ hubTheme: document.documentElement.getAttribute('data-theme') }, '*'); } catch(err) {} } }, true);
 applyTheme(document.documentElement.getAttribute('data-theme') || 'dark');
 $('themeBtn').onclick = () => {
   const t = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
