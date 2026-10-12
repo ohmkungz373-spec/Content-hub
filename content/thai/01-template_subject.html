@@ -949,6 +949,81 @@ html[data-theme="light"] #exModal .ex-reason-text{color:#4c1d95!important}
 html[data-theme="light"] #exModal .ex-reason b{color:#3b0764!important}
 html[data-theme="light"] .footer,html[data-theme="light"] footer{color:#7a8aae!important}
 html[data-theme="light"] .lg-ico{background:rgba(14,165,233,.12)!important;border-color:rgba(14,165,233,.4)!important}
+
+/* ===== แก้ข้อความที่ยังเป็นสีขาวในโหมดสว่าง ===== */
+html[data-theme="light"] .page{color:#12203f}
+html[data-theme="light"] .page p,html[data-theme="light"] .page li,html[data-theme="light"] .page td,html[data-theme="light"] .page th,html[data-theme="light"] .page span{color:inherit}
+html[data-theme="light"] .qz-result{background:linear-gradient(135deg,rgba(34,197,94,.14),rgba(14,165,233,.08))!important;border-color:#22c55e!important}
+html[data-theme="light"] .qz-result.low{background:linear-gradient(135deg,rgba(245,158,11,.16),rgba(239,68,68,.07))!important;border-color:#f59e0b!important}
+html[data-theme="light"] .qz-result .qr-txt b{color:#12203f!important}
+html[data-theme="light"] .qz-result .qr-txt span{color:#5a6b91!important}
+html[data-theme="light"] .qz-result button{background:rgba(37,99,235,.12)!important;color:#1d4ed8!important;border:1px solid rgba(37,99,235,.3)!important}
+html[data-theme="light"] .topic-btn.active,html[data-theme="light"] .topic-btn.active .topic-sub{color:#12203f!important}
+html[data-theme="light"] .topic-btn.active .topic-sub{color:#5a6b91!important}
+html[data-theme="light"] .quiz h3,html[data-theme="light"] .quiz .small,html[data-theme="light"] .quiz-note{color:inherit}
+html[data-theme="light"] .quiz h3{color:#1d4ed8!important}
+html[data-theme="light"] .quiz-note{color:#b45309!important}
+html[data-theme="light"] .hero p,html[data-theme="light"] .progress-label{color:#5a6b91!important}
+html[data-theme="light"] .small{color:#5a6b91!important}
+html[data-theme="light"] li::marker{color:#0284c7!important}
+</style>
+<style id="hub-drawer">
+/* ===== เมนูบทเรียน (drawer) — ดีไซน์ใหม่ ใช้ได้ทั้งสว่างและมืด ===== */
+html[data-theme] .drawer{padding-bottom:24px}
+html[data-theme] .drawer-head{padding-bottom:14px!important}
+html[data-theme] .drawer-head h2{display:flex;align-items:center;gap:10px;font-size:21px!important;font-weight:700!important}
+html[data-theme] .drawer .close{width:40px!important;height:40px!important;border-radius:50%!important;display:grid;place-items:center;padding:0!important;font-size:20px!important;background:var(--panel2)!important;border:1px solid var(--line)!important;color:var(--ink)!important}
+html[data-theme] .drawer .close:hover{border-color:#3b82f6!important}
+html[data-theme] .search{border-radius:999px!important;padding:13px 18px!important;font-size:15px!important}
+html[data-theme] .search:focus{border-color:#3b82f6!important;box-shadow:0 0 0 3px rgba(59,130,246,.18)!important;outline:0}
+html[data-theme] .menu-section{display:flex!important;align-items:center;gap:10px;font-size:12px!important;font-weight:700!important;letter-spacing:1.6px!important;margin:20px 4px 10px!important;color:#0284c7!important}
+html[data-theme] .menu-section::after{content:"";flex:1;height:1px;background:var(--line)}
+html[data-theme] .topic-btn{position:relative;display:flex!important;align-items:center;gap:14px;padding:12px 14px!important;border-radius:18px!important;border:1px solid var(--line)!important;background:var(--panel)!important;box-shadow:none!important;margin-bottom:10px!important;transition:transform .15s,border-color .15s,background .15s}
+html[data-theme] .topic-btn:hover{transform:translateY(-1px);border-color:#3b82f6!important;background:color-mix(in srgb,#3b82f6 7%,var(--panel))!important;box-shadow:none!important}
+html[data-theme] .topic-btn .topic-num{flex:none;width:46px!important;height:46px!important;border-radius:14px!important;display:grid!important;place-items:center;font-weight:700!important;font-size:16px!important;letter-spacing:.3px;background:color-mix(in srgb,#3b82f6 14%,var(--panel))!important;color:color-mix(in srgb,#2563eb 80%,var(--ink))!important;border:1px solid color-mix(in srgb,#3b82f6 30%,transparent)!important;box-shadow:none!important}
+html[data-theme] .topic-btn .topic-label{font-size:16px!important;font-weight:600!important;color:var(--ink)!important;line-height:1.35}
+html[data-theme] .topic-btn .topic-sub{font-size:13px!important;color:var(--muted)!important}
+html[data-theme] .topic-btn .topic-arrow{font-size:24px!important;line-height:1;color:var(--muted)!important;margin-left:auto}
+/* บทที่กำลังเปิดอยู่ */
+html[data-theme] .topic-btn.active{background:color-mix(in srgb,#3b82f6 13%,var(--panel))!important;border:1.5px solid #3b82f6!important;box-shadow:none!important;outline:0!important}
+html[data-theme] .topic-btn.active::after{display:none!important}
+html[data-theme] .topic-btn.active .topic-num{background:linear-gradient(135deg,#2563eb,#0ea5e9)!important;color:#fff!important;border-color:transparent!important}
+html[data-theme] .topic-btn.active .topic-label{color:var(--ink)!important;font-weight:700!important}
+html[data-theme] .topic-btn.active .topic-sub{color:var(--muted)!important}
+html[data-theme] .topic-btn.active .topic-arrow{color:#3b82f6!important}
+</style>
+<style id="hub-drawer2">
+/* ===== สวยขึ้นอีก: เมนูบทเรียน + กรอบเนื้อหา (ไม่ใช้แสงเรือง) ===== */
+html[data-theme] .drawer{border-radius:0 30px 30px 0!important;background:linear-gradient(180deg,var(--panel),var(--bg))!important;overflow-x:hidden}
+html[data-theme] .drawer-head{background:linear-gradient(180deg,color-mix(in srgb,#3b82f6 12%,transparent),transparent)!important;padding:20px 18px 14px!important;margin:0 -2px 6px;border-radius:0 30px 0 0}
+html[data-theme] .drawer-head h2 .hi{width:26px;height:26px}
+html[data-theme] .search{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237a8aae' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.5-3.5'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:16px center!important;background-size:20px!important;padding-left:46px!important;background-color:var(--panel2)!important;height:48px}
+html[data-theme] .menu-section{margin:22px 6px 12px!important;color:#0284c7!important}
+html[data-theme] .menu-section::before{content:"";width:8px;height:8px;border-radius:50%;background:#3b82f6;flex:none}
+html[data-theme] .topic-btn{padding:14px 16px 14px 14px!important;border-radius:20px!important;gap:15px}
+html[data-theme] .topic-btn .topic-num{width:50px!important;height:50px!important;border-radius:16px!important;font-size:17px!important}
+html[data-theme] .topic-btn .topic-label{font-size:16.5px!important}
+html[data-theme] .topic-btn .topic-arrow{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,#3b82f6 10%,transparent);font-size:22px!important;color:#3b82f6!important;flex:none;margin-left:auto}
+html[data-theme] .topic-btn:hover .topic-arrow{background:#3b82f6;color:#fff!important}
+html[data-theme] .topic-btn.active{background:linear-gradient(120deg,color-mix(in srgb,#3b82f6 18%,var(--panel)),color-mix(in srgb,#0ea5e9 6%,var(--panel)))!important}
+html[data-theme] .topic-btn.active .topic-arrow{background:#3b82f6;color:#fff!important}
+html[data-theme] .drawer::-webkit-scrollbar{width:6px}
+html[data-theme] .drawer::-webkit-scrollbar-thumb{background:var(--line);border-radius:9px}
+html[data-theme] .overlay{backdrop-filter:blur(4px)}
+/* กรอบเนื้อหา */
+html[data-theme] .page{border-radius:28px!important}
+html[data-theme] .sec-card{border-radius:22px!important}
+html[data-theme] .intro,html[data-theme] .box,html[data-theme] .quiz,html[data-theme] .q{border-radius:18px!important}
+html[data-theme] .topic-head{padding-bottom:16px!important}
+html[data-theme] .badge{font-weight:600!important;letter-spacing:.3px}
+</style>
+<style id="hub-disabled">
+/* ===== ปุ่มที่กดไม่ได้ (บทก่อนหน้า/ถัดไปในบทแรก-บทสุดท้าย): ไม่เทา อ่านออก แต่ดูชัดว่ากดไม่ได้ ===== */
+html[data-theme] .nav button:disabled:not(#x),
+html[data-theme] .nav button:disabled:not(#x):hover{
+  opacity:1!important;background:transparent!important;border:1.5px dashed var(--line)!important;
+  color:color-mix(in srgb,var(--muted) 75%,transparent)!important;box-shadow:none!important;transform:none!important;cursor:not-allowed}
+html[data-theme] .nav button:disabled:not(#x) .hi{opacity:.6}
 </style>
 </head>
 <body>
