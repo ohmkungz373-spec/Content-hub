@@ -730,14 +730,29 @@ function applyTheme(t){
   const b = $('themeBtn'); b.innerHTML = t === 'light' ? MOON : SUN;
   b.setAttribute('aria-label', t === 'light' ? 'เปลี่ยนเป็นโหมดมืด' : 'เปลี่ยนเป็นโหมดสว่าง');
   b.title = b.getAttribute('aria-label');
-  const f = document.querySelector('iframe'); if (f && f.contentWindow) { try { f.contentWindow.postMessage({ hubTheme: t }, '*'); } catch(e) {} }
+  document.querySelectorAll('iframe').forEach(f => {
+    try { const d = f.contentDocument; if (d && d.documentElement) d.documentElement.setAttribute('data-theme', t); } catch(e) {}
+    try { f.contentWindow.postMessage({ hubTheme: t }, '*'); } catch(e) {}
+  });
 }
 document.addEventListener('load', e => { if (e.target && e.target.tagName === 'IFRAME') { try { e.target.contentWindow.postMessage({ hubTheme: document.documentElement.getAttribute('data-theme') }, '*'); } catch(err) {} } }, true);
 applyTheme(document.documentElement.getAttribute('data-theme') || 'dark');
+function noTrans(on){
+  const docs = [document];
+  document.querySelectorAll('iframe').forEach(f => { try { if (f.contentDocument) docs.push(f.contentDocument); } catch(e) {} });
+  docs.forEach(d => {
+    let st = d.getElementById('hub-notrans');
+    if (on) { if (!st) { st = d.createElement('style'); st.id = 'hub-notrans'; st.textContent = '*,*::before,*::after{transition:none!important}'; (d.head || d.documentElement).appendChild(st); } }
+    else if (st) st.remove();
+  });
+}
 $('themeBtn').onclick = () => {
   const t = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  noTrans(true);                       // ปิดอนิเมชันสีชั่วคราว ให้ทั้งสองฝั่งเปลี่ยนในเฟรมเดียวกัน
   try { localStorage.setItem('hub-theme', t); } catch(e) {}
-  applyTheme(t);
+  applyTheme(t);                       // เปลี่ยนหน้าหลัก + เอกสารในกรอบบทเรียนพร้อมกัน
+  void document.body.offsetHeight;
+  requestAnimationFrame(() => requestAnimationFrame(() => noTrans(false)));
 };
 </script>
 </body>
