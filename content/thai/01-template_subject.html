@@ -7,6 +7,16 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#080d1b">
+<script>
+/* สลับโหมดมืด/สว่างตามเว็บหลัก (อ่านจาก localStorage "hub-theme" + ฟังการเปลี่ยนแบบสด) */
+(function(){
+  function g(){try{return localStorage.getItem("hub-theme")}catch(e){return null}}
+  function a(v){document.documentElement.setAttribute("data-theme",v);var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=v==="light"?"#eef3fb":"#080d1b"}
+  a(g()||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"));
+  addEventListener("storage",function(e){if(e.key==="hub-theme"&&e.newValue)a(e.newValue)});
+  addEventListener("message",function(e){if(e.data&&e.data.hubTheme)a(e.data.hubTheme)});
+})();
+</script>
 <title>ชื่อบทเรียน | ม.4</title>
 <!--
 ╔══════════════════════════════════════════════════════════════════════╗
@@ -859,6 +869,86 @@ header .logo{display:flex!important;align-items:center;gap:10px}
 #exModal .ex-ok-banner .hi{width:20px;height:20px}
 #exModal .ex-done .hi{width:18px;height:18px}
 .nav button .hi{width:20px;height:20px;stroke-width:2.8}
+</style>
+<style id="hub-light">
+/* ===== โหมดสว่าง: ทำงานเมื่อ <html data-theme="light"> ===== */
+html[data-theme="light"],html[data-theme="light"] body{background:#eef3fb!important}
+html[data-theme="light"]{--primary:#2563eb!important;--bluebg:#e6eefc!important;--ink:#12203f!important;--muted:#5a6b91!important;--bg:#eef3fb!important;--white:#ffffff!important;--line:#d7e0f1!important;--panel:#ffffff;--panel2:#f1f5fd;--hl:#1d4ed8;color-scheme:light}
+html[data-theme="light"] body{color:#12203f!important;background:radial-gradient(620px 360px at 10% -6%,rgba(59,130,246,.18),transparent),radial-gradient(520px 320px at 100% 4%,rgba(6,182,212,.13),transparent),linear-gradient(rgba(11,27,64,.05) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(11,27,64,.05) 1px,transparent 1px) 0 0/44px 44px,#eef3fb!important}
+html[data-theme="light"] header{background:rgba(255,255,255,.9)!important;border-bottom:1px solid #d7e0f1!important}
+html[data-theme="light"] header .logo,html[data-theme="light"] .logo{color:#12203f!important}
+html[data-theme="light"] .badge{background:rgba(14,165,233,.1)!important;color:#0369a1!important;border-color:rgba(14,165,233,.4)!important}
+html[data-theme="light"] .hero h1{color:#12203f!important}
+html[data-theme="light"] .hero h1 span:last-child{background:linear-gradient(90deg,#2563eb,#0891b2)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+html[data-theme="light"] .progress{background:rgba(11,27,64,.1)!important}
+html[data-theme="light"] .page{background:#fff!important;border-color:#d7e0f1!important;box-shadow:0 12px 36px rgba(27,42,80,.12)!important}
+html[data-theme="light"] h2,html[data-theme="light"] h3{color:#12203f!important}
+html[data-theme="light"] h3{color:#1d4ed8!important}
+html[data-theme="light"] .subtitle{color:#0369a1!important}
+html[data-theme="light"] .intro,html[data-theme="light"] .box,html[data-theme="light"] .quiz{background:#f1f5fd!important;border-color:#d7e0f1!important;color:#12203f!important}
+html[data-theme="light"] .intro{border-left-color:#38bdf8!important}
+html[data-theme="light"] .box:hover{box-shadow:0 6px 18px rgba(37,99,235,.15)!important}
+html[data-theme="light"] .box strong,html[data-theme="light"] li strong,html[data-theme="light"] .intro strong,html[data-theme="light"] .note strong,html[data-theme="light"] li b,html[data-theme="light"] .intro b,html[data-theme="light"] .note b,html[data-theme="light"] .sec-card b,html[data-theme="light"] .box b{color:#1d4ed8!important}
+html[data-theme="light"] .sec-card{background:linear-gradient(180deg,#fff,#f7f9ff)!important;border-color:#d7e0f1!important;box-shadow:0 4px 14px rgba(27,42,80,.08)!important}
+html[data-theme="light"] .sec-card h3{border-bottom-color:#c3d0ea!important}
+html[data-theme="light"] .formula{background:linear-gradient(160deg,#fff8e1,#fdeeb8)!important;border-color:#f59e0b!important;color:#78350f!important;box-shadow:0 6px 18px rgba(245,158,11,.15)!important}
+html[data-theme="light"] .formula .f-title,html[data-theme="light"] .formula .f-label,html[data-theme="light"] .formula .f-plain b,html[data-theme="light"] .f-title .hi{color:#b45309!important}
+html[data-theme="light"] .formula .f-eq{background:rgba(255,255,255,.75)!important;border-color:#f59e0b!important;color:#78350f!important}
+html[data-theme="light"] .formula .f-chip{background:#fff!important;border-color:#f3b95a!important;color:#92400e!important}
+html[data-theme="light"] .formula .f-plain{color:#78350f!important}
+html[data-theme="light"] .note{background:linear-gradient(135deg,rgba(37,99,235,.09),rgba(14,165,233,.05))!important;color:#1e3a8a!important;box-shadow:none!important}
+html[data-theme="light"] .nav{border-top-color:#d7e0f1!important}
+html[data-theme="light"] .nav button:first-child{background:#f1f5fd!important;color:#1d4ed8!important;border:1px solid #c3d0ea!important}
+html[data-theme="light"] .nav button:hover:not(:disabled){background:#e6eefc!important}
+html[data-theme="light"] .nav button:last-child{color:#fff!important}
+html[data-theme="light"] .nav button:disabled,html[data-theme="light"] .nav button:first-child:disabled:hover{background:#eef2fa!important;color:#8a9ac0!important;border:1px solid #d7e0f1!important;opacity:.7!important}
+html[data-theme="light"] .q{background:#fff!important;border-color:#d7e0f1!important;color:#12203f!important}
+html[data-theme="light"] .q button,html[data-theme="light"] .q .opt{background:#f1f5fd!important;border-color:#c3d0ea!important;color:#12203f!important}
+html[data-theme="light"] .q button:hover:not(:disabled),html[data-theme="light"] .q .opt:hover:not(:disabled){background:#e6eefc!important;border-color:#3b82f6!important}
+html[data-theme="light"] .q .opt.picked{background:rgba(37,99,235,.1)!important;box-shadow:none!important}
+html[data-theme="light"] .q .opt.right{background:rgba(34,197,94,.14)!important;color:#166534!important}
+html[data-theme="light"] .q .opt.wrong{background:rgba(239,68,68,.1)!important;color:#991b1b!important}
+html[data-theme="light"] .q .answer{background:#f1f5fd!important}
+html[data-theme="light"] .q.is-right .answer{background:rgba(34,197,94,.12)!important}
+html[data-theme="light"] .q.is-wrong .answer{background:rgba(239,68,68,.09)!important}
+html[data-theme="light"] .quiz-note{color:#b45309!important}
+html[data-theme="light"] .quiz-bar{background:#fff!important;border-color:#d7e0f1!important}
+html[data-theme="light"] .quiz-bar .qb-reset{background:#f1f5fd!important;color:#1d4ed8!important}
+html[data-theme="light"] .quiz-bar .qb-reset:hover{background:#e6eefc!important}
+html[data-theme="light"] .quiz-bar .qb-score{color:#12203f!important}
+html[data-theme="light"] .quiz-bar .qb-score b{color:#0369a1!important}
+html[data-theme="light"] .quiz-bar .qb-score.done b{color:#16a34a!important}
+html[data-theme="light"] .quiz-bar .qb-score.low b{color:#dc2626!important}
+html[data-theme="light"] .overlay{background:rgba(15,23,42,.45)!important}
+html[data-theme="light"] .drawer{background:#fff!important;border-right-color:#d7e0f1!important;box-shadow:12px 0 40px rgba(27,42,80,.18)!important;color:#12203f!important}
+html[data-theme="light"] .drawer-head{border-bottom-color:#d7e0f1!important}
+html[data-theme="light"] .drawer-head h2{color:#12203f!important}
+html[data-theme="light"] .drawer .close{background:#f1f5fd!important;color:#12203f!important;border:1px solid #c3d0ea!important}
+html[data-theme="light"] .search{background:#f1f5fd!important;border-color:#d7e0f1!important;color:#12203f!important}
+html[data-theme="light"] .search::placeholder{color:#7a8aae}
+html[data-theme="light"] .menu-section{color:#0369a1!important}
+html[data-theme="light"] .topic-btn{background:#fff!important;border-color:#d7e0f1!important;color:#12203f!important}
+html[data-theme="light"] .topic-btn:hover{background:#f1f5fd!important;box-shadow:0 4px 12px rgba(37,99,235,.12)!important}
+html[data-theme="light"] .topic-btn.active{background:linear-gradient(90deg,rgba(37,99,235,.14),rgba(14,165,233,.05))!important;color:#12203f!important}
+html[data-theme="light"] .topic-btn .topic-num{background:#e6eefc!important;color:#1d4ed8!important}
+html[data-theme="light"] .topic-btn.active .topic-num{color:#fff!important}
+html[data-theme="light"] .topic-btn .topic-label,html[data-theme="light"] .topic-btn.active .topic-label{color:#12203f!important}
+html[data-theme="light"] .topic-btn .topic-sub{color:#5a6b91!important}
+html[data-theme="light"] .topic-btn .topic-arrow{color:#8a9ac0!important}
+html[data-theme="light"] #qzModal .qz-back,html[data-theme="light"] #exModal .ex-back{background:rgba(15,23,42,.5)!important}
+html[data-theme="light"] #qzModal .qz-box,html[data-theme="light"] #exModal .ex-box{background:#fff!important;border-color:#d7e0f1!important;box-shadow:0 24px 60px rgba(27,42,80,.25)!important}
+html[data-theme="light"] #qzModal .qz-x,html[data-theme="light"] #exModal .ex-x{background:#f1f5fd!important;color:#12203f!important}
+html[data-theme="light"] #exModal .ex-head{background:linear-gradient(135deg,#fff4d1,#ffe9a8)!important;border-bottom:1px solid #f0d78c!important}
+html[data-theme="light"] #exModal .ex-head-txt h4{color:#92400e!important}
+html[data-theme="light"] #exModal .ex-head-txt small{color:#b45309!important}
+html[data-theme="light"] #exModal .ex-pill.right,html[data-theme="light"] #exModal .ex-ok-banner{background:rgba(34,197,94,.13)!important;color:#166534!important}
+html[data-theme="light"] #exModal .ex-pill.wrong{background:rgba(239,68,68,.1)!important;color:#991b1b!important}
+html[data-theme="light"] #exModal .ex-reason{background:linear-gradient(145deg,rgba(168,85,247,.1),rgba(99,102,241,.05))!important;color:#4c1d95!important}
+html[data-theme="light"] #exModal .ex-reason-label{color:#6d28d9!important}
+html[data-theme="light"] #exModal .ex-reason-text{color:#4c1d95!important}
+html[data-theme="light"] #exModal .ex-reason b{color:#3b0764!important}
+html[data-theme="light"] .footer,html[data-theme="light"] footer{color:#7a8aae!important}
+html[data-theme="light"] .lg-ico{background:rgba(14,165,233,.12)!important;border-color:rgba(14,165,233,.4)!important}
 </style>
 </head>
 <body>
