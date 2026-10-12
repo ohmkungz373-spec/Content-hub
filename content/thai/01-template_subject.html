@@ -1775,6 +1775,49 @@ li{font-size:15px!important;margin:5px 0!important}
 .qx-exp-h{padding:7px 11px!important}.qx-exp-ico{width:26px!important;height:26px!important}
 .qx-exp-h b{font-size:13px!important}
 .qx-exp-t{font-size:14px!important;padding:9px 12px 11px!important;line-height:1.75!important}
+/* ===== แถบความคืบหน้า: ใหญ่ขึ้น (วางท้ายสุด) ===== */
+.progress-wrap{margin-top:18px!important}
+.progress-label{font-size:14px!important;font-weight:700!important;margin-bottom:8px!important}
+.progress{height:12px!important;border-radius:99px!important}
+.progress i{border-radius:99px!important}
+/* ===== เมนูบทเรียน: เรียบ สะอาด สวย (วางท้ายสุด) ===== */
+html[data-theme] .drawer{border-radius:0 28px 28px 0!important;padding:18px 16px calc(24px + env(safe-area-inset-bottom))!important}
+html[data-theme] .drawer-head{background:none!important;border:0!important;border-radius:0!important;margin:0 0 14px!important;padding:2px 2px 0!important}
+html[data-theme] .drawer-head h2{font-size:20px!important;font-weight:800!important;gap:12px!important;letter-spacing:.2px}
+html[data-theme] .drawer-head h2 .hi{width:36px!important;height:36px!important;padding:8px!important;box-sizing:border-box;border-radius:12px;background:linear-gradient(135deg,#2563eb,#0ea5e9);color:#fff!important;stroke:#fff}
+html[data-theme] .drawer .close{width:34px!important;height:34px!important;font-size:17px!important;border:0!important;background:color-mix(in srgb,var(--ink) 8%,transparent)!important}
+html[data-theme] .search{font-size:14.5px!important;padding:12px 16px 12px 44px!important;margin:0 0 6px!important;border:0!important;background-color:color-mix(in srgb,var(--ink) 7%,transparent)!important;box-shadow:none!important}
+html[data-theme] .search::placeholder{color:var(--muted)!important;opacity:.85}
+html[data-theme] .search:focus{box-shadow:0 0 0 2px #3b82f6!important}
+html[data-theme] .menu-section{display:flex!important;align-items:center;gap:10px;font-size:12px!important;font-weight:700!important;letter-spacing:1.4px!important;text-transform:uppercase;color:var(--muted)!important;margin:20px 4px 10px!important}
+html[data-theme] .menu-section::after{content:"";flex:1;height:1px;background:var(--line);opacity:.7}
+html[data-theme] .topic-btn{display:flex!important;align-items:center!important;gap:13px!important;padding:12px 14px!important;margin-bottom:8px!important;border-radius:18px!important;min-height:0!important;transform:none!important;border:1px solid transparent!important;background:color-mix(in srgb,var(--ink) 5%,transparent)!important;box-shadow:none!important;transition:background .15s,border-color .15s}
+html[data-theme] .topic-btn:hover{background:color-mix(in srgb,var(--ink) 9%,transparent)!important;transform:none!important;box-shadow:none!important;border-color:transparent!important}
+html[data-theme] .topic-btn .topic-num{width:40px!important;height:40px!important;flex:none!important;border-radius:12px!important;font-size:14.5px!important;font-weight:800!important;display:grid!important;place-items:center!important;background:color-mix(in srgb,#3b82f6 16%,transparent)!important;color:#3b82f6!important}
+html[data-theme] .topic-btn .topic-copy{flex:1;min-width:0}
+html[data-theme] .topic-btn .topic-label{font-size:15.5px!important;font-weight:700!important;line-height:1.3!important;white-space:normal!important}
+html[data-theme] .topic-btn .topic-sub{font-size:12.5px!important;font-weight:500!important;line-height:1.35!important;margin-top:2px!important;white-space:normal!important;color:var(--muted)!important}
+html[data-theme] .topic-btn .topic-sub:empty{display:none}
+html[data-theme] .topic-btn .topic-arrow{font-size:20px!important;font-weight:600!important;width:auto;height:auto;background:none!important;margin-left:0!important;opacity:.55}
+html[data-theme] .topic-btn.active{background:linear-gradient(135deg,#2563eb,#0ea5e9)!important;border-color:transparent!important;box-shadow:0 8px 20px rgba(37,99,235,.35)!important}
+html[data-theme] .topic-btn.active::after{display:none!important}
+html[data-theme] .topic-btn.active .topic-num{background:rgba(255,255,255,.22)!important;color:#fff!important}
+html[data-theme] .topic-btn.active .topic-label{color:#fff!important}
+html[data-theme] .topic-btn.active .topic-sub{color:rgba(255,255,255,.85)!important}
+html[data-theme] .topic-btn.active .topic-arrow{color:#fff!important;opacity:1;background:none!important}
+html[data-theme="light"] .topic-btn .topic-label{color:#12203f!important}
+html[data-theme="light"] .topic-btn .topic-num{color:#2563eb!important}
+html[data-theme="light"] .topic-btn .topic-sub{color:#5a6a8e!important}
+/* ===== เฉลยทันที: โชว์แค่กรอบเขียว (ข้อถูก) / กรอบแดง (ข้อที่เลือกผิด) ===== */
+.quiz .qx-opt.right{border:2px solid var(--ok,#22c55e)!important}
+.quiz .qx-opt.wrong{border:2px solid var(--bad,#ef4444)!important}
+.quiz .qx-opt.dim{opacity:.55}
+/* ===== ลายน้ำเอียง ๆ ตามไอคอนของการ์ดโหมด (วางท้ายสุด) ===== */
+.quiz .qx-m2>*:not(.qx-m2-wm){position:relative;z-index:1}
+.quiz .qx-m2 .qx-m2-wm{position:absolute!important;z-index:0!important;right:-22px;top:6px;width:170px;height:170px;display:block;transform:rotate(14deg);opacity:.17;pointer-events:none;filter:drop-shadow(0 4px 10px rgba(0,0,0,.12))}
+.quiz .qx-m2 .qx-m2-wm .hi{width:100%!important;height:100%!important;display:block;stroke-width:1.4}
+.quiz .qx-m2.exam .qx-m2-wm{transform:rotate(-12deg);right:-26px}
+@media(max-width:480px){.quiz .qx-m2 .qx-m2-wm{width:140px;height:140px;right:-18px;top:10px}}
 @media(min-width:900px){main{max-width:880px!important}}
 @media(prefers-reduced-motion:reduce){.qx-bar i::after,.quiz .qx-btn.submit.ready{animation:none!important}}
 </style>
@@ -1799,7 +1842,7 @@ li{font-size:15px!important;margin:5px 0!important}
   <span class="badge" id="subjBadge"></span>
   <h1><span id="subjTitle"></span> <span id="subjAccent"></span></h1>
   <p id="subjDesc"></p>
-  <div class="progress-wrap"><div class="progress-label"><span id="progressText">บท 1</span><span>ความคืบหน้า</span></div><div class="progress"><i id="progress"></i></div></div>
+  <div class="progress-wrap"><div class="progress-label"><span id="progressText">หน้า 1</span><span>ความคืบหน้า</span></div><div class="progress"><i id="progress"></i></div></div>
 </section>
 
 <section class="page" id="page"></section>
@@ -1959,7 +2002,7 @@ function buildMenu(list=topics){
  if(!list.length){
    const empty=document.createElement("div");
    empty.className="menu-section";
-   empty.textContent="ไม่พบบทที่ค้นหา";
+   empty.textContent="ไม่พบหน้าที่ค้นหา";
    menu.appendChild(empty);
    return;
  }
@@ -2045,7 +2088,7 @@ function showTopic(i){
     body+=`<section class="sec-card"><h3>${s[0]||""}</h3>${items.length?`<ul>${items.map(x=>`<li>${x}</li>`).join("")}</ul>`:""}${s[2]||""}</section>`;
    }catch(err){
     console.error("[บท "+(i+1)+" กล่อง "+(n+1)+"]",err);
-    body+=`<section class="sec-card"><h3>${hi("warn")} กล่องนี้ข้อมูลผิดรูปแบบ</h3><p class="small">บท ${i+1} กล่องที่ ${n+1}</p></section>`;
+    body+=`<section class="sec-card"><h3>${hi("warn")} กล่องนี้ข้อมูลผิดรูปแบบ</h3><p class="small">หน้า ${i+1} กล่องที่ ${n+1}</p></section>`;
    }
   });
  }
@@ -2080,7 +2123,7 @@ function showTopic(i){
   b.classList.toggle("active",+b.dataset.topicIndex===i);
  });
  document.getElementById("progress").style.width=((i+1)/topics.length*100)+"%";
- document.getElementById("progressText").textContent="บท "+(i+1)+" / "+topics.length;
+ document.getElementById("progressText").textContent="หน้า "+(i+1)+" / "+topics.length;
  window.scrollTo({top:0,behavior:"smooth"});
 }
 
@@ -2108,6 +2151,7 @@ const qzSt={
   set(o){try{localStorage.setItem(qzKey(),JSON.stringify(o));}catch(e){}}
 };
 function qzScrollTo(id){
+  return;   // ไม่เลื่อนหน้าขึ้นอัตโนมัติในหน้า Quiz
   const el=document.getElementById(id); if(!el) return;
   const y=el.getBoundingClientRect().top+window.pageYOffset-84;
   if(Math.abs(y-window.pageYOffset)<30) return;
@@ -2132,24 +2176,17 @@ function qzIntro(){
   const st=qzSt.get(), best=st.best, wrong=(st.wrong||[]).filter(n=>n<N);
   const P=qzPracN(N), mp=Math.max(1,Math.ceil(P*45/60)), me=Math.max(1,Math.ceil(N*45/60));
   area.innerHTML=`<div class="qx">
-   <div class="qx-hero">
-    <div class="qx-hero-ico">${hi("quiz",{c:"#fff"})}</div>
-    <h4>ทดสอบความเข้าใจ</h4>
-    <p>คลังข้อสอบ ${N} ข้อ · เลือกวิธีที่ใช่สำหรับคุณ</p>
-    <div class="qx-chips">
-     ${best?`<span class="qx-chip gold">${hi("trophy")} สถิติ ${best.score}/${best.total} · ${best.pct}%</span>`:`<span class="qx-chip">ยังไม่เคยทำ</span>`}
-     ${st.attempts?`<span class="qx-chip">ทำแล้ว ${st.attempts} ครั้ง</span>`:""}
-    </div>
-   </div>
    <div class="qx-m2s">
     <button type="button" class="qx-m2 prac" onclick="qzStart('practice')">
+      <span class="qx-m2-wm" aria-hidden="true">${hi("bulb",{c:"#fff"})}</span>
       <span class="qx-m2-top"><span class="qx-m2-ico">${hi("bulb",{c:"#fff"})}</span>${st.attempts?"":'<span class="qx-m2-badge">แนะนำ</span>'}</span>
       <b class="qx-m2-t">โหมดฝึก</b>
-      <span class="qx-m2-d">เฉลยทันทีหลังตอบ · ไม่จับเวลากดดัน</span>
+      <span class="qx-m2-d">เฉลยทันทีหลังตอบ</span>
       <span class="qx-m2-meta"><i>${P} ข้อ</i><i>~${mp} นาที</i></span>
       <span class="qx-m2-go">เริ่มฝึกเลย ${hi("right",{c:"currentColor"})}</span>
     </button>
     <button type="button" class="qx-m2 exam" onclick="qzStart('exam')">
+      <span class="qx-m2-wm" aria-hidden="true">${hi("target",{c:"#fff"})}</span>
       <span class="qx-m2-top"><span class="qx-m2-ico">${hi("target",{c:"#fff"})}</span></span>
       <b class="qx-m2-t">โหมดสอบจริง</b>
       <span class="qx-m2-d">ครบทุกข้อ · จับเวลา · ส่งตอนท้าย</span>
@@ -2223,15 +2260,7 @@ function qzPlay(anim){
     } else if(it.pick===k){ c+=" picked"; ic=hi("check",{c:"#3b82f6"}); }
     return `<button type="button" class="${c}" ${locked?"disabled":""} onclick="qzPick(${k})"><span class="qx-l">${QL[k]}</span><span class="qx-t">${o.t}</span><span class="qx-ic">${ic}</span></button>`;
   }).join("");
-  let fb="";
-  if(locked){
-    const ok=qzOk(it), ci=it.opts.findIndex(o=>o.ok);
-    fb=`<div class="qx-fb ${ok?"ok":"bad"}" id="qxFb" onclick="qzCdStop()">
-      <div class="qx-fb-h">${ok?hi("check")+" ถูกต้อง!":hi("cross")+" ยังไม่ถูก"}${ok&&QZ.streak>=3?`<em>คอมโบ x${QZ.streak}</em>`:""}</div>
-      ${!ok&&ci>=0?`<div class="qx-fb-a">เฉลย: <b>${QL[ci]}. ${it.opts[ci].t}</b></div>`:""}
-      ${it.why?`<div class="qx-why"><span>${hi("bulb")} คำอธิบาย</span>${it.why}</div>`:""}
-    </div>`;
-  }
+  let fb="";   // ไม่แสดงเฉลย/คำอธิบายทันที — ดูได้ที่ปุ่มทบทวนหลังจบข้อสอบ
   let ctrl="";
   if(prac){
     ctrl=locked
