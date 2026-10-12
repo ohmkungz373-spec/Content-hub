@@ -589,6 +589,28 @@ html.m-open{overflow:hidden}
 .totop:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
 html.m-open .totop{opacity:0!important;pointer-events:none!important}
 html[data-theme="light"] .totop{box-shadow:0 10px 22px -8px #2250d8a6,0 1px 4px #1b2a5040,inset 0 1px 0 #ffffff80}
+
+/* ===== แก้ไขรอบใหม่ ===== */
+/* 1) ซ่อนปุ่ม x ของเบราว์เซอร์ เหลือปุ่มเดียว */
+.search input[type="search"]{-webkit-appearance:none;appearance:none}
+.search input::-webkit-search-cancel-button,.search input::-webkit-search-decoration,.search input::-webkit-search-results-button,.search input::-webkit-search-results-decoration{-webkit-appearance:none;appearance:none;display:none}
+.search input::-ms-clear{display:none}
+.search .x{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;font-size:20px;line-height:1;padding:0;background:color-mix(in srgb,var(--ink) 8%,transparent)}
+.search .x.hidden{display:none}
+/* 2) แถบค้นหาไม่ลอยตามตอนเลื่อน */
+.tools{position:static!important;top:auto!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:none!important}
+/* 3) ปุ่มย้อนกลับใหม่: เรียบ สะอาด */
+header.top #backBtn,html[data-theme="light"] header.top #backBtn{
+  height:40px;min-height:40px;padding:0 16px 0 5px!important;gap:8px;border-radius:999px!important;
+  background:var(--panel)!important;color:var(--ink)!important;font-size:14.5px;font-weight:600;letter-spacing:.2px;
+  border:1px solid var(--line2)!important;box-shadow:0 2px 8px #0000001f!important;filter:none;
+  transition:transform .15s,border-color .2s,box-shadow .2s,background .2s}
+header.top #backBtn::before,header.top #backBtn::after{display:none!important}
+header.top #backBtn .bk-ic{width:30px;height:30px;background:linear-gradient(135deg,#3b82f6,#06b6d4);color:#fff;box-shadow:0 2px 6px #2563eb55;transition:transform .2s}
+header.top #backBtn .bk-ic .ic{width:16px;height:16px;stroke-width:2.8}
+header.top #backBtn:hover,html[data-theme="light"] header.top #backBtn:hover{filter:none;border-color:#38bdf8!important;box-shadow:0 4px 14px #2563eb33!important}
+header.top #backBtn:hover .bk-ic{transform:translateX(-2px);background:linear-gradient(135deg,#3b82f6,#06b6d4)}
+header.top #backBtn:active{transform:scale(.95)}
 </style>
 </head>
 <body>
