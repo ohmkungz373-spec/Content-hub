@@ -1821,6 +1821,234 @@ html[data-theme="light"] .topic-btn .topic-sub{color:#5a6a8e!important}
 @media(min-width:900px){main{max-width:880px!important}}
 @media(prefers-reduced-motion:reduce){.qx-bar i::after,.quiz .qx-btn.submit.ready{animation:none!important}}
 </style>
+<style id="final-polish">
+/* ═════════ 0) ฟอนต์เดียวกันทั้งหน้า (รวมปุ่ม/ป็อปอัพ/ช่องค้นหา) ═════════ */
+:root{--ff:"IBM Plex Sans Thai","Noto Sans Thai","Sarabun",Tahoma,sans-serif}
+html *,html *::before,html *::after,
+body,button,input,textarea,select,summary{font-family:var(--ff)!important}
+
+/* ═════════ 1) หน้าเนื้อหา: เรียบ อ่านง่าย น่าค้นคว้า ═════════ */
+html body .page{counter-reset:sec}
+
+/* หัวบท */
+html body .page .topic-head{align-items:center!important;gap:14px!important;padding-bottom:16px!important;margin-bottom:16px!important;border-bottom:1px solid var(--line)!important}
+html body .page .topic-head h2{font-size:22px!important;line-height:1.3!important;font-weight:800!important;letter-spacing:0!important}
+html body .page .topic-head .subtitle{font-size:13px!important;font-weight:600!important;margin:3px 0 0!important;color:#7dd3fc!important}
+html[data-theme="light"] body .page .topic-head .subtitle{color:#0369a1!important}
+
+/* คำนำ = กล่องภาพรวม */
+html body .page .intro{
+  position:relative;margin:0 0 6px!important;padding:14px 16px 15px!important;border-radius:18px!important;
+  font-size:15.5px!important;line-height:1.85!important;font-weight:400;color:var(--ink)!important;
+  background:linear-gradient(135deg,color-mix(in srgb,#38bdf8 12%,var(--panel)),var(--panel))!important;
+  border:1px solid color-mix(in srgb,#38bdf8 30%,var(--line))!important;border-left-width:1px!important;box-shadow:none!important}
+html body .page .intro::before{content:"ภาพรวมบทนี้";display:block;margin-bottom:3px;font-size:11.5px;font-weight:700;letter-spacing:.8px;color:#38bdf8}
+html[data-theme="light"] body .page .intro::before{color:#0284c7}
+
+/* กล่องเนื้อหา: การ์ดมีเลขลำดับ */
+html body .page .sec-card{
+  counter-increment:sec;position:relative;margin-top:14px!important;padding:18px 18px 8px!important;border-radius:22px!important;overflow:visible!important;
+  background:color-mix(in srgb,var(--ink) 4%,var(--panel))!important;
+  border:1px solid var(--line)!important;box-shadow:0 8px 22px rgba(0,0,0,.14)!important;transform:none!important}
+html[data-theme="light"] body .page .sec-card{box-shadow:0 6px 18px rgba(27,42,80,.08)!important;background:#fff!important}
+html body .page .sec-card::before{display:none!important}
+html body .page .sec-card:hover{transform:none!important;box-shadow:0 8px 22px rgba(0,0,0,.14)!important}
+html[data-theme="light"] body .page .sec-card:hover{box-shadow:0 6px 18px rgba(27,42,80,.08)!important}
+
+html body .page .sec-card h3{
+  display:flex!important;align-items:center;gap:12px;margin:0 0 4px!important;padding:0 0 14px!important;
+  font-size:18px!important;font-weight:700!important;line-height:1.35!important;color:var(--ink)!important;
+  border-bottom:1px solid var(--line)!important}
+html body .page .sec-card h3::before{
+  content:counter(sec,decimal-leading-zero)!important;flex:none;display:grid!important;place-items:center;
+  width:38px!important;min-width:38px;height:38px!important;border-radius:13px!important;
+  font-size:14px;font-weight:800;letter-spacing:.3px;color:#fff;
+  background:linear-gradient(135deg,#3b82f6,#06b6d4)!important;box-shadow:0 6px 14px rgba(37,99,235,.3)}
+
+html body .page .sec-card ul{list-style:none!important;padding:0!important;margin:0!important}
+html body .page .sec-card li{
+  position:relative;margin:0!important;padding:12px 0 12px 26px;
+  font-size:15.5px!important;line-height:1.85!important;color:color-mix(in srgb,var(--ink) 94%,transparent)}
+html body .page .sec-card li+li{border-top:1px dashed color-mix(in srgb,var(--line) 80%,transparent)}
+html body .page .sec-card li::before{
+  content:"";position:absolute;left:4px;top:23px;width:8px;height:8px;border-radius:50%;
+  background:linear-gradient(135deg,#38bdf8,#6366f1);box-shadow:0 0 0 4px rgba(56,189,248,.15)}
+
+/* จุดที่ควรจำ */
+html body .page .note{
+  margin-top:18px!important;padding:16px 18px!important;border-radius:20px!important;font-size:15.5px!important;line-height:1.85!important;
+  color:var(--ink)!important;box-shadow:none!important;
+  background:linear-gradient(135deg,rgba(251,191,36,.15),rgba(251,191,36,.04))!important;
+  border:1px solid rgba(251,191,36,.5)!important}
+html body .page .note>br{display:none}
+html body .page .note>b:first-child{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:16.5px!important;font-weight:800;color:#fbbf24!important}
+html[data-theme="light"] body .page .note{background:linear-gradient(135deg,rgba(251,191,36,.2),rgba(251,191,36,.05))!important;border-color:rgba(217,119,6,.5)!important}
+html[data-theme="light"] body .page .note>b:first-child{color:#b45309!important}
+
+/* ═════════ 2) ปุ่ม "เลือกโหมดใหม่": เข้ม ชัด อยากกด ═════════ */
+html body .quiz .qx-link.qx-swap{
+  display:flex!important;align-items:center;justify-content:center;gap:10px;
+  width:min(100%,360px)!important;min-height:54px!important;margin:18px auto 4px!important;padding:0 28px!important;
+  border:0!important;border-radius:999px!important;
+  background:linear-gradient(135deg,#1e40af 0%,#2563eb 45%,#4f46e5 100%)!important;
+  color:#fff!important;font-size:16.5px!important;font-weight:800!important;letter-spacing:.2px;
+  box-shadow:0 12px 26px rgba(37,99,235,.5),inset 0 1px 0 rgba(255,255,255,.28),inset 0 -3px 0 rgba(0,0,0,.18)!important;
+  transition:transform .15s,box-shadow .15s,filter .15s}
+html body .quiz .qx-link.qx-swap .hi{width:22px!important;height:22px!important;color:#fff!important;stroke:#fff}
+html body .quiz .qx-link.qx-swap:hover{transform:translateY(-2px);filter:brightness(1.1);box-shadow:0 16px 32px rgba(37,99,235,.6),inset 0 1px 0 rgba(255,255,255,.3),inset 0 -3px 0 rgba(0,0,0,.18)!important}
+html body .quiz .qx-link.qx-swap:active{transform:translateY(1px) scale(.97);box-shadow:0 6px 14px rgba(37,99,235,.45),inset 0 1px 0 rgba(255,255,255,.2)!important}
+
+/* ═════════ 3) ป็อปอัพเฉลยคำตอบ ═════════ */
+html body .qx-review-sheet{--gt:#4ade80;--rt:#fca5a5;--bt:#7dd3fc;--vt:#c4b5fd}
+html[data-theme="light"] body .qx-review-sheet{--gt:#15803d;--rt:#be123c;--bt:#1d4ed8;--vt:#6d28d9}
+
+/* หัว */
+html body .qx-review-head{background:linear-gradient(135deg,rgba(37,99,235,.3),rgba(6,182,212,.12))!important;padding:18px 18px 16px!important}
+html[data-theme="light"] body .qx-review-head{background:linear-gradient(135deg,#e6f0ff,#e6fbff)!important}
+html body .qx-review-head h4{font-size:24px!important;font-weight:800!important;margin:4px 0 5px!important}
+html body .qx-review-kicker{font-size:11px!important;font-weight:800;letter-spacing:.8px;color:var(--bt)!important}
+html body .qx-review-head p{font-size:13px!important}
+html body .qx-review-summary{margin-top:12px!important;padding:6px 14px!important;border-radius:999px!important;background:rgba(59,130,246,.16)!important;border:1px solid rgba(96,165,250,.45)!important;color:var(--bt)!important;font-size:13px!important;font-weight:700}
+html body .qx-review-summary-score{font-size:17px!important;font-weight:800;color:var(--bt)!important}
+
+/* แท็บ: ทั้งหมด=ฟ้า · ตอบถูก=เขียว · ตอบผิด=แดง */
+html body .qx-review-filters{display:flex!important;gap:8px!important;flex-wrap:nowrap!important;padding:12px 14px!important;background:var(--panel);border-bottom:1px solid var(--line)}
+html body .qx-review-filter{
+  --c:#3b82f6;--ct:var(--bt);--g1:#2563eb;--g2:#0ea5e9;
+  flex:1 1 0;min-width:0;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 10px!important;
+  border-radius:999px!important;font-size:14.5px!important;font-weight:700;white-space:nowrap;cursor:pointer;
+  color:var(--ct)!important;background:color-mix(in srgb,var(--c) 12%,transparent)!important;
+  border:1.5px solid color-mix(in srgb,var(--c) 50%,transparent)!important;transition:transform .12s,box-shadow .15s}
+html body .qx-review-filter:nth-child(2){--c:#22c55e;--ct:var(--gt);--g1:#15803d;--g2:#22c55e}
+html body .qx-review-filter:nth-child(3){--c:#ef4444;--ct:var(--rt);--g1:#dc2626;--g2:#f87171}
+html body .qx-review-filter[aria-pressed="true"]{
+  color:#fff!important;border-color:transparent!important;
+  background:linear-gradient(135deg,var(--g1),var(--g2))!important;
+  box-shadow:0 8px 18px color-mix(in srgb,var(--c) 45%,transparent),inset 0 1px 0 rgba(255,255,255,.28)}
+html body .qx-review-filter:active{transform:scale(.96)}
+html body .qx-review-filter .count{
+  display:inline-grid!important;place-items:center;min-width:24px;height:24px;margin:0!important;padding:0 7px;border-radius:99px;
+  font-size:12.5px!important;font-weight:800;color:inherit;background:color-mix(in srgb,var(--c) 22%,transparent)}
+html body .qx-review-filter[aria-pressed="true"] .count{background:rgba(255,255,255,.26)}
+
+/* รายการ */
+html body .qx-review-list{padding:14px 14px 24px!important;gap:14px!important;background:color-mix(in srgb,#3b82f6 5%,var(--bg))}
+html[data-theme="light"] body .qx-review-list{background:#eef3fb}
+
+/* การ์ดโจทย์ */
+html body .qx-review-list .qx-rv{
+  flex:none!important;position:relative;overflow:hidden;margin:0!important;padding:16px 16px 16px 22px!important;border-radius:20px!important;
+  border:1px solid var(--line)!important;border-left-width:1px!important;background:var(--panel)!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.18)!important}
+html[data-theme="light"] body .qx-review-list .qx-rv{box-shadow:0 6px 18px rgba(27,42,80,.09)!important}
+html body .qx-review-list .qx-rv::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:linear-gradient(180deg,#22c55e,#4ade80)}
+html body .qx-review-list .qx-rv.bad::before{background:linear-gradient(180deg,#ef4444,#fb7185)}
+html body .qx-review-list .qx-rv.ok{border-color:color-mix(in srgb,#22c55e 38%,var(--line))!important;background:linear-gradient(180deg,color-mix(in srgb,#22c55e 8%,var(--panel)),var(--panel) 65%)!important}
+html body .qx-review-list .qx-rv.bad{border-color:color-mix(in srgb,#ef4444 38%,var(--line))!important;background:linear-gradient(180deg,color-mix(in srgb,#ef4444 8%,var(--panel)),var(--panel) 65%)!important}
+html[data-theme="light"] body .qx-review-list .qx-rv.ok{background:linear-gradient(180deg,#f0fdf4,#fff 65%)!important}
+html[data-theme="light"] body .qx-review-list .qx-rv.bad{background:linear-gradient(180deg,#fff1f2,#fff 65%)!important}
+
+html body .qx-review-list .qx-rv-h{display:flex;align-items:flex-start!important;gap:12px!important}
+html body .qx-review-list .qx-no{flex:none;width:38px!important;height:38px!important;border-radius:13px!important;font-size:14px!important;font-weight:800;color:#fff!important;
+  background:linear-gradient(135deg,#16a34a,#22c55e)!important;box-shadow:0 6px 14px rgba(34,197,94,.35)}
+html body .qx-review-list .qx-rv.bad .qx-no{background:linear-gradient(135deg,#dc2626,#f87171)!important;box-shadow:0 6px 14px rgba(239,68,68,.35)}
+html body .qx-review-list .qx-rv-q{flex:1;min-width:0;padding-top:6px;font-size:16px!important;font-weight:700;line-height:1.5;color:var(--ink)!important}
+
+html body .qx-review-list .qx-rv-status{
+  flex:none;display:inline-flex;align-items:center;gap:5px;margin-top:5px;padding:5px 12px!important;border-radius:99px!important;
+  font-size:12.5px!important;font-weight:800;border:1px solid transparent}
+html body .qx-review-list .qx-rv-status.ok{background:rgba(34,197,94,.16)!important;color:var(--gt)!important;border-color:rgba(34,197,94,.45)}
+html body .qx-review-list .qx-rv-status.bad{background:rgba(239,68,68,.15)!important;color:var(--rt)!important;border-color:rgba(239,68,68,.45)}
+html body .qx-review-list .qx-rv-status.ok::before{content:"✓"}
+html body .qx-review-list .qx-rv-status.bad::before{content:"✕"}
+
+/* คำตอบของคุณ / เฉลย */
+html body .qx-review-list .qx-rv-a{display:grid!important;grid-template-columns:1fr!important;gap:10px!important;margin:14px 0 0!important}
+@media(min-width:560px){html body .qx-review-list .qx-rv-a{grid-template-columns:1fr 1fr!important}}
+html body .qx-review-list .qx-rv-answer-row{display:flex;flex-direction:column;align-items:flex-start;gap:4px!important;padding:11px 14px!important;border-radius:14px!important;border:1.5px solid var(--line)!important;background:transparent!important}
+html body .qx-review-list .qx-rv-label{display:flex;align-items:center;font-size:12px!important;font-weight:800;letter-spacing:.3px}
+html body .qx-review-list .qx-rv-label::before{content:"";width:8px;height:8px;margin-right:7px;border-radius:50%;background:currentColor}
+html body .qx-review-list .qx-rv-answer{font-size:15.5px!important;line-height:1.5;font-weight:700}
+html body .qx-review-list .qx-rv-answer b,html body .qx-review-list .qx-rv-answer .r,html body .qx-review-list .qx-rv-answer .g{font-weight:800;color:var(--ink)!important}
+
+html body .qx-review-list .qx-rv-answer-row.yours.selected-bad{background:color-mix(in srgb,#ef4444 12%,var(--panel))!important;border-color:rgba(239,68,68,.55)!important}
+html body .qx-review-list .qx-rv-answer-row.yours.selected-bad .qx-rv-label{color:var(--rt)!important}
+html body .qx-review-list .qx-rv-answer-row.yours.selected-bad .qx-rv-answer b{color:var(--rt)!important}
+
+html body .qx-review-list .qx-rv-answer-row.yours.selected-ok,
+html body .qx-review-list .qx-rv-answer-row.correct{background:color-mix(in srgb,#22c55e 12%,var(--panel))!important;border-color:rgba(34,197,94,.55)!important}
+html body .qx-review-list .qx-rv-answer-row.yours.selected-ok .qx-rv-label,
+html body .qx-review-list .qx-rv-answer-row.correct .qx-rv-label{color:var(--gt)!important}
+html body .qx-review-list .qx-rv-answer-row.yours.selected-ok .qx-rv-answer b,
+html body .qx-review-list .qx-rv-answer-row.correct .qx-rv-answer b{color:var(--gt)!important}
+
+html body .qx-review-list .qx-rv-answer-row.yours.unanswered{border-style:dashed!important;background:transparent!important}
+html body .qx-review-list .qx-rv-answer-row.yours.unanswered .qx-rv-label{color:var(--muted)!important}
+html[data-theme="light"] body .qx-review-list .qx-rv-answer-row.yours.selected-bad{background:#fff1f2!important}
+html[data-theme="light"] body .qx-review-list .qx-rv-answer-row.yours.selected-ok,
+html[data-theme="light"] body .qx-review-list .qx-rv-answer-row.correct{background:#f0fdf4!important}
+
+/* คำอธิบาย */
+html body .qx-review-list .qx-exp,
+html body .qx-review-list .qx-rv.ok .qx-exp{margin-top:14px!important;border-radius:16px!important;overflow:hidden;
+  border:1px solid color-mix(in srgb,#a78bfa 42%,transparent)!important;
+  background:linear-gradient(160deg,color-mix(in srgb,#8b5cf6 14%,var(--panel)),var(--panel))!important}
+html[data-theme="light"] body .qx-review-list .qx-exp,
+html[data-theme="light"] body .qx-review-list .qx-rv.ok .qx-exp{background:linear-gradient(160deg,#faf5ff,#fff)!important;border-color:#ddd0fb!important}
+html body .qx-review-list .qx-exp-h,
+html body .qx-review-list .qx-rv.ok .qx-exp-h{display:flex;align-items:center;gap:10px;padding:10px 14px!important;background:color-mix(in srgb,#8b5cf6 12%,transparent);border-bottom:1px solid color-mix(in srgb,#a78bfa 28%,transparent)!important}
+html body .qx-review-list .qx-exp-ico{width:30px!important;height:30px!important;border-radius:10px!important;background:rgba(250,204,21,.18);border:1px solid rgba(250,204,21,.35)}
+html body .qx-review-list .qx-exp-h b,
+html body .qx-review-list .qx-rv.ok .qx-exp-h b{font-size:14.5px!important;font-weight:800;color:var(--vt)!important}
+html body .qx-review-list .qx-exp-t{padding:12px 15px 15px!important;font-size:15px!important;line-height:1.85!important;color:var(--ink)!important}
+
+@media(max-width:560px){
+  html body .qx-review-list{padding:12px 12px 22px!important}
+  html body .qx-review-list .qx-rv{padding:14px 14px 14px 20px!important}
+  html body .qx-review-list .qx-rv-q{font-size:15.5px!important}
+  html body .qx-review-head h4{font-size:22px!important}
+}
+
+/* ═════════ ปรับขนาดปุ่มให้กระชับ (override ท้ายสุด) ═════════ */
+/* ปุ่มเปลี่ยนหน้า ก่อนหน้า / ถัดไป */
+html body .nav{margin-top:24px!important;padding-top:16px!important;gap:10px!important}
+html body .nav button{min-height:44px!important;padding:0 12px!important;font-size:14.5px!important;font-weight:700!important;border-radius:13px!important;gap:5px!important}
+html body .nav button .hi{width:17px!important;height:17px!important}
+
+/* ปุ่มในโหมดทำข้อสอบ (ก่อนหน้า / ข้อถัดไป / ส่งคำตอบ / ทำใหม่) */
+html body .quiz .qx-btn{min-height:44px!important;padding:0 14px!important;font-size:14.5px!important;font-weight:700!important;border-radius:13px!important;border-width:1.5px!important}
+html body .quiz .qx-btn.sm{width:48px!important;padding:0!important}
+html body .quiz .qx-btn.submit{min-height:48px!important;font-size:15.5px!important;font-weight:800!important;border-radius:14px!important;margin-top:8px!important}
+html body .quiz .qx-btn.submit .hi{width:18px!important;height:18px!important}
+html body .quiz .qx-btn.pri.lock,html body .quiz .qx-btn.submit.lock{font-size:14px!important}
+html body .quiz .qx-result-actions .qx-btn:not(.qx-review-trigger){min-height:44px!important;font-size:14.5px!important}
+html body .quiz .qx-result-actions .qx-review-trigger{min-height:48px!important;padding:6px 12px!important;border-radius:14px!important;gap:9px}
+html body .qx-review-trigger-ico{width:30px!important;height:30px!important;border-radius:10px!important}
+html body .qx-review-trigger-ico .hi{width:18px!important;height:18px!important}
+html body .qx-review-trigger-copy b{font-size:15px!important}
+html body .qx-review-trigger-arrow{font-size:22px!important}
+html body .qx-miss button{width:38px!important;height:38px!important;border-radius:11px!important;font-size:14px}
+
+/* ปุ่มเลือกโหมดใหม่ */
+html body .quiz .qx-link.qx-swap{width:max-content!important;max-width:100%!important;min-height:42px!important;margin:14px auto 2px!important;padding:0 20px!important;font-size:14px!important;font-weight:700!important;gap:8px!important;box-shadow:0 8px 18px rgba(37,99,235,.38),inset 0 1px 0 rgba(255,255,255,.28)!important}
+html body .quiz .qx-link.qx-swap .hi{width:17px!important;height:17px!important}
+
+/* ปุ่ม "เริ่ม" ในการ์ดเลือกโหมด */
+html body .qx-m2-go{min-height:42px!important;font-size:15px!important;border-radius:13px!important;margin-top:6px!important}
+html body .qx-m2-go .hi{width:18px!important;height:18px!important}
+
+/* ปุ่มในป๊อปอัพเฉลยคำตอบ */
+html body .qx-review-close{width:36px!important;height:36px!important;border-radius:11px!important;font-size:22px!important}
+html body .qx-review-filters{gap:6px!important;padding:10px 12px!important}
+html body .qx-review-filter{min-height:36px!important;padding:0 10px!important;font-size:13px!important;gap:6px!important}
+html body .qx-review-filter .count{min-width:20px!important;height:20px!important;padding:0 6px!important;font-size:11.5px!important}
+html body .qx-review-head{padding:16px 16px 13px!important}
+html body .qx-review-head h4{font-size:21px!important}
+
+/* ปุ่มเลื่อนขึ้นบน */
+html body .to-top{width:42px!important;height:42px!important}
+html body .to-top svg{width:19px!important;height:19px!important}
+</style>
 </head>
 <body>
 
