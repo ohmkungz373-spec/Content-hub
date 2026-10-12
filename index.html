@@ -174,7 +174,8 @@ footer{text-align:center;color:#5d709b;font-size:13px;padding:24px}
 @media(max-width:430px){.nav span{display:none}.nav{width:48px;padding:0}}
 
 /* ===== แนวตั้ง: แต่ละหมวดเรียงลงมา การ์ด 2 คอลัมน์ ===== */
-html,body{overflow-x:hidden;max-width:100%}
+html{overflow-x:hidden}
+body{overflow-x:clip;max-width:100%}
 .rail,.rail.x{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;overflow:visible;scroll-snap-type:none;padding:2px 0;margin:0}
 .rail .card{width:auto;min-height:140px}
 @media(min-width:640px){.rail{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}}
@@ -496,6 +497,98 @@ html[data-theme="light"] .vbar{background:#fff;border-bottom-color:var(--line2);
 html[data-theme="light"] .vbar .t{background:var(--panel2);border-color:var(--line2)}
 html[data-theme="light"] #subjBox .mclose{background:var(--panel2);border-color:var(--line2)}
 html[data-theme="light"] #subjBox .grab{background:#b4c2e0}
+
+/* ================= อัปเกรด: ส่วนหัว + ปุ่มย้อนกลับ + แถบเลื่อนบท ================= */
+.top-in{padding:9px 14px;min-height:60px;gap:12px}
+.viewer{height:calc(100dvh - 61px)}
+.tools{top:60px}
+header.top{background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 88%,transparent),color-mix(in srgb,var(--bg) 70%,transparent));-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);border-image:none;border-bottom:1px solid transparent;box-shadow:0 10px 30px -18px #000c}
+header.top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;pointer-events:none;background:linear-gradient(90deg,transparent,#3b82f6aa 22%,#22d3eecc 50%,#a78bfa99 78%,transparent)}
+html[data-theme="light"] header.top{background:linear-gradient(180deg,#ffffffe6,#eaf1fbd9);box-shadow:0 10px 26px -18px #1b2a5066}
+
+/* --- ปุ่มย้อนกลับ --- */
+header.top #backBtn{position:relative;overflow:hidden;isolation:isolate;display:inline-flex;align-items:center;gap:9px;height:42px;min-height:42px;padding:0 17px 0 6px!important;border-radius:999px!important;border:1px solid #ffffff40!important;
+ background:linear-gradient(135deg,#2f6df0 0%,#2455d6 55%,#4338ca 100%)!important;color:#fff!important;font-weight:700;font-size:15px;letter-spacing:.2px;white-space:nowrap;
+ box-shadow:0 10px 24px -6px #2563ebb3,0 2px 6px #0003,inset 0 1px 0 #ffffff80,inset 0 -3px 8px #1e1b4b55!important;
+ transition:transform .2s cubic-bezier(.3,1.5,.5,1),box-shadow .25s,filter .2s}
+header.top #backBtn::before{content:"";position:absolute;inset:0 0 50% 0;z-index:-1;border-radius:inherit;background:linear-gradient(#ffffff3d,#ffffff00);pointer-events:none}
+header.top #backBtn::after{content:"";position:absolute;top:0;bottom:0;left:0;width:46%;z-index:-1;background:linear-gradient(105deg,transparent,#ffffff59,transparent);transform:translateX(-140%) skewX(-18deg);pointer-events:none}
+header.top #backBtn:hover::after,header.top #backBtn:focus-visible::after{transform:translateX(330%) skewX(-18deg);transition:transform .75s ease}
+header.top #backBtn:hover{filter:brightness(1.07) saturate(1.1);box-shadow:0 14px 30px -6px #2563ebcc,0 2px 6px #0003,inset 0 1px 0 #ffffff99,inset 0 -3px 8px #1e1b4b55!important}
+header.top #backBtn:active{transform:scale(.93);filter:brightness(.97)}
+header.top #backBtn .bk-ic{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#ffffff2e;box-shadow:inset 0 1px 0 #ffffff66,0 2px 5px #0003;transition:transform .25s cubic-bezier(.3,1.5,.5,1),background .2s}
+header.top #backBtn .bk-ic .ic{width:18px;height:18px;stroke-width:3}
+header.top #backBtn:hover .bk-ic{transform:translateX(-3px);background:#ffffff40}
+header.top #backBtn:focus-visible{outline:2px solid #fff;outline-offset:2px}
+html[data-theme="light"] header.top #backBtn{background:linear-gradient(135deg,#2f6df0 0%,#2250d8 55%,#3730a3 100%)!important;box-shadow:0 8px 20px -6px #2250d899,0 1px 3px #1b2a5040,inset 0 1px 0 #ffffff80,inset 0 -3px 8px #1e1b4b4d!important}
+
+/* --- ปุ่มสลับธีม --- */
+header.top .themebtn{position:relative;overflow:hidden;width:42px;height:42px;min-height:42px;border-radius:14px;color:#fbbf24;
+ background:linear-gradient(145deg,color-mix(in srgb,var(--ink) 12%,transparent),color-mix(in srgb,var(--ink) 3%,transparent));
+ border:1px solid color-mix(in srgb,var(--ink) 16%,transparent);box-shadow:inset 0 1px 0 #ffffff26,0 8px 18px -8px #000a}
+header.top .themebtn svg{width:21px;height:21px;filter:drop-shadow(0 0 6px #fbbf2499);transition:transform .3s}
+header.top .themebtn:hover svg{transform:rotate(18deg) scale(1.08)}
+header.top .themebtn.tgl svg{animation:tspin .6s cubic-bezier(.3,1.3,.5,1)}
+@keyframes tspin{from{transform:rotate(-140deg) scale(.3);opacity:0}}
+html[data-theme="light"] header.top .themebtn{color:#4f46e5;background:linear-gradient(145deg,#fff,#e9effc);border-color:var(--line2);box-shadow:inset 0 1px 0 #fff,0 8px 18px -10px #1b2a5066}
+html[data-theme="light"] header.top .themebtn svg{filter:none}
+
+/* --- แถบเลื่อนบท (ก่อนหน้า / ชื่อบท / ถัดไป) --- */
+.viewer .vbar{position:relative;display:flex;align-items:center;gap:10px;padding:10px 12px 13px;border-bottom:0;z-index:3;
+ background:linear-gradient(180deg,var(--s3),var(--s1));box-shadow:0 14px 30px -16px #000d,inset 0 1px 0 #ffffff0f;animation:vbIn .4s cubic-bezier(.22,1,.36,1)}
+@keyframes vbIn{from{opacity:0;transform:translateY(-12px)}}
+.viewer .vbar::before{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:color-mix(in srgb,var(--ink) 9%,transparent)}
+.viewer .vbar::after{content:"";position:absolute;left:0;bottom:0;height:3px;width:var(--p,0%);border-radius:0 3px 3px 0;background:linear-gradient(90deg,#3b82f6,#22d3ee 60%,#a78bfa);box-shadow:0 0 12px #22d3ee99;transition:width .55s cubic-bezier(.22,1,.36,1)}
+.viewer .vbar.single::before,.viewer .vbar.single::after{display:none}
+
+.viewer .vbar .nav{position:relative;flex:none;width:48px;min-width:48px;height:48px;padding:0;border-radius:16px;display:grid;place-items:center;border:1px solid transparent;font-weight:700;font-size:14px;cursor:pointer}
+.viewer .vbar .nav .ic{width:22px;height:22px;stroke-width:2.7;transition:transform .22s cubic-bezier(.3,1.5,.5,1)}
+.viewer .vbar .nav.prev{color:var(--ink);background:linear-gradient(145deg,color-mix(in srgb,var(--ink) 12%,var(--s2)),var(--s2));border-color:var(--line2);box-shadow:inset 0 1px 0 #ffffff1f,0 8px 16px -10px #000b}
+.viewer .vbar .nav.next{color:#fff;background:linear-gradient(135deg,#2f6df0,#2455d6 55%,#0ea5e9);border-color:#ffffff33;box-shadow:0 12px 24px -8px #2563ebb3,inset 0 1px 0 #ffffff66}
+.viewer .vbar .nav:hover:not(:disabled){transform:translateY(-2px)}
+.viewer .vbar .nav.prev:hover:not(:disabled) .ic{transform:translateX(-3px)}
+.viewer .vbar .nav.next:hover:not(:disabled) .ic{transform:translateX(3px)}
+.viewer .vbar .nav:active:not(:disabled){transform:scale(.92)}
+.viewer .vbar .nav:disabled{opacity:1;cursor:not-allowed;color:color-mix(in srgb,var(--ink) 30%,transparent);background:color-mix(in srgb,var(--ink) 5%,transparent);border-color:color-mix(in srgb,var(--ink) 9%,transparent);box-shadow:none}
+@media(min-width:431px){.viewer .vbar .nav{width:auto;padding:0 18px;display:inline-flex;gap:8px}}
+
+.viewer .vbar .t{position:relative;flex:1;min-width:0;min-height:48px;display:flex;align-items:center;justify-content:center;padding:6px 46px;border-radius:16px;text-align:center;cursor:pointer;
+ background:linear-gradient(180deg,color-mix(in srgb,var(--ink) 8%,transparent),color-mix(in srgb,var(--ink) 2%,transparent));border:1px solid var(--line2);
+ box-shadow:inset 0 1px 0 #ffffff14,0 8px 18px -12px #000b;transition:transform .15s,border-color .2s,box-shadow .2s}
+.viewer .vbar .t:hover{border-color:var(--cyan);box-shadow:inset 0 1px 0 #ffffff14,0 10px 22px -10px #22d3ee66}
+.viewer .vbar .t:active{transform:scale(.985)}
+.vt-main{display:block;min-width:0;max-width:100%;animation:vtIn .34s cubic-bezier(.22,1,.36,1)}
+@keyframes vtIn{from{opacity:0;transform:translateY(7px)}}
+.viewer .vbar .t b{display:block;font-size:15.5px;font-weight:700;line-height:1.25;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.viewer .vbar .t small{display:flex;justify-content:center;align-items:center;gap:6px;font-size:12px;line-height:1.35;color:var(--muted);margin-top:1px}
+.vt-sub{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.vt-no{flex:none;font-weight:700;color:var(--cyan)}
+.vt-chev{position:absolute;right:9px;top:50%;width:28px;height:28px;margin-top:-14px;border-radius:50%;display:grid;place-items:center;color:var(--cyan);background:color-mix(in srgb,var(--cyan) 16%,transparent);transition:transform .25s cubic-bezier(.3,1.5,.5,1)}
+.vt-chev svg{width:16px;height:16px}
+.viewer .vbar .t:hover .vt-chev{transform:translateY(2px)}
+
+html[data-theme="light"] .viewer .vbar{background:linear-gradient(180deg,#fff,#f3f7fe);box-shadow:0 12px 26px -16px #1b2a5059,inset 0 1px 0 #fff}
+html[data-theme="light"] .viewer .vbar::before{background:#dbe4f5}
+html[data-theme="light"] .viewer .vbar .nav.prev{color:#1d4ed8;background:linear-gradient(145deg,#fff,#eef3fd);border-color:var(--line2);box-shadow:0 8px 16px -10px #1b2a5066,inset 0 1px 0 #fff}
+html[data-theme="light"] .viewer .vbar .nav.next{background:linear-gradient(135deg,#2f6df0,#1d4ed8 55%,#0369a1);box-shadow:0 10px 22px -8px #1d4ed899,inset 0 1px 0 #ffffff66}
+html[data-theme="light"] .viewer .vbar .nav:disabled{color:#a3b0cc;background:#eef2fa;border-color:#e1e8f5;box-shadow:none}
+html[data-theme="light"] .viewer .vbar .t{background:linear-gradient(180deg,#fafcff,#eef3fd);border-color:var(--line2);box-shadow:0 8px 18px -14px #1b2a5066,inset 0 1px 0 #fff}
+html[data-theme="light"] .viewer .vbar .t:hover{border-color:#2563eb;box-shadow:0 10px 22px -12px #2563eb66,inset 0 1px 0 #fff}
+html[data-theme="light"] .vt-no{color:#0369a1}
+html[data-theme="light"] .vt-chev{color:#0369a1;background:#0369a11a}
+
+/* ===== ปุ่มกลับขึ้นข้างบน ===== */
+html.m-open{overflow:hidden}
+.totop{position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:40;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;color:#fff;border:1px solid #ffffff40;cursor:pointer;
+ background:linear-gradient(135deg,#2f6df0,#2455d6 55%,#4338ca);box-shadow:0 12px 26px -6px #2563ebb3,0 2px 6px #0004,inset 0 1px 0 #ffffff80;
+ opacity:0;transform:translateY(18px) scale(.8);pointer-events:none;transition:opacity .25s,transform .35s cubic-bezier(.3,1.4,.5,1),filter .2s}
+.totop.show{opacity:1;transform:none;pointer-events:auto}
+.totop svg{width:24px;height:24px}
+.totop:hover{filter:brightness(1.1)}
+.totop.show:active{transform:scale(.9)}
+.totop:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+html.m-open .totop{opacity:0!important;pointer-events:none!important}
+html[data-theme="light"] .totop{box-shadow:0 10px 22px -8px #2250d8a6,0 1px 4px #1b2a5040,inset 0 1px 0 #ffffff80}
 </style>
 </head>
 <body>
@@ -536,6 +629,7 @@ html[data-theme="light"] #subjBox .grab{background:#b4c2e0}
 
 <div class="hidden" id="subjBg"><div class="mback"></div><div id="subjBox" role="dialog" aria-modal="true"></div></div>
 <div class="sheet-bg hidden" id="sheetBg"><div class="sheet" id="sheet"></div></div>
+<button class="totop" id="toTop" type="button" aria-label="กลับขึ้นข้างบน"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button>
 <footer id="foot">◆ CONTENT HUB</footer>
 
 <script>
@@ -597,6 +691,7 @@ function show(v){
   $('backBtn').classList.toggle('hidden', v === 'home');
   $('logo').classList.toggle('hidden', v !== 'home' && matchMedia('(max-width:520px)').matches);
   if (v !== 'chapterView') window.scrollTo(0, 0);
+  updTop();
 }
 
 /* ---------- หน้าแรก ---------- */
@@ -654,7 +749,7 @@ function renderGrid(){
       out += groupHTML(c.name, c.color, l);
     });
   }
-  $('grid').innerHTML = out || `<div class="msg">${activeCat === 'pin' && !q ? 'ยังไม่ได้กดดาววิชาไหนเลย<br>กดดาวที่การ์ดวิชาเพื่อเก็บไว้ตรงนี้' : 'ไม่พบวิชาที่ค้นหา<br>ลองพิมพ์ชื่ออื่น หรือเลือก "ทั้งหมด"'}</div>`;
+  $('grid').innerHTML = out || (activeCat === 'pin' && !q ? '' : `<div class="msg">ไม่พบวิชาที่ค้นหา<br>ลองพิมพ์ชื่ออื่น หรือเลือก "ทั้งหมด"</div>`);
   $('count').textContent = `${total} วิชา`;
 }
 
@@ -711,7 +806,11 @@ function renderChapter(s, i){
   const url = k => `/${s.id}/${s.chapters[k].id}`;
   store.set('last', `${s.id}/${c.id}`);
   closeSheet();
-  $('vtitle').innerHTML = `<b>${esc(c.title)}</b><small>${esc(s.name)} · บท ${i + 1}/${s.chapters.length} ▾</small>`;
+  const n = s.chapters.length;
+  $('vtitle').innerHTML = `<span class="vt-main"><b>${esc(c.title)}</b><small><span class="vt-sub">${esc(s.name)}</span><span class="vt-no">บท ${i + 1}/${n}</span></small></span><span class="vt-chev">${CHEV}</span>`;
+  const vb = document.querySelector('.vbar');
+  vb.style.setProperty('--p', ((i + 1) / n * 100) + '%');
+  vb.classList.toggle('single', n < 2);
   $('vtitle').onclick = () => openSheet(s, i);
   $('prevBtn').disabled = i === 0;
   $('nextBtn').disabled = i === s.chapters.length - 1;
@@ -731,6 +830,7 @@ function renderChapter(s, i){
 
 
 /* ---------- popup วิชา ---------- */
+const CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
 const X_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
 let mSubj = null;
 function renderSubjModal(s){
@@ -768,14 +868,12 @@ function openSubjModal(s){
   renderSubjModal(s);
   $('subjBg').classList.remove('hidden');
   $('subjBox').scrollTop = 0;
-  document.body.style.overflow = 'hidden';
   document.documentElement.classList.add('m-open');
   $('crumb').textContent = '';
 }
 function hideSubjModal(){
   $('subjBg').classList.add('hidden');
   resetModalStyle();
-  document.body.style.overflow = '';
   document.documentElement.classList.remove('m-open');
   closing = false; mSubj = null;
 }
@@ -860,6 +958,16 @@ $('subjBg').addEventListener('click', e => {
   box.addEventListener('touchcancel', end);
 })();
 
+/* ---------- ปุ่มกลับขึ้นข้างบน (โผล่เมื่อเลื่อนลงไกล เฉพาะหน้าแรก) ---------- */
+let _tt = false;
+function updTop(){
+  _tt = false;
+  const on = window.scrollY > 520 && !$('home').classList.contains('hidden');
+  $('toTop').classList.toggle('show', on);
+}
+window.addEventListener('scroll', () => { if (!_tt) { _tt = true; requestAnimationFrame(updTop); } }, {passive:true});
+$('toTop').onclick = () => window.scrollTo({top:0, behavior:'smooth'});
+
 /* ---------- ระบบหน้า (URL) ---------- */
 function go(path, st){ history.pushState(st || null, '', path); route(); }
 function route(){
@@ -905,7 +1013,7 @@ window.addEventListener('keydown', e => {
   }
 });
 
-$('backBtn').innerHTML = ico('left') + 'ย้อนกลับ';
+$('backBtn').innerHTML = '<span class="bk-ic">' + ico('left') + '</span><span class="bk-tx">ย้อนกลับ</span>';
 $('prevBtn').innerHTML = ico('left') + '<span>ก่อนหน้า</span>';
 $('nextBtn').innerHTML = '<span>ถัดไป</span>' + ico('right');
 fetch('/subjects.json').then(r => r.json()).then(d => {
@@ -943,6 +1051,7 @@ function noTrans(on){
 }
 $('themeBtn').onclick = () => {
   const t = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  const tb = $('themeBtn'); tb.classList.remove('tgl'); void tb.offsetWidth; tb.classList.add('tgl'); setTimeout(() => tb.classList.remove('tgl'), 700);
   noTrans(true);                       // ปิดอนิเมชันสีชั่วคราว ให้ทั้งสองฝั่งเปลี่ยนในเฟรมเดียวกัน
   try { localStorage.setItem('hub-theme', t); } catch(e) {}
   applyTheme(t);                       // เปลี่ยนหน้าหลัก + เอกสารในกรอบบทเรียนพร้อมกัน
