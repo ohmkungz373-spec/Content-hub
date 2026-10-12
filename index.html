@@ -442,9 +442,10 @@ html[data-theme="light"] .sheet{box-shadow:0 -8px 30px #1b2a5026}
 html[data-theme="light"] footer{color:#7a8aae}
 html[data-theme="light"] ::-webkit-scrollbar-thumb{background:#c3d0ea}
 /* ===== popup วิชา (กดการ์ดวิชาแล้วขึ้นรายการบท ไม่เต็มหน้า) ===== */
-#subjBg{position:fixed;inset:0;z-index:55;display:flex;align-items:flex-end;justify-content:center;background:#000a;backdrop-filter:blur(4px);animation:mfade .2s}
+#subjBg{position:fixed;inset:0;z-index:55;display:flex;align-items:flex-end;justify-content:center}
+#subjBg .mback{position:absolute;inset:0;background:#000b;animation:mfade .28s both;will-change:opacity}
 #subjBg.hidden{display:none!important}
-#subjBox{position:relative;width:100%;max-width:560px;max-height:88dvh;overflow:auto;overscroll-behavior:contain;padding:8px 14px 20px;background:linear-gradient(var(--s3),var(--s1));border:1px solid var(--line2);border-bottom:0;border-radius:28px 28px 0 0;box-shadow:0 -20px 60px #000a;animation:up .28s cubic-bezier(.2,.8,.2,1)}
+#subjBox{position:relative;width:100%;max-width:560px;max-height:88dvh;overflow:auto;overscroll-behavior:contain;padding:8px 14px 20px;background:linear-gradient(var(--s3),var(--s1));border:1px solid var(--line2);border-bottom:0;border-radius:28px 28px 0 0;box-shadow:0 -20px 60px #000a;animation:msheet .34s cubic-bezier(.22,1,.36,1);will-change:transform;-webkit-overflow-scrolling:touch}
 #subjBox .mtop{position:relative;display:flex;justify-content:center;align-items:center;height:34px}
 #subjBox .grab{display:block;width:44px;height:5px;border-radius:9px;background:var(--line2)}
 #subjBox .mtop{touch-action:none}
@@ -455,6 +456,12 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb{background:#c3d0ea}
 #subjBox .startcard{margin-bottom:16px}
 #subjBox .row{margin:4px 0 10px}
 @keyframes mfade{from{opacity:0}}
+@keyframes msheet{from{transform:translate3d(0,100%,0)}}
+/* ตอนเปิด popup: หยุดอนิเมชันพื้นหลังที่กินเครื่อง + ปิดอนิเมชันซ้อนข้างใน */
+html.m-open body:after,html.m-open .kicker:before{animation:none}
+#subjBox .chap{animation:none}
+#subjBox .startcard::after{animation:none}
+#subjBox .chap:hover{transform:none}
 @keyframes mpop{from{opacity:0;transform:translateY(16px) scale(.97)}}
 @media(min-width:640px){
  #subjBg{align-items:center;padding:20px}
@@ -462,7 +469,7 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb{background:#c3d0ea}
  #subjBox .grab{display:none}
 }
 html[data-theme="light"] #subjBox{box-shadow:0 -8px 30px #1b2a5026}
-html[data-theme="light"] #subjBg{background:#0b1b4066}
+html[data-theme="light"] #subjBg .mback{background:#0b1b4080}
 
 /* ===== โหมดสว่าง: ปรับให้อ่านง่าย (ตัวอักษรเข้มขึ้น ปุ่มสีเข้มขึ้นให้ตัวขาวชัด) ===== */
 html[data-theme="light"]{--muted:#46567c}
@@ -527,7 +534,7 @@ html[data-theme="light"] #subjBox .grab{background:#b4c2e0}
   <div class="vframe" id="vframe"></div>
 </section>
 
-<div class="hidden" id="subjBg"><div id="subjBox" role="dialog" aria-modal="true"></div></div>
+<div class="hidden" id="subjBg"><div class="mback"></div><div id="subjBox" role="dialog" aria-modal="true"></div></div>
 <div class="sheet-bg hidden" id="sheetBg"><div class="sheet" id="sheet"></div></div>
 <footer id="foot">◆ CONTENT HUB</footer>
 
@@ -595,7 +602,7 @@ function show(v){
 /* ---------- หน้าแรก ---------- */
 function renderContinue(){
   const b = $('cont');
-  b.classList.add('hidden');
+  b.classList.add('hidden'); return;
   const last = (store.get('last') || '').split('/');
   const s = SUBJECTS.find(x => x.id === last[0]);
   const c = s && s.chapters.find(x => x.id === last[1]);
@@ -652,6 +659,7 @@ function renderGrid(){
 }
 
 function renderHome(){
+  gridDirty = false;
   $('sSub').textContent = SUBJECTS.length;
   $('sChap').textContent = SUBJECTS.reduce((n, s) => n + s.chapters.length, 0);
   renderContinue(); renderChips(); renderGrid();
@@ -747,61 +755,106 @@ function renderSubjModal(s){
     <div class="list">${s.chapters.map((c, i) => `<button class="chap ${resume && c.id === resume.id ? 'cur' : ''}" data-id="${esc(c.id)}"><i>${i + 1}</i><span>${esc(c.title)}${resume && c.id === resume.id ? '<em class="tag">ล่าสุด</em>' : ''}</span><u>›</u></button>`).join('')}</div>`
     : `<div class="msg">ยังไม่มีบทเรียนในวิชานี้<br>เร็ว ๆ นี้</div>`}`;
 }
+let gridDirty = false, closing = false;
+const isMobile = () => matchMedia('(max-width:639px)').matches;
+const mBack = () => document.querySelector('#subjBg .mback');
+function resetModalStyle(){
+  const bx = $('subjBox'), bk = mBack();
+  bx.style.transition = ''; bx.style.transform = ''; bx.style.opacity = '';
+  bk.style.transition = ''; bk.style.opacity = '';
+}
 function openSubjModal(s){
-  $('subjBox').style.transition = ''; $('subjBox').style.transform = '';
+  closing = false; resetModalStyle();
   renderSubjModal(s);
   $('subjBg').classList.remove('hidden');
   $('subjBox').scrollTop = 0;
   document.body.style.overflow = 'hidden';
+  document.documentElement.classList.add('m-open');
   $('crumb').textContent = '';
 }
 function hideSubjModal(){
   $('subjBg').classList.add('hidden');
-  $('subjBox').style.transition = ''; $('subjBox').style.transform = '';
+  resetModalStyle();
   document.body.style.overflow = '';
-  mSubj = null;
+  document.documentElement.classList.remove('m-open');
+  closing = false; mSubj = null;
 }
 // ปิด popup: ถ้าเปิดมาจากการ์ดหน้าแรก (มี state) ให้ย้อน history; ไม่งั้นแทนที่เป็นหน้าแรก
 function closeSubj(){
   if (history.state && history.state.m) history.back();
   else { history.replaceState(null, '', '/'); route(); }
 }
+// ปิดแบบมีอนิเมชัน (ปุ่ม × / แตะพื้นหลัง / Esc)
+function slideClose(){
+  if (closing || $('subjBg').classList.contains('hidden')) return;
+  closing = true;
+  const bx = $('subjBox'), bk = mBack();
+  bx.style.transition = 'transform .26s cubic-bezier(.4,0,.9,.6), opacity .26s';
+  bk.style.transition = 'opacity .26s linear'; bk.style.opacity = '0';
+  if (isMobile()) bx.style.transform = 'translate3d(0,100%,0)';
+  else { bx.style.transform = 'translateY(14px) scale(.97)'; bx.style.opacity = '0'; }
+  setTimeout(() => { if (!$('subjBg').classList.contains('hidden')) closeSubj(); }, 250);
+}
 $('subjBg').addEventListener('click', e => {
-  if (e.target === $('subjBg') || e.target.closest('[data-close]')) return closeSubj();
-  if (e.target.closest('[data-mpin]') && mSubj) { togglePin(mSubj.id); renderSubjModal(mSubj); renderGrid(); return; }
+  if (closing) return;
+  if (e.target === $('subjBg') || e.target.classList.contains('mback') || e.target.closest('[data-close]')) return slideClose();
+  if (e.target.closest('[data-mpin]') && mSubj) {
+    const st = $('subjBox').scrollTop;
+    togglePin(mSubj.id); renderSubjModal(mSubj); $('subjBox').scrollTop = st;
+    gridDirty = true;            // ค่อยรีเฟรชการ์ดหน้าแรกตอนปิด popup (ไม่ให้กระตุกระหว่างเปิดอยู่)
+    return;
+  }
   const b = e.target.closest('[data-id]');
   if (b && mSubj) go(`/${mSubj.id}/${b.dataset.id}`);   // เข้าเนื้อหา = หน้าเต็ม
 });
 
-
-// ปัดลงเพื่อปิด popup (มือถือ): ลากจากขีดด้านบน หรือลากลงตอนรายการอยู่บนสุด
+// ปัดลงเพื่อปิด popup (มือถือ): ใช้ transform อย่างเดียว อัปเดตผ่าน requestAnimationFrame
 (function(){
-  const box = $('subjBox');
-  let sy = 0, dy = 0, drag = false, t0 = 0, fromHandle = false;
-  const mobile = () => matchMedia('(max-width:639px)').matches;
+  const box = $('subjBox'), back = mBack();
+  let sy = 0, dy = 0, drag = false, fromHandle = false, ly = 0, lt = 0, vel = 0, raf = 0;
+  const apply = () => {
+    raf = 0;
+    box.style.transform = dy ? `translate3d(0,${dy}px,0)` : '';
+    back.style.opacity = String(Math.max(0, 1 - dy / Math.max(260, box.offsetHeight)));
+  };
   box.addEventListener('touchstart', e => {
-    if (!mobile() || e.touches.length !== 1) { sy = 0; return; }
-    sy = e.touches[0].clientY; dy = 0; drag = false; t0 = Date.now();
+    if (!isMobile() || closing || e.touches.length !== 1) { sy = 0; return; }
+    sy = ly = e.touches[0].clientY; lt = e.timeStamp; dy = 0; vel = 0; drag = false;
     fromHandle = !!e.target.closest('.mtop');
   }, {passive:true});
   box.addEventListener('touchmove', e => {
     if (!sy) return;
     const y = e.touches[0].clientY;
     if (!drag) {
-      if (!fromHandle && box.scrollTop > 0) { sy = y; return; }   // กำลังเลื่อนรายการอยู่
-      if (y - sy > 6) { drag = true; box.style.transition = 'none'; } else return;
+      if (!fromHandle && box.scrollTop > 0) { sy = y; return; }          // กำลังเลื่อนรายการอยู่
+      if (y - sy > 5) { drag = true; sy = y; box.style.transition = 'none'; back.style.transition = 'none'; }  // sy=y → ไม่กระโดดตอนเริ่มลาก
+      else return;
     }
     dy = Math.max(0, y - sy);
-    box.style.transform = `translateY(${dy}px)`;
+    const dt = e.timeStamp - lt;
+    if (dt > 0) vel = 0.7 * vel + 0.3 * ((y - ly) / dt);
+    ly = y; lt = e.timeStamp;
+    if (!raf) raf = requestAnimationFrame(apply);
     e.preventDefault();
   }, {passive:false});
   const end = () => {
     if (!drag) { sy = 0; return; }
-    const v = dy / Math.max(1, Date.now() - t0);
-    box.style.transition = 'transform .22s ease';
-    if (dy > 110 || v > 0.6) { box.style.transform = 'translateY(100%)'; setTimeout(closeSubj, 190); }
-    else box.style.transform = 'translateY(0)';
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
     sy = 0; drag = false;
+    const h = box.offsetHeight || 1;
+    if (dy > Math.min(140, h * 0.25) || vel > 0.6) {
+      closing = true;                                                    // ปล่อยต่อจากตำแหน่งนิ้ว
+      const dur = Math.max(0.16, Math.min(0.28, 0.28 * (1 - dy / h)));
+      box.style.transition = `transform ${dur}s cubic-bezier(.3,.7,.4,1)`;
+      back.style.transition = `opacity ${dur}s linear`;
+      box.style.transform = 'translate3d(0,100%,0)'; back.style.opacity = '0';
+      setTimeout(() => { if (!$('subjBg').classList.contains('hidden')) closeSubj(); }, dur * 1000);
+    } else {
+      box.style.transition = 'transform .3s cubic-bezier(.22,1,.36,1)';
+      back.style.transition = 'opacity .3s';
+      box.style.transform = ''; back.style.opacity = '';
+      dy = 0;
+    }
   };
   box.addEventListener('touchend', end);
   box.addEventListener('touchcancel', end);
@@ -816,7 +869,7 @@ function route(){
   const homeUp = !$('home').classList.contains('hidden') && $('grid').children.length > 0;
   if (!s) {
     hideSubjModal();
-    if (homeUp) { renderGrid(); renderContinue(); $('crumb').textContent = ''; return; }   // กลับมาจาก popup: ไม่เด้งขึ้นบนสุด
+    if (homeUp) { if (gridDirty) { renderGrid(); gridDirty = false; } $('crumb').textContent = ''; return; }   // กลับมาจาก popup: ไม่เด้งขึ้นบนสุด
     return renderHome();
   }
   if (parts[1]) {
@@ -843,7 +896,7 @@ $('clr').onclick = () => { $('q').value = ''; renderGrid(); $('q').focus(); };
 window.addEventListener('popstate', route);
 window.addEventListener('keydown', e => {
   const tag = (e.target.tagName || '').toLowerCase();
-  if (e.key === 'Escape') { if (!$('sheetBg').classList.contains('hidden')) closeSheet(); else if (!$('subjBg').classList.contains('hidden')) closeSubj(); }
+  if (e.key === 'Escape') { if (!$('sheetBg').classList.contains('hidden')) closeSheet(); else if (!$('subjBg').classList.contains('hidden')) slideClose(); }
   if (tag === 'input') return;
   if (e.key === '/' && !$('home').classList.contains('hidden')) { e.preventDefault(); $('q').focus(); }
   if (!$('chapterView').classList.contains('hidden')) {
