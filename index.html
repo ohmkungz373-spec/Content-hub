@@ -441,6 +441,27 @@ html[data-theme="light"] .top{box-shadow:0 1px 0 #d7e0f1}
 html[data-theme="light"] .sheet{box-shadow:0 -8px 30px #1b2a5026}
 html[data-theme="light"] footer{color:#7a8aae}
 html[data-theme="light"] ::-webkit-scrollbar-thumb{background:#c3d0ea}
+/* ===== popup วิชา (กดการ์ดวิชาแล้วขึ้นรายการบท ไม่เต็มหน้า) ===== */
+#subjBg{position:fixed;inset:0;z-index:55;display:flex;align-items:flex-end;justify-content:center;background:#000a;backdrop-filter:blur(4px);animation:mfade .2s}
+#subjBg.hidden{display:none!important}
+#subjBox{position:relative;width:100%;max-width:560px;max-height:88dvh;overflow:auto;overscroll-behavior:contain;padding:8px 14px 20px;background:linear-gradient(var(--s3),var(--s1));border:1px solid var(--line2);border-bottom:0;border-radius:28px 28px 0 0;box-shadow:0 -20px 60px #000a;animation:up .28s cubic-bezier(.2,.8,.2,1)}
+#subjBox .mtop{position:relative;display:flex;justify-content:center;align-items:center;height:34px}
+#subjBox .grab{display:block;width:44px;height:5px;border-radius:9px;background:var(--line2)}
+#subjBox .mclose{position:absolute;right:0;top:0;width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--ink) 7%,transparent);border:1px solid var(--line);color:var(--ink)}
+#subjBox .mclose:hover{border-color:var(--cyan)}
+#subjBox .mclose svg{width:16px;height:16px}
+#subjBox .banner{margin:4px 0 12px}
+#subjBox .startcard{margin-bottom:16px}
+#subjBox .row{margin:4px 0 10px}
+@keyframes mfade{from{opacity:0}}
+@keyframes mpop{from{opacity:0;transform:translateY(16px) scale(.97)}}
+@media(min-width:640px){
+ #subjBg{align-items:center;padding:20px}
+ #subjBox{border-radius:28px;border-bottom:1px solid var(--line2);max-height:84dvh;animation:mpop .25s ease}
+ #subjBox .grab{display:none}
+}
+html[data-theme="light"] #subjBox{box-shadow:0 -8px 30px #1b2a5026}
+html[data-theme="light"] #subjBg{background:#0b1b4066}
 </style>
 </head>
 <body>
@@ -479,6 +500,7 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb{background:#c3d0ea}
   <div class="vframe" id="vframe"></div>
 </section>
 
+<div class="hidden" id="subjBg"><div id="subjBox" role="dialog" aria-modal="true"></div></div>
 <div class="sheet-bg hidden" id="sheetBg"><div class="sheet" id="sheet"></div></div>
 <footer id="foot">◆ CONTENT HUB</footer>
 
@@ -672,25 +694,79 @@ function renderChapter(s, i){
   show('chapterView');
 }
 
+
+/* ---------- popup วิชา ---------- */
+const X_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+let mSubj = null;
+function renderSubjModal(s){
+  mSubj = s;
+  const box = $('subjBox');
+  box.style.setProperty('--acc', catOf(s).color);
+  const first = s.chapters[0];
+  box.innerHTML = `
+    <div class="mtop"><i class="grab"></i><button class="mclose" data-close="1" aria-label="ปิด">${X_ICON}</button></div>
+    <div class="banner"><span class="ico">${subjIcon(s.icon, s.name)}</span><div><h1>${esc(s.name)}</h1><div class="pills2"><span class="p-code">${esc(s.code)}</span><span class="p-n">${s.chapters.length} บทเรียน</span></div></div>
+      <button class="pin ${isPinned(s.id) ? 'on' : ''}" data-mpin="1" aria-label="รายการโปรด">${isPinned(s.id) ? ico('star','fill') : ico('star')}</button></div>
+    ${s.chapters.length ? `
+    <button class="startcard" data-id="${esc(first.id)}">
+      <span class="play">${ico('play','fill')}</span>
+      <span class="tx"><small>เริ่มเรียน</small><b>${esc(first.title)}</b></span>
+      <span class="go">›</span>
+    </button>
+    <div class="row"><h2>บทเรียนทั้งหมด</h2><span class="count">${s.chapters.length} บท</span></div>
+    <div class="list">${s.chapters.map((c, i) => `<button class="chap" data-id="${esc(c.id)}"><i>${i + 1}</i><span>${esc(c.title)}</span><u>›</u></button>`).join('')}</div>`
+    : `<div class="msg">ยังไม่มีบทเรียนในวิชานี้<br>เร็ว ๆ นี้</div>`}`;
+}
+function openSubjModal(s){
+  renderSubjModal(s);
+  $('subjBg').classList.remove('hidden');
+  $('subjBox').scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+  $('crumb').textContent = '';
+}
+function hideSubjModal(){
+  $('subjBg').classList.add('hidden');
+  document.body.style.overflow = '';
+  mSubj = null;
+}
+// ปิด popup: ถ้าเปิดมาจากการ์ดหน้าแรก (มี state) ให้ย้อน history; ไม่งั้นแทนที่เป็นหน้าแรก
+function closeSubj(){
+  if (history.state && history.state.m) history.back();
+  else { history.replaceState(null, '', '/'); route(); }
+}
+$('subjBg').addEventListener('click', e => {
+  if (e.target === $('subjBg') || e.target.closest('[data-close]')) return closeSubj();
+  if (e.target.closest('[data-mpin]') && mSubj) { togglePin(mSubj.id); renderSubjModal(mSubj); renderGrid(); return; }
+  const b = e.target.closest('[data-id]');
+  if (b && mSubj) go(`/${mSubj.id}/${b.dataset.id}`);   // เข้าเนื้อหา = หน้าเต็ม
+});
+
 /* ---------- ระบบหน้า (URL) ---------- */
-function go(path){ history.pushState(null, '', path); route(); }
+function go(path, st){ history.pushState(st || null, '', path); route(); }
 function route(){
   closeSheet();
   const parts = location.pathname.split('/').filter(Boolean).map(decodeURIComponent);
   const s = SUBJECTS.find(x => x.id === parts[0]);
-  if (!s) return renderHome();
+  const homeUp = !$('home').classList.contains('hidden') && $('grid').children.length > 0;
+  if (!s) {
+    hideSubjModal();
+    if (homeUp) { renderGrid(); $('crumb').textContent = ''; return; }   // กลับมาจาก popup: ไม่เด้งขึ้นบนสุด
+    return renderHome();
+  }
   if (parts[1]) {
     const i = s.chapters.findIndex(c => c.id === parts[1]);
-    if (i >= 0) return renderChapter(s, i);
+    if (i >= 0) { hideSubjModal(); return renderChapter(s, i); }
   }
-  renderSubject(s);
+  // /<วิชา> = หน้าแรกอยู่ข้างหลัง + popup รายการบท
+  if (!homeUp) renderHome();
+  openSubjModal(s);
 }
 
 const curSubject = () => location.pathname.split('/').filter(Boolean)[0];
 $('grid').addEventListener('click', e => {
   const p = e.target.closest('[data-pin]');
   if (p) { e.stopPropagation(); togglePin(p.dataset.pin); renderGrid(); return; }
-  const b = e.target.closest('.card'); if (b) go('/' + b.dataset.id);
+  const b = e.target.closest('.card'); if (b) go('/' + b.dataset.id, {m:1});
 });
 $('chips').addEventListener('click', e => { const b = e.target.closest('.chip'); if (b) { activeCat = b.dataset.k; renderChips(); renderGrid(); } });
 $('subjectView').addEventListener('click', e => { const b = e.target.closest('[data-id]'); if (b) go(`/${curSubject()}/${b.dataset.id}`); });
@@ -701,7 +777,7 @@ $('clr').onclick = () => { $('q').value = ''; renderGrid(); $('q').focus(); };
 window.addEventListener('popstate', route);
 window.addEventListener('keydown', e => {
   const tag = (e.target.tagName || '').toLowerCase();
-  if (e.key === 'Escape') closeSheet();
+  if (e.key === 'Escape') { if (!$('sheetBg').classList.contains('hidden')) closeSheet(); else if (!$('subjBg').classList.contains('hidden')) closeSubj(); }
   if (tag === 'input') return;
   if (e.key === '/' && !$('home').classList.contains('hidden')) { e.preventDefault(); $('q').focus(); }
   if (!$('chapterView').classList.contains('hidden')) {
