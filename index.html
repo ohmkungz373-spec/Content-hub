@@ -18,6 +18,9 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+*{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+img{-webkit-user-drag:none}
 :root{--bg:#080d1b;--s0:#0b1226;--s1:#0f1830;--s2:#111b36;--s3:#152248;--line2:#2a3d6e;--panel:var(--s1);--panel2:#16224a;--line:#1e2d57;--ink:#eaf0ff;--muted:#8499c4;--blue:#3b82f6;--cyan:#38bdf8;--acc:#3b82f6;color-scheme:dark}
 html{scroll-behavior:smooth}
 body{margin:0;font-family:"IBM Plex Sans Thai",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;min-height:100dvh}
@@ -772,6 +775,11 @@ html[data-theme="light"] #hwBox{box-shadow:0 -8px 30px #1b2a5026}
 .hw-tag{display:inline-flex;align-items:center;gap:4px;padding:2px 9px 2px 3px;border-radius:999px;font-size:11.5px;font-weight:500;background:color-mix(in srgb,var(--c) 15%,transparent);color:var(--ink);max-width:100%}
 .hw-tag .sic{width:17px;height:17px;display:block;flex:none}
 .hw-tag span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hw-it .tx{display:flex;flex-direction:column}
+.hw-it .tx .hw-meta{order:-1;margin:0 0 5px}
+.hw-it .hw-tag{font-size:14.5px;font-weight:600;padding:3px 12px 3px 4px;gap:6px}
+.hw-it .hw-tag .sic{width:22px;height:22px}
+.hw-it .hw-due{font-size:12.5px}
 .hw-due{padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:600;background:color-mix(in srgb,var(--ink) 8%,transparent);color:var(--muted)}
 .hw-due.late{background:#ef444422;color:#ef4444}
 .hw-due.soon{background:#f59e0b24;color:#d97706}
@@ -818,7 +826,7 @@ html[data-theme="light"] #hwBox{box-shadow:0 -8px 30px #1b2a5026}
 .vhero .vi .sic{width:34px;height:34px}
 .vhero .vi svg.gen,.vhero .vi>svg:not(.sic){width:26px;height:26px;color:var(--c,#3b82f6)}
 .vhero .vt2{min-width:0}
-.vhero .vt2 small{display:block;font-size:12.5px;opacity:.9;margin-bottom:2px}
+.vhero .vt2 small{display:block;font-size:15px;font-weight:600;opacity:.95;margin-bottom:2px}
 .vhero .vt2 b{display:block;font-size:19px;line-height:1.3;word-break:break-word;font-weight:700}
 .vgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 10px}
 .vt{display:flex;align-items:center;gap:9px;padding:10px 11px;border-radius:14px;border:1px solid var(--line);background:var(--s2)}
@@ -1094,7 +1102,7 @@ function renderChapter(s, i){
   const spin = document.createElement('div');
   spin.className = 'spin'; spin.textContent = 'กำลังโหลดบทเรียน...';
   f.title = c.title;
-  f.addEventListener('load', () => spin.remove());
+  f.addEventListener('load', () => { spin.remove(); lockDoc(f); });
   f.src = `/content/${encodeURIComponent(s.id)}/${encodeURIComponent(c.file)}`;
   $('vframe').replaceChildren(f, spin);
   $('crumb').textContent = '';
@@ -1242,7 +1250,17 @@ window.addEventListener('scroll', () => { if (!_tt) { _tt = true; requestAnimati
 $('toTop').onclick = () => window.scrollTo({top:0, behavior:'smooth'});
 
 /* ---------- ระบบหน้า (URL) ---------- */
-function go(path, st){ history.pushState(st || null, '', path); route(); }
+function isChapPath(p){
+  const a = p.split('/').filter(Boolean).map(decodeURIComponent);
+  const s = SUBJECTS.find(x => x.id === a[0]);
+  return !!(s && a[1] && s.chapters.some(c => c.id === a[1]));
+}
+function go(path, st){
+  const willChap = isChapPath(path);
+  if (willChap && isChapPath(location.pathname)) history.replaceState(history.state, '', path);   // บท→บท: ไม่เพิ่ม history
+  else history.pushState(st || (willChap ? {c:1} : null), '', path);
+  route();
+}
 function route(){
   closeSheet();
   const parts = location.pathname.split('/').filter(Boolean).map(decodeURIComponent);
@@ -1270,14 +1288,44 @@ $('grid').addEventListener('click', e => {
 });
 $('chips').addEventListener('click', e => { const b = e.target.closest('.chip'); if (b) { activeCat = b.dataset.k; renderChips(); renderGrid(); } });
 $('subjectView').addEventListener('click', e => { const b = e.target.closest('[data-id]'); if (b) go(`/${curSubject()}/${b.dataset.id}`); });
-$('backBtn').onclick = () => go(location.pathname.split('/').filter(Boolean).length > 1 ? '/' + curSubject() : '/');
+$('backBtn').onclick = () => {
+  if (!$('chapterView').classList.contains('hidden')) {   // อยู่หน้าบทเรียน → กลับหน้าหลักเลย
+    if (history.state && history.state.c) { history.back(); return; }
+    history.replaceState(null, '', '/'); route(); return;
+  }
+  go('/');
+};
 $('logo').onclick = () => {   // หน้าแรก: กดโลโก้ = รีเฟรช / หน้าอื่น: กลับหน้าแรก
   if (location.pathname === '/') { $('logo').animate([{transform:'scale(1)'},{transform:'scale(.9)'},{transform:'scale(1)'}], {duration:160}); setTimeout(() => location.reload(), 170); }
   else go('/');
 };
 $('q').addEventListener('input', renderGrid);
 $('clr').onclick = () => { $('q').value = ''; renderGrid(); $('q').focus(); };
-window.addEventListener('popstate', route);
+window.addEventListener('popstate', () => {
+  // ย้อนจากบทเรียนมาเจอ popup รายการบท → ข้ามไปหน้าหลักเลย
+  const parts = location.pathname.split('/').filter(Boolean);
+  if (!$('chapterView').classList.contains('hidden') && parts.length === 1 && SUBJECTS.some(x => x.id === decodeURIComponent(parts[0]))) {
+    if (history.state && history.state.m) { history.back(); return; }
+    history.replaceState(null, '', '/');
+  }
+  route();
+});
+
+/* ---------- ห้ามเลือก/คัดลอกข้อความ + ปิดเมนูกดค้าง ---------- */
+const LOCK_CSS = '*{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}input,textarea{-webkit-user-select:text!important;user-select:text!important}';
+const isField = t => t && t.closest && t.closest('input,textarea,[contenteditable="true"]');
+function lockDoc(frame){
+  try {
+    const d = frame.contentDocument; if (!d || d.__locked) return; d.__locked = true;
+    const st = d.createElement('style'); st.textContent = LOCK_CSS; (d.head || d.documentElement).appendChild(st);
+    d.addEventListener('contextmenu', e => { if (!isField(e.target)) e.preventDefault(); });
+    d.addEventListener('selectstart', e => { if (!isField(e.target)) e.preventDefault(); });
+    d.addEventListener('dragstart', e => e.preventDefault());
+  } catch(err) {}
+}
+document.addEventListener('contextmenu', e => { if (!isField(e.target)) e.preventDefault(); });
+document.addEventListener('selectstart', e => { if (!isField(e.target)) e.preventDefault(); });
+document.addEventListener('dragstart', e => e.preventDefault());
 window.addEventListener('keydown', e => {
   const tag = (e.target.tagName || '').toLowerCase();
   if (e.key === 'Escape') { if (!$('sheetBg').classList.contains('hidden')) closeSheet(); else if (!$('subjBg').classList.contains('hidden')) slideClose(); }
@@ -1529,7 +1577,7 @@ function hwDelConfirm(id){
     <div class="cf-i">${HW_TRASH}</div>
     <div class="cf-t">ลบการบ้านนี้?</div>
     <div class="cf-n">${_esc(x.title)}</div>
-    <div class="cf-s">ลบแล้วจะหายจากรายการ แต่ยังกดเลิกทำได้ในไม่กี่วินาที</div>
+    <div class="cf-s">ลบแล้วจะหายจากรายการ</div>
     <div class="pa"><button type="button" data-pdelno="1">ยกเลิก</button><button type="button" class="dng" data-pdelok="1">ลบเลย</button></div>
   </div>`;
   $('hwBg').appendChild(el);
@@ -1612,7 +1660,7 @@ try { store.remove('hwNotify'); store.remove('hwNoted'); } catch(e) {}
 function hwCommit(id, dir){          // dir: 'r' = เสร็จ/ย้อนกลับ, 'l' = ลบ
   const a = hwLoad(), i = a.findIndex(z => z.id === id); if (i < 0) return;
   if (dir === 'r') { a[i].done = !a[i].done; a[i].doneTs = a[i].done ? Date.now() : 0; hwSave(a); }
-  else { hwLast = {item: a[i], idx: i}; a.splice(i,1); hwSave(a); hwToast('ลบการบ้านแล้ว', true); }
+  else { hwLast = {item: a[i], idx: i}; a.splice(i,1); hwSave(a); hwToast('ลบการบ้านแล้ว', false); }
   const st = $('hwBox').scrollTop; hwRender(true); $('hwBox').scrollTop = st;
 }
 $('hwBg').addEventListener('click', e => {
