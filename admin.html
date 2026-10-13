@@ -105,6 +105,27 @@ button:active:not(:disabled){transform:scale(.98)}
 .row.on .ck{background:var(--acc);border-color:var(--acc);color:#0b1020}
 .edit{flex:none;background:var(--panel2);border:1px solid var(--line);min-height:36px;padding:0 12px;font-size:13px;border-radius:10px;color:var(--ink)}
 .dangerbtn{background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;width:100%;font-size:15.5px}
+/* header + subject picker */
+.top .brand{min-width:0}
+.top h1{font-size:19px;white-space:nowrap}
+.top .sub{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .acts{display:flex;gap:8px;flex:none}
+.ghost{white-space:nowrap}
+.ic{width:44px;min-height:44px;padding:0;font-size:21px;line-height:1}
+.spin{animation:sp .8s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+.cur{width:100%;display:flex;align-items:center;gap:12px;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 14px;min-height:62px;margin-bottom:12px}
+.cur .tx{flex:1;min-width:0}
+.cur small{display:block;color:var(--muted);font-size:12.5px;font-weight:500}
+.cur b{display:block;font-size:15.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cur .chg{flex:none;color:var(--acc);font-size:13.5px}
+.cur i,.gh i{width:10px;height:10px;border-radius:50%;background:var(--c);flex:none}
+.grp{margin-bottom:18px}.grp:last-child{margin-bottom:0}
+.gh{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;margin-bottom:8px}
+.gh span{margin-left:auto;font-weight:500;font-size:12.5px;color:var(--muted)}
+.subs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sb{text-align:left;min-height:60px;padding:8px 12px;border-radius:12px;background:var(--bg2);border:1px solid var(--line);border-left:4px solid var(--c);color:var(--ink);font-size:14px;line-height:1.35}
+.sb small{display:block;color:var(--muted);font-size:12px;font-weight:500}
+.sb[aria-pressed=true]{background:var(--panel2);border-color:var(--c);box-shadow:0 0 0 1px var(--c)}
 /* dialog */
 .ov{position:fixed;inset:0;background:#050810cc;display:flex;align-items:flex-end;justify-content:center;padding:16px;z-index:20}
 .dlg{width:100%;max-width:440px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px;margin-bottom:env(safe-area-inset-bottom,0px)}
@@ -148,10 +169,11 @@ button:active:not(:disabled){transform:scale(.98)}
         <div class="logo" aria-hidden="true">🛠</div>
         <div><h1>Admin Dashboard</h1><p class="sub">เพิ่มบทเรียนด้วยไฟล์ .html</p></div>
       </div>
-      <button class="ghost" id="logoutBtn" type="button">ออกจากระบบ</button>
+      <div class="acts"><button class="ghost ic" id="refBtn" type="button" aria-label="รีเฟรชรายการ" title="รีเฟรช">↻</button><button class="ghost" id="logoutBtn" type="button">ออกจากระบบ</button></div>
     </div>
 
-    <div class="chips" id="chips" role="group" aria-label="เลือกวิชา"></div>
+    <button class="cur" id="curBtn" type="button" aria-expanded="false"></button>
+    <div class="card hidden" id="picker"></div>
     <input type="hidden" id="subj">
     <div class="tabs" role="tablist">
       <button class="tab" id="tabUp" role="tab" aria-selected="true" type="button">อัปโหลดบทใหม่</button>
@@ -230,16 +252,44 @@ function ask(o){
   });
 }
 async function loadSubjects(){
-  const d = await (await fetch('/subjects.json', { cache:'no-store' })).json();
+  const d = await (await fetch('/subjects.json?t=' + Date.now(), { cache:'no-store' })).json();
   SUBJECTS = d.subjects || [];
   const cur = $('subj').value;
   $('subj').value = SUBJECTS.some(s => s.id === cur) ? cur : (SUBJECTS[0] ? SUBJECTS[0].id : '');
   renderChips(); renderChs(); renderFiles();
 }
+const CATS = [
+  {name:'ภาษา', color:'#f59e0b', test:c => 'ทอ'.includes(c)},
+  {name:'คณิตศาสตร์', color:'#a78bfa', test:c => c === 'ค'},
+  {name:'วิทยาศาสตร์', color:'#22c55e', test:c => c === 'ว'},
+  {name:'สังคม', color:'#f97316', test:c => c === 'ส'},
+  {name:'สุขภาพ/ศิลปะ/การงาน', color:'#ec4899', test:c => 'พศง'.includes(c)}
+];
+const catOf = s => CATS.find(c => c.test((s.code || '')[0] || '')) || CATS[CATS.length - 1];
+let PICK = true;
 function renderChips(){
-  $('chips').innerHTML = SUBJECTS.map(s => `<button class="chip" data-sid="${esc(s.id)}" aria-pressed="${s.id === $('subj').value}" type="button">${esc((s.code ? s.code + ' · ' : '') + s.name)}</button>`).join('');
+  const cur = curSubject();
+  const cb = $('curBtn');
+  cb.setAttribute('aria-expanded', PICK);
+  cb.style.setProperty('--c', cur ? catOf(cur).color : 'var(--muted)');
+  cb.innerHTML = cur ? `<i></i><div class="tx"><small>วิชาที่กำลังจัดการ</small><b>${esc((cur.code ? cur.code + ' · ' : '') + cur.name)}</b></div><span class="chg">${PICK ? 'ปิด ▴' : 'เปลี่ยนวิชา ▾'}</span>` : '<div class="tx"><b>เลือกวิชา</b></div>';
+  $('picker').classList.toggle('hidden', !PICK);
+  $('picker').innerHTML = CATS.map(c => {
+    const l = SUBJECTS.filter(s => catOf(s) === c); if (!l.length) return '';
+    return `<div class="grp" style="--c:${c.color}"><div class="gh"><i></i>${esc(c.name)}<span>${l.length} วิชา</span></div><div class="subs">${l.map(s => `<button class="sb" data-sid="${esc(s.id)}" aria-pressed="${s.id === $('subj').value}" type="button">${s.code ? `<small>${esc(s.code)}</small>` : ''}${esc(s.name)}</button>`).join('')}</div></div>`;
+  }).join('') || '<div class="empty" style="color:var(--muted);text-align:center">ไม่พบรายวิชา</div>';
 }
-$('chips').addEventListener('click', e => { const b = e.target.closest('[data-sid]'); if (!b) return; $('subj').value = b.dataset.sid; SEL.clear(); renderChips(); renderChs(); renderFiles(); });
+$('curBtn').onclick = () => { PICK = !PICK; renderChips(); };
+$('picker').addEventListener('click', e => { const b = e.target.closest('[data-sid]'); if (!b) return; $('subj').value = b.dataset.sid; SEL.clear(); PICK = false; renderChips(); renderChs(); renderFiles(); window.scrollTo({ top:0, behavior:'smooth' }); });
+$('refBtn').onclick = async () => {
+  const b = $('refBtn'); b.classList.add('spin'); b.disabled = true;
+  try {
+    await loadSubjects();
+    const m = '<div class="msg ok">อัปเดตรายการบทแล้ว</div>'; $('status').innerHTML = m;
+    setTimeout(() => { if ($('status').innerHTML === m) $('status').innerHTML = ''; }, 2500);
+  } catch(e){ $('status').innerHTML = '<div class="msg bad">รีเฟรชไม่สำเร็จ ลองใหม่อีกครั้ง</div>'; }
+  b.classList.remove('spin'); b.disabled = false;
+};
 function curSubject(){ return SUBJECTS.find(s => s.id === $('subj').value); }
 function setTab(t){
   TAB = t; $('viewUp').classList.toggle('hidden', t !== 'up'); $('viewMg').classList.toggle('hidden', t !== 'mg');
@@ -349,7 +399,7 @@ $('upBtn').onclick = async () => {
   } catch(e){ $('status').innerHTML = `<div class="msg bad">${esc(e.message)}</div>`; renderFiles(); }
 };
 
-async function enter(){ await loadSubjects(); showPanel(true); }
+async function enter(){ PICK = true; await loadSubjects(); showPanel(true); }
 (async () => {
   if (!TOKEN) return;
   try { await api('check'); await enter(); } catch(e){ /* ยังไม่ล็อกอิน */ }
