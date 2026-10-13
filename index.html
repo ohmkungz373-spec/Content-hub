@@ -658,6 +658,13 @@ html:not([data-theme="light"]) #subjBox{box-shadow:0 -12px 36px #0007}
 header.top .hwbtn{position:relative;flex:none;width:42px;height:42px;min-height:42px;padding:0;display:grid;place-items:center;border-radius:14px;margin-left:auto;color:var(--cyan)}
 header.top .hwbtn svg{width:21px;height:21px}
 header.top .hwbtn + .themebtn{margin-left:0}
+header.top .notifbtn{position:relative;flex:none;width:42px;height:42px;min-height:42px;padding:0;display:grid;place-items:center;border-radius:14px;margin-left:auto;color:var(--muted)}
+header.top .notifbtn svg{width:21px;height:21px}
+header.top .notifbtn.on{color:#fbbf24}
+header.top .notifbtn.on svg{filter:drop-shadow(0 0 6px #fbbf2480)}
+header.top .notifbtn + .hwbtn{margin-left:0}
+html[data-theme="light"] header.top .notifbtn.on{color:#d97706}
+.notif-toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:300;max-width:calc(100% - 32px);padding:11px 18px;border-radius:14px;background:#111827;color:#fff;font-size:13.5px;box-shadow:0 10px 30px #0008;animation:hwin .25s both}
 .hwbtn .bd{position:absolute;top:-6px;right:-6px;min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:linear-gradient(135deg,#f43f5e,#ef4444);color:#fff;font-size:11px;font-weight:700;line-height:19px;text-align:center;border:2px solid var(--bg);box-shadow:0 2px 8px #ef444466}
 #hwBg{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center}
 #hwBg.hidden{display:none!important}
@@ -874,6 +881,7 @@ header.top .refbtn:active{transform:scale(.93)}
     <button class="btn refbtn hidden" id="refBtn" type="button" aria-label="รีเฟรช" title="รีเฟรช"></button>
     <div class="logo" id="logo">◆ CONTENT <span>HUB</span></div>
     <div class="crumb" id="crumb"></div>
+    <button class="btn notifbtn" id="notifBtn" type="button" aria-label="การแจ้งเตือน" title="การแจ้งเตือน"></button>
     <button class="btn hwbtn" id="hwBtn" type="button" aria-label="บันทึกการบ้าน" title="บันทึกการบ้าน"></button>
     <button class="btn themebtn" id="themeBtn" type="button"></button>
   </div>
@@ -1731,6 +1739,95 @@ document.addEventListener('touchend', e => {
   if (now - _lastTouchEnd <= 300) e.preventDefault();
   _lastTouchEnd = now;
 }, {passive:false});
+
+
+/* ---------- ระบบแจ้งเตือน: เตือนการบ้าน + บทเรียนใหม่ ---------- */
+const NF_ON = '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 6-2.5 8-2.5 8h17S18 15 18 9z"/><path d="M10.3 20a2 2 0 0 0 3.4 0" fill="none"/></svg>';
+const NF_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 6-2.5 8-2.5 8h17S18 15 18 9z"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/><path d="M3 3l18 18"/></svg>';
+const NF_PREF = 'hub-notif', NF_SENT = 'hub-notif-sent', NF_KNOWN = 'hub-known-chapters';
+const nfSupported = 'Notification' in window;
+const nfEnabled = () => nfSupported && Notification.permission === 'granted' && store.get(NF_PREF) === '1';
+function nfToast(msg){
+  const o = document.querySelector('.notif-toast'); if (o) o.remove();
+  const t = document.createElement('div'); t.className = 'notif-toast'; t.textContent = msg;
+  document.body.appendChild(t); setTimeout(() => t.remove(), 3200);
+}
+function nfPaint(){
+  const b = $('notifBtn'), on = nfEnabled();
+  b.innerHTML = on ? NF_ON : NF_OFF; b.classList.toggle('on', on);
+  b.title = on ? 'การแจ้งเตือน: เปิดอยู่ (แตะเพื่อปิด)' : 'เปิดการแจ้งเตือน';
+}
+async function nfShow(title, body, url, tag){
+  if (!nfEnabled()) return;
+  const opt = { body, icon: '/icon-192.png', badge: '/favicon-32.png', tag: tag || undefined, data: { url: url || '/' } };
+  try {
+    if ('serviceWorker' in navigator) {
+      const reg = await navigator.serviceWorker.getRegistration();
+      if (reg && reg.showNotification) return await reg.showNotification(title, opt);
+    }
+  } catch(e) {}
+  try { new Notification(title, opt); } catch(e) {}
+}
+async function nfToggle(){
+  if (!nfSupported) { nfToast('เบราว์เซอร์นี้ยังไม่รองรับการแจ้งเตือน'); return; }
+  if (nfEnabled()) { store.set(NF_PREF, '0'); nfPaint(); nfToast('ปิดการแจ้งเตือนแล้ว'); return; }
+  if (Notification.permission === 'denied') { nfToast('การแจ้งเตือนถูกบล็อกไว้ — เปิดได้ที่การตั้งค่าของเบราว์เซอร์/เครื่อง'); return; }
+  let perm = Notification.permission;
+  if (perm !== 'granted') { try { perm = await Notification.requestPermission(); } catch(e) {} }
+  if (perm === 'granted') {
+    store.set(NF_PREF, '1'); nfPaint(); nfToast('เปิดการแจ้งเตือนแล้ว');
+    nfShow('เปิดการแจ้งเตือนแล้ว 🔔', 'จะเตือนการบ้านใกล้ส่งและบทเรียนใหม่', '/', 'hub-test');
+    nfCheck();
+  } else { nfPaint(); nfToast('ยังไม่ได้อนุญาตการแจ้งเตือน'); }
+}
+
+// เตือนการบ้าน: ล่วงหน้า 1 วัน / 1 ชั่วโมง / เมื่อเลยกำหนด (ครั้งเดียวต่อขั้น)
+function nfHomework(){
+  let sent = {}; try { sent = JSON.parse(store.get(NF_SENT) || '{}'); } catch(e) {}
+  const items = hwLoad(), alive = new Set(), now = Date.now(); let dirty = false;
+  items.forEach(x => {
+    alive.add(x.id);
+    if (x.done || !x.due) return;
+    const [y, m, d] = x.due.split('-').map(Number), [hh, mm] = (x.time || '23:59').split(':').map(Number);
+    const left = new Date(y, m - 1, d, hh, mm).getTime() - now;
+    const sj = (SUBJECTS || []).find(z => z.id === x.subj), name = sj ? sj.name : 'การบ้าน';
+    let stage = '', title = '', body = x.title;
+    if (left < 0 && left > -864e5) { stage = 'late'; title = `เลยกำหนดส่ง · ${name}`; }
+    else if (left >= 0 && left <= 36e5) { stage = 'h1'; title = `อีกไม่ถึง 1 ชั่วโมง · ${name}`; }
+    else if (left > 36e5 && left <= 864e5) { stage = 'd1'; title = `ครบกำหนดภายใน 24 ชั่วโมง · ${name}`; }
+    if (!stage) return;
+    const key = x.id + ':' + stage; if (sent[key]) return;
+    sent[key] = now; dirty = true;
+    nfShow(title, body + (x.time ? ` (ส่ง ${x.time} น.)` : ''), '/', 'hw-' + x.id);
+  });
+  Object.keys(sent).forEach(k => { if (!alive.has(k.split(':')[0])) { delete sent[k]; dirty = true; } });
+  if (dirty) store.set(NF_SENT, JSON.stringify(sent));
+}
+
+// เตือนบทเรียนใหม่: เทียบกับรายการบทที่เคยเห็น (ครั้งแรกแค่จดไว้ ไม่เตือน)
+function nfNewLessons(){
+  if (!SUBJECTS || !SUBJECTS.length) return;
+  const cur = []; SUBJECTS.forEach(s => s.chapters.forEach(c => cur.push(s.id + '/' + c.id)));
+  let known = null; try { known = JSON.parse(store.get(NF_KNOWN) || 'null'); } catch(e) {}
+  if (!Array.isArray(known)) { store.set(NF_KNOWN, JSON.stringify(cur)); return; }
+  const ks = new Set(known), fresh = [];
+  SUBJECTS.forEach(s => s.chapters.forEach(c => { if (!ks.has(s.id + '/' + c.id)) fresh.push({s, c}); }));
+  if (!fresh.length) return;
+  if (nfEnabled()) {
+    if (fresh.length === 1) nfShow('มีบทเรียนใหม่ 📘', `${fresh[0].s.name} · ${fresh[0].c.title}`, `/${fresh[0].s.id}/${fresh[0].c.id}`, 'new-lessons');
+    else nfShow(`มีบทเรียนใหม่ ${fresh.length} บท 📘`, fresh.slice(0, 3).map(f => `${f.s.name}: ${f.c.title}`).join('\n'), '/', 'new-lessons');
+    store.set(NF_KNOWN, JSON.stringify(cur));
+  } else if (nfSupported && store.get(NF_PREF) !== '1') {
+    store.set(NF_KNOWN, JSON.stringify(cur));   // ยังไม่ได้เปิดแจ้งเตือน: อัปเดตรายการไว้เฉย ๆ
+  }
+}
+function nfCheck(){ if (nfEnabled()) nfHomework(); nfNewLessons(); }
+
+$('notifBtn').onclick = nfToggle;
+nfPaint();
+setInterval(nfCheck, 60000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) nfCheck(); });
+addEventListener('load', () => setTimeout(nfCheck, 1500));
 
 if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
 
