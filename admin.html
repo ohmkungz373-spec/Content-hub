@@ -28,7 +28,7 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;border-radius:12px;min
 .chs div{padding:7px 12px;font-size:13.5px;border-bottom:1px solid var(--line);display:flex;gap:8px}
 .chs div:last-child{border-bottom:0}
 .chs small{color:var(--muted);flex:none;min-width:20px}
-.chs span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chs div{align-items:center}.chs span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pick{display:block;text-align:center;padding:18px 12px;border:2px dashed #2a3d6e;border-radius:14px;color:var(--cyan);font-weight:600;cursor:pointer}
 .pick input{display:none}
 .fl{border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:10px;background:var(--bg)}
@@ -36,6 +36,7 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;border-radius:12px;min
 .fl .t b{color:var(--ink)}
 .tag{display:inline-block;font-size:12px;border-radius:999px;padding:1px 10px;margin-top:6px;font-weight:600}
 .tag.new{background:#22c55e22;color:#4ade80}.tag.over{background:#f59e0b22;color:#fbbf24}.tag.warn{background:#ef444422;color:#fca5a5}
+.del{flex:none;background:#ef444422;color:#fca5a5;border:1px solid #ef444455;min-height:32px;padding:0 10px;font-size:13px;border-radius:10px}
 .rm{float:right;background:none;color:var(--muted);min-height:30px;padding:0 6px;font-size:18px}
 .msg{border-radius:12px;padding:12px 14px;font-size:14px;margin-top:12px}
 .msg.ok{background:#22c55e1c;border:1px solid #22c55e66;color:#bbf7d0}
@@ -124,8 +125,19 @@ function curSubject(){ return SUBJECTS.find(s => s.id === $('subj').value); }
 function renderChs(){
   const s = curSubject(), list = s ? s.chapters : [];
   $('cnt').textContent = list.length;
-  $('chs').innerHTML = list.length ? list.map((c, i) => `<div><small>${i + 1}</small><span title="${esc(c.file)}">${esc(c.title)} <small>· ${esc(c.file)}</small></span></div>`).join('') : '<div><span style="color:var(--muted)">ยังไม่มีบทเรียน</span></div>';
+  $('chs').innerHTML = list.length ? list.map((c, i) => `<div><small>${i + 1}</small><span title="${esc(c.file)}">${esc(c.title)} <small>· ${esc(c.file)}</small></span><button class="del" data-del="${i}" type="button">🗑 ลบ</button></div>`).join('') : '<div><span style="color:var(--muted)">ยังไม่มีบทเรียน</span></div>';
 }
+$('chs').addEventListener('click', async e => {
+  const bt = e.target.closest('[data-del]'); if (!bt) return;
+  const s = curSubject(), c = s && s.chapters[+bt.dataset.del]; if (!c) return;
+  if (!confirm(`ลบบท "${c.title}"\n(${c.file}) ออกจากวิชา ${s.name} ?\n\nลบแล้วกู้คืนผ่านหน้านี้ไม่ได้`)) return;
+  bt.disabled = true; bt.textContent = '...'; $('status').innerHTML = '';
+  try {
+    const j = await api('delete', { subject: s.id, files: [c.file] });
+    s.chapters.splice(+bt.dataset.del, 1); renderChs(); renderFiles();
+    $('status').innerHTML = `<div class="msg ok">🗑 ลบ ${esc(c.file)} แล้ว (commit ${esc(j.commit)})<br>เว็บกำลัง deploy ใหม่ ประมาณ 1 นาทีบทจะหายจากหน้าเว็บ</div>`;
+  } catch(err){ bt.disabled = false; bt.textContent = '🗑 ลบ'; $('status').innerHTML = `<div class="msg bad">❌ ${esc(err.message)}</div>`; }
+});
 $('subj').onchange = () => { renderChs(); renderFiles(); };
 
 const FILE_RE = /^[^\\/:*?"<>|\u0000-\u001f]{1,100}\.html$/i;
