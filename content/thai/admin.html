@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Admin Dashboard | CONTENT HUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0b1020;--bg2:#10172b;--panel:#151e36;--panel2:#1c2745;--line:#26335a;
+  --ink:#eef2ff;--muted:#8fa0c8;--acc:#8b9bff;--acc2:#5eead4;--ok:#4ade80;--bad:#f87171;--warn:#fbbf24;
+  --r:16px;color-scheme:dark
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;font-family:"IBM Plex Sans Thai",Tahoma,Arial,sans-serif;background:radial-gradient(900px 420px at 80% -10%,#1b2650 0%,transparent 70%),var(--bg);background-attachment:fixed;color:var(--ink);line-height:1.6;min-height:100dvh;padding:calc(20px + env(safe-area-inset-top,0px)) 16px calc(110px + env(safe-area-inset-bottom,0px))}
+.wrap{max-width:620px;margin:0 auto}
+h1{font-size:22px;font-weight:700;margin:0;letter-spacing:-.2px}
+h2{font-size:16px;font-weight:600;margin:0}
+.sub{color:var(--muted);font-size:14px;margin:2px 0 0}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--acc),var(--acc2));display:grid;place-items:center;font-size:20px;flex:none;color:#0b1020}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:20px}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.step{width:26px;height:26px;border-radius:50%;background:var(--panel2);border:1px solid var(--line);color:var(--acc);font-size:13px;font-weight:700;display:grid;place-items:center;flex:none}
+.head .pill{margin-left:auto}
+.pill{font-size:12.5px;font-weight:600;background:var(--panel2);border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:1px 11px}
+
+label{display:block;font-size:13.5px;color:var(--muted);margin:0 0 6px}
+input,select{width:100%;font:inherit;color:var(--ink);background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:11px 13px;min-height:48px;outline:0;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus{border-color:var(--acc);box-shadow:0 0 0 3px #8b9bff30}
+button{font:inherit;color:inherit;cursor:pointer;border:0;border-radius:12px;min-height:48px;padding:0 18px;font-weight:600;transition:transform .1s,opacity .15s,background .15s}
+button:active:not(:disabled){transform:scale(.98)}
+:focus-visible{outline:2px solid var(--acc2);outline-offset:2px}
+.pri{background:linear-gradient(135deg,#6d7dff,#38c8c0);color:#071022;width:100%;font-size:16px;min-height:56px;border-radius:14px}
+.pri:disabled{opacity:.4;cursor:default}
+#loginBtn{margin-top:14px;min-height:50px}
+.ghost{background:var(--panel2);border:1px solid var(--line);min-height:40px;padding:0 14px;font-size:14px;color:var(--ink)}
+.ghost:hover{background:#243158}
+.err{color:#fca5a5;font-size:14px;margin-top:10px;min-height:22px}
+.hidden{display:none!important}
+.pwbox{position:relative}
+.pwbox input{padding-right:64px}
+.eye{position:absolute;right:6px;top:6px;min-height:36px;padding:0 10px;background:none;color:var(--muted);font-size:13px}
+
+.login{margin-top:12vh}
+.login .brand{margin-bottom:22px}
+
+/* chapter list */
+.chs{max-height:280px;overflow:auto;border:1px solid var(--line);border-radius:12px;background:var(--bg2)}
+.chs .row{display:flex;align-items:center;gap:12px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.chs .row:last-child{border-bottom:0}
+.chs .n{flex:none;width:26px;height:26px;border-radius:8px;background:var(--panel2);color:var(--muted);font-size:12.5px;font-weight:600;display:grid;place-items:center}
+.chs .tx{flex:1;min-width:0}
+.chs .tt{font-size:14.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chs .ff{font-size:12.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chs .empty{padding:22px 14px;text-align:center;color:var(--muted);font-size:14px}
+.del{flex:none;background:transparent;color:#fca5a5;border:1px solid #f8717144;min-height:36px;padding:0 12px;font-size:13px;border-radius:10px}
+.del:hover{background:#f8717120}
+
+/* dropzone */
+.pick{display:block;text-align:center;padding:26px 14px;border:2px dashed #3a4a80;border-radius:14px;background:var(--bg2);color:var(--ink);cursor:pointer;transition:border-color .15s,background .15s}
+.pick:hover,.pick.drag{border-color:var(--acc2);background:#5eead414}
+.pick .ic{display:block;font-size:26px;line-height:1;margin-bottom:8px;color:var(--acc2)}
+.pick b{display:block;font-size:15px;font-weight:600}
+.pick span{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.pick input{display:none}
+
+.fl{position:relative;border:1px solid var(--line);border-radius:14px;padding:12px 12px 12px;margin-top:10px;background:var(--bg2)}
+.fl input{min-height:42px;padding-right:44px;font-size:14px}
+.fl .t{font-size:13px;color:var(--muted);margin-top:8px;word-break:break-word}
+.fl .t b{color:var(--ink);font-weight:600}
+.rm{position:absolute;right:16px;top:16px;background:none;color:var(--muted);min-height:34px;width:34px;padding:0;font-size:20px;line-height:1;border-radius:8px}
+.rm:hover{background:var(--panel2);color:var(--ink)}
+.tag{display:inline-block;font-size:12px;border-radius:999px;padding:1px 10px;margin-top:8px;font-weight:600}
+.tag.new{background:#4ade8022;color:var(--ok)}.tag.over{background:#fbbf2420;color:var(--warn)}.tag.warn{background:#f8717122;color:#fca5a5}
+
+.msg{border-radius:12px;padding:12px 14px;font-size:14px;margin-top:14px}
+.msg.ok{background:#4ade8018;border:1px solid #4ade8055;color:#bbf7d0}
+.msg.bad{background:#f8717118;border:1px solid #f8717155;color:#fecaca}
+.hint{font-size:13px;color:var(--muted);margin-top:10px}
+
+
+/* subject chips + tabs */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin:0 -2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;min-height:42px;padding:0 16px;border-radius:999px;background:var(--panel);border:1px solid var(--line);color:var(--muted);font-size:14px;font-weight:600;white-space:nowrap}
+.chip[aria-pressed=true]{background:var(--acc);border-color:var(--acc);color:#0b1020}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:var(--panel);border:1px solid var(--line);border-radius:14px;margin:4px 0 16px}
+.tab{min-height:44px;background:none;color:var(--muted);border-radius:10px;font-size:15px}
+.tab[aria-selected=true]{background:var(--panel2);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.tab .pill{margin-left:6px;padding:0 8px;font-size:12px}
+/* manage list */
+.tools{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.tools .ghost{min-height:36px;font-size:13.5px}
+.tools .sel{margin-left:auto;font-size:13.5px;color:var(--muted)}
+.chs .row{cursor:pointer}
+.chs .row.on{background:#8b9bff1c}
+.ck{flex:none;width:24px;height:24px;border-radius:8px;border:2px solid #3a4a80;display:grid;place-items:center;color:transparent;font-size:14px;font-weight:700}
+.row.on .ck{background:var(--acc);border-color:var(--acc);color:#0b1020}
+.edit{flex:none;background:var(--panel2);border:1px solid var(--line);min-height:36px;padding:0 12px;font-size:13px;border-radius:10px;color:var(--ink)}
+.dangerbtn{background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;width:100%;font-size:15.5px}
+/* header + subject picker */
+.top .brand{min-width:0}
+.top h1{font-size:19px;white-space:nowrap}
+.top .sub{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .acts{display:flex;gap:8px;flex:none}
+.ghost{white-space:nowrap}
+.ic{width:44px;min-height:44px;padding:0;font-size:21px;line-height:1}
+.spin{animation:sp .8s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+.cur{width:100%;display:flex;align-items:center;gap:12px;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 14px;min-height:62px;margin-bottom:12px}
+.cur .tx{flex:1;min-width:0}
+.cur small{display:block;color:var(--muted);font-size:12.5px;font-weight:500}
+.cur b{display:block;font-size:15.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cur .chg{flex:none;color:var(--acc);font-size:13.5px}
+.cur i,.gh i{width:10px;height:10px;border-radius:50%;background:var(--c);flex:none}
+.grp{margin-bottom:18px}.grp:last-child{margin-bottom:0}
+.gh{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;margin-bottom:8px}
+.gh span{margin-left:auto;font-weight:500;font-size:12.5px;color:var(--muted)}
+.subs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sb{text-align:left;min-height:60px;padding:8px 12px;border-radius:12px;background:var(--bg2);border:1px solid var(--line);border-left:4px solid var(--c);color:var(--ink);font-size:14px;line-height:1.35}
+.sb small{display:block;color:var(--muted);font-size:12px;font-weight:500}
+.sb[aria-pressed=true]{background:var(--panel2);border-color:var(--c);box-shadow:0 0 0 1px var(--c)}
+/* dialog */
+.ov{position:fixed;inset:0;background:#050810cc;display:flex;align-items:flex-end;justify-content:center;padding:16px;z-index:20}
+.dlg{width:100%;max-width:440px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px;margin-bottom:env(safe-area-inset-bottom,0px)}
+.dlg h3{margin:0 0 6px;font-size:17px}
+.dlg p{margin:0 0 14px;color:var(--muted);font-size:14px;word-break:break-word;white-space:pre-line}
+.dlg .btns{display:flex;gap:10px;margin-top:14px}
+.dlg .btns button{flex:1}
+@media (min-width:600px){.ov{align-items:center}}
+
+/* sticky bar */
+.bar{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(to top,var(--bg) 60%,transparent);z-index:5}
+.bar .in{max-width:620px;margin:0 auto}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ล็อกอิน -->
+  <div id="loginView" class="login">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">🔒</div>
+      <div><h1>Admin Dashboard</h1><p class="sub">เข้าสู่ระบบเพื่อจัดการบทเรียน</p></div>
+    </div>
+    <div class="card">
+      <label for="pw">รหัสผ่าน</label>
+      <div class="pwbox">
+        <input id="pw" type="password" autocomplete="current-password" placeholder="กรอกรหัสผ่าน">
+        <button class="eye" id="eye" type="button">แสดง</button>
+      </div>
+      <button class="pri" id="loginBtn" type="button">เข้าสู่ระบบ</button>
+      <div class="err" id="loginErr" role="alert"></div>
+    </div>
+  </div>
+
+  <!-- แดชบอร์ด -->
+  <div id="panelView" class="hidden">
+    <div class="top">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">🛠</div>
+        <div><h1>Admin Dashboard</h1><p class="sub">เพิ่มบทเรียนด้วยไฟล์ .html</p></div>
+      </div>
+      <div class="acts"><button class="ghost ic" id="refBtn" type="button" aria-label="รีเฟรชรายการ" title="รีเฟรช">↻</button><button class="ghost" id="logoutBtn" type="button">ออกจากระบบ</button></div>
+    </div>
+
+    <button class="cur" id="curBtn" type="button" aria-expanded="false"></button>
+    <div class="card hidden" id="picker"></div>
+    <input type="hidden" id="subj">
+    <div class="tabs" role="tablist">
+      <button class="tab" id="tabUp" role="tab" aria-selected="true" type="button">อัปโหลดบทใหม่</button>
+      <button class="tab" id="tabMg" role="tab" aria-selected="false" type="button">จัดการบท<span class="pill"><span id="cnt">0</span></span></button>
+    </div>
+
+    <section id="viewUp">
+      <div class="card">
+        <label class="pick" id="drop">
+          <span class="ic" aria-hidden="true">＋</span>
+          <b>แตะเพื่อเลือกไฟล์ .html</b>
+          <span>เลือกได้หลายไฟล์ หรือลากมาวางที่นี่</span>
+          <input id="file" type="file" accept=".html,text/html" multiple>
+        </label>
+        <div id="fileList"></div>
+        <div class="hint">ไฟล์ที่ชื่อซ้ำจะถูกเขียนทับ · ชื่อบทดึงจากแท็ก &lt;title&gt; · หลังอัปโหลด เว็บจะ deploy ใหม่ประมาณ 1 นาที</div>
+      </div>
+    </section>
+
+    <section id="viewMg" class="hidden">
+      <div class="card">
+        <div class="tools"><button class="ghost" id="selAll" type="button">เลือกทั้งหมด</button><span class="sel" id="selInfo"></span></div>
+        <div class="chs" id="chs"></div>
+        <div class="hint">แตะที่บทเพื่อเลือกหลายบท แล้วกดลบที่แถบด้านล่าง · ปุ่ม “แก้ชื่อ” ใช้เปลี่ยนชื่อไฟล์ (ลำดับบทเรียงตามชื่อไฟล์)</div>
+      </div>
+    </section>
+    <div id="status" role="status"></div>
+  </div>
+</div>
+
+<div class="bar hidden" id="bar"><div class="in">
+  <button class="pri" id="upBtn" type="button">เลือกไฟล์ .html</button>
+  <button class="pri dangerbtn hidden" id="delBtn" type="button">ลบที่เลือก</button>
+</div></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ss = { get(k){ try { return sessionStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { sessionStorage.setItem(k,v); } catch(e){} }, del(k){ try { sessionStorage.removeItem(k); } catch(e){} } };
+let TOKEN = ss.get('hub-admin') || '', SUBJECTS = [], FILES = [];   // FILES: {name,b64,size,title}
+
+async function api(action, data){
+  let r, j;
+  try { r = await fetch('/api/admin', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.assign({action, token: TOKEN}, data || {})) }); }
+  catch(e){ throw new Error('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้'); }
+  try { j = await r.json(); } catch(e){ throw new Error('ใช้งานได้เฉพาะบน Vercel (ไม่มี /api/admin ในโหมดรันเครื่อง)'); }
+  if (r.status === 401 && action !== 'login') { logout(); throw new Error(j.error || 'หมดเวลาการเข้าสู่ระบบ'); }
+  if (!r.ok) throw new Error(j.error || ('เกิดข้อผิดพลาด ' + r.status));
+  return j;
+}
+
+function showPanel(on){ $('loginView').classList.toggle('hidden', on); $('panelView').classList.toggle('hidden', !on); updBar(); }
+function logout(){ TOKEN = ''; SEL.clear(); ss.del('hub-admin'); showPanel(false); $('pw').value = ''; }
+
+async function login(){
+  const b = $('loginBtn'); $('loginErr').textContent = ''; b.disabled = true; b.textContent = 'กำลังตรวจสอบ...';
+  try { const j = await api('login', { password: $('pw').value }); TOKEN = j.token; ss.set('hub-admin', TOKEN); await enter(); }
+  catch(e){ $('loginErr').textContent = e.message; }
+  b.disabled = false; b.textContent = 'เข้าสู่ระบบ';
+}
+$('loginBtn').onclick = login;
+$('pw').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+$('logoutBtn').onclick = logout;
+$('eye').onclick = () => { const p = $('pw'), show = p.type === 'password'; p.type = show ? 'text' : 'password'; $('eye').textContent = show ? 'ซ่อน' : 'แสดง'; };
+
+let SEL = new Set(), TAB = 'up';
+function ask(o){
+  return new Promise(res => {
+    const ov = document.createElement('div'); ov.className = 'ov';
+    ov.innerHTML = `<div class="dlg" role="dialog" aria-modal="true"><h3>${esc(o.title)}</h3><p>${esc(o.body || '')}</p>${o.input !== undefined ? `<input id="dlgIn" value="${esc(o.input)}">` : ''}<div class="btns"><button class="ghost" data-x="0" type="button">ยกเลิก</button><button class="${o.danger ? 'dangerbtn' : 'pri'}" data-x="1" type="button" style="min-height:48px">${esc(o.ok || 'ตกลง')}</button></div></div>`;
+    document.body.appendChild(ov);
+    const inp = ov.querySelector('#dlgIn'); (inp || ov.querySelector('[data-x="1"]')).focus();
+    const done = v => { ov.remove(); res(v); };
+    ov.addEventListener('click', e => { if (e.target === ov) done(null); const x = e.target.closest('[data-x]'); if (x) done(x.dataset.x === '1' ? (inp ? inp.value.trim() : true) : null); });
+    ov.addEventListener('keydown', e => { if (e.key === 'Escape') done(null); if (e.key === 'Enter' && inp) done(inp.value.trim()); });
+  });
+}
+async function loadSubjects(){
+  const d = await (await fetch('/subjects.json?t=' + Date.now(), { cache:'no-store' })).json();
+  SUBJECTS = d.subjects || [];
+  const cur = $('subj').value;
+  $('subj').value = SUBJECTS.some(s => s.id === cur) ? cur : (SUBJECTS[0] ? SUBJECTS[0].id : '');
+  renderChips(); renderChs(); renderFiles();
+}
+const CATS = [
+  {name:'ภาษา', color:'#f59e0b', test:c => 'ทอ'.includes(c)},
+  {name:'คณิตศาสตร์', color:'#a78bfa', test:c => c === 'ค'},
+  {name:'วิทยาศาสตร์', color:'#22c55e', test:c => c === 'ว'},
+  {name:'สังคม', color:'#f97316', test:c => c === 'ส'},
+  {name:'สุขภาพ/ศิลปะ/การงาน', color:'#ec4899', test:c => 'พศง'.includes(c)}
+];
+const catOf = s => CATS.find(c => c.test((s.code || '')[0] || '')) || CATS[CATS.length - 1];
+let PICK = true;
+function renderChips(){
+  const cur = curSubject();
+  const cb = $('curBtn');
+  cb.setAttribute('aria-expanded', PICK);
+  cb.style.setProperty('--c', cur ? catOf(cur).color : 'var(--muted)');
+  cb.innerHTML = cur ? `<i></i><div class="tx"><small>วิชาที่กำลังจัดการ</small><b>${esc((cur.code ? cur.code + ' · ' : '') + cur.name)}</b></div><span class="chg">${PICK ? 'ปิด ▴' : 'เปลี่ยนวิชา ▾'}</span>` : '<div class="tx"><b>เลือกวิชา</b></div>';
+  $('picker').classList.toggle('hidden', !PICK);
+  $('picker').innerHTML = CATS.map(c => {
+    const l = SUBJECTS.filter(s => catOf(s) === c); if (!l.length) return '';
+    return `<div class="grp" style="--c:${c.color}"><div class="gh"><i></i>${esc(c.name)}<span>${l.length} วิชา</span></div><div class="subs">${l.map(s => `<button class="sb" data-sid="${esc(s.id)}" aria-pressed="${s.id === $('subj').value}" type="button">${s.code ? `<small>${esc(s.code)}</small>` : ''}${esc(s.name)}</button>`).join('')}</div></div>`;
+  }).join('') || '<div class="empty" style="color:var(--muted);text-align:center">ไม่พบรายวิชา</div>';
+}
+$('curBtn').onclick = () => { PICK = !PICK; renderChips(); };
+$('picker').addEventListener('click', e => { const b = e.target.closest('[data-sid]'); if (!b) return; $('subj').value = b.dataset.sid; SEL.clear(); PICK = false; renderChips(); renderChs(); renderFiles(); window.scrollTo({ top:0, behavior:'smooth' }); });
+$('refBtn').onclick = async () => {
+  const b = $('refBtn'); b.classList.add('spin'); b.disabled = true;
+  try {
+    await loadSubjects();
+    const m = '<div class="msg ok">อัปเดตรายการบทแล้ว</div>'; $('status').innerHTML = m;
+    setTimeout(() => { if ($('status').innerHTML === m) $('status').innerHTML = ''; }, 2500);
+  } catch(e){ $('status').innerHTML = '<div class="msg bad">รีเฟรชไม่สำเร็จ ลองใหม่อีกครั้ง</div>'; }
+  b.classList.remove('spin'); b.disabled = false;
+};
+function curSubject(){ return SUBJECTS.find(s => s.id === $('subj').value); }
+function setTab(t){
+  TAB = t; $('viewUp').classList.toggle('hidden', t !== 'up'); $('viewMg').classList.toggle('hidden', t !== 'mg');
+  $('tabUp').setAttribute('aria-selected', t === 'up'); $('tabMg').setAttribute('aria-selected', t === 'mg'); $('status').innerHTML = ''; updBar();
+}
+$('tabUp').onclick = () => setTab('up'); $('tabMg').onclick = () => setTab('mg');
+function updBar(){
+  const up = TAB === 'up', n = SEL.size;
+  $('upBtn').classList.toggle('hidden', !up); $('delBtn').classList.toggle('hidden', up || !n);
+  $('bar').classList.toggle('hidden', !TOKEN || (!up && !n));
+  $('delBtn').textContent = `ลบที่เลือก (${n} บท)`;
+}
+function renderChs(){
+  const s = curSubject(), list = s ? s.chapters : [];
+  SEL = new Set([...SEL].filter(f => list.some(c => c.file === f)));
+  $('cnt').textContent = list.length;
+  $('chs').innerHTML = list.length ? list.map((c, i) => `<div class="row${SEL.has(c.file) ? ' on' : ''}" data-i="${i}"><span class="ck" aria-hidden="true">✓</span><span class="n">${i + 1}</span><div class="tx" title="${esc(c.file)}"><div class="tt">${esc(c.title)}</div><div class="ff">${esc(c.file)}</div></div><button class="edit" data-edit="${i}" type="button">แก้ชื่อ</button></div>`).join('') : '<div class="empty">ยังไม่มีบทเรียนในวิชานี้<br>ไปที่แท็บ “อัปโหลดบทใหม่” เพื่อเพิ่ม</div>';
+  $('selInfo').textContent = SEL.size ? `เลือก ${SEL.size} จาก ${list.length}` : '';
+  $('selAll').textContent = list.length && SEL.size === list.length ? 'ยกเลิกทั้งหมด' : 'เลือกทั้งหมด';
+  $('selAll').classList.toggle('hidden', !list.length); updBar();
+}
+$('selAll').onclick = () => { const s = curSubject(), l = s ? s.chapters : []; if (SEL.size === l.length) SEL.clear(); else l.forEach(c => SEL.add(c.file)); renderChs(); };
+$('chs').addEventListener('click', async e => {
+  const s = curSubject(); if (!s) return;
+  const ed = e.target.closest('[data-edit]');
+  if (ed) {
+    const c = s.chapters[+ed.dataset.edit]; if (!c) return;
+    const nn = await ask({ title: 'แก้ชื่อไฟล์', body: `ชื่อเดิม: ${c.file}\nขึ้นต้นด้วยตัวเลขเพื่อกำหนดลำดับ เช่น 05-เรื่องใหม่.html`, input: c.file, ok: 'บันทึกชื่อ' });
+    if (nn === null || nn === c.file) return;
+    if (!FILE_RE.test(nn) || /^[._]/.test(nn) || s.chapters.some(x => x !== c && x.file.toLowerCase() === nn.toLowerCase())) { $('status').innerHTML = '<div class="msg bad">ชื่อไฟล์ไม่ถูกต้องหรือซ้ำกับบทอื่น (ต้องลงท้าย .html)</div>'; return; }
+    $('status').innerHTML = '';
+    try {
+      const j = await api('rename', { subject: s.id, from: c.file, to: nn });
+      c.file = nn; s.chapters.sort((a, b) => a.file.localeCompare(b.file, 'th', { numeric:true })); SEL.clear(); renderChs();
+      $('status').innerHTML = `<div class="msg ok">เปลี่ยนชื่อเป็น ${esc(nn)} แล้ว${j && j.commit ? ' (commit ' + esc(j.commit) + ')' : ''}<br>เว็บกำลัง deploy ใหม่ ประมาณ 1 นาที</div>`;
+    } catch(err){ $('status').innerHTML = `<div class="msg bad">${esc(err.message)}</div>`; }
+    return;
+  }
+  const row = e.target.closest('[data-i]'); if (!row) return;
+  const c = s.chapters[+row.dataset.i]; if (!c) return;
+  SEL.has(c.file) ? SEL.delete(c.file) : SEL.add(c.file); renderChs();
+});
+$('delBtn').onclick = async () => {
+  const s = curSubject(), files = [...SEL]; if (!s || !files.length) return;
+  const ok = await ask({ title: `ลบ ${files.length} บท?`, body: files.map(f => '• ' + f).join('\n') + `\n\nจากวิชา ${s.name} · ลบแล้วกู้คืนผ่านหน้านี้ไม่ได้`, ok: 'ลบเลย', danger: true });
+  if (!ok) return;
+  const b = $('delBtn'); b.disabled = true; b.textContent = 'กำลังลบ...'; $('status').innerHTML = '';
+  try {
+    const j = await api('delete', { subject: s.id, files });
+    s.chapters = s.chapters.filter(c => !files.includes(c.file)); SEL.clear(); renderChs(); renderFiles();
+    $('status').innerHTML = `<div class="msg ok">ลบ ${files.length} บทแล้ว (commit ${esc(j.commit)})<br>เว็บกำลัง deploy ใหม่ ประมาณ 1 นาทีบทจะหายจากหน้าเว็บ</div>`;
+  } catch(err){ $('status').innerHTML = `<div class="msg bad">${esc(err.message)}</div>`; }
+  b.disabled = false; updBar();
+};
+
+const FILE_RE = /^[^\\/:*?"<>|\u0000-\u001f]{1,100}\.html$/i;
+function renderFiles(){
+  const s = curSubject(), have = new Set((s ? s.chapters : []).map(c => c.file.toLowerCase()));
+  const names = FILES.map(f => f.name.toLowerCase());
+  $('fileList').innerHTML = FILES.map((f, i) => {
+    const bad = !FILE_RE.test(f.name) || /^[._]/.test(f.name) || names.indexOf(f.name.toLowerCase()) !== i;
+    const tag = bad ? '<span class="tag warn">ชื่อไฟล์ไม่ถูกต้องหรือซ้ำ</span>' : have.has(f.name.toLowerCase()) ? '<span class="tag over">จะเขียนทับไฟล์เดิม</span>' : '<span class="tag new">บทใหม่</span>';
+    return `<div class="fl"><button class="rm" data-rm="${i}" type="button" aria-label="เอาออก">×</button>
+      <input data-name="${i}" value="${esc(f.name)}" aria-label="ชื่อไฟล์">
+      <div class="t">ชื่อบท: <b>${f.title ? esc(f.title) : '(ไม่พบ &lt;title&gt; จะใช้ชื่อไฟล์แทน)'}</b> · ${(f.size / 1024).toFixed(0)} KB</div>${tag}</div>`;
+  }).join('');
+  const ok = FILES.length && FILES.every((f, i) => FILE_RE.test(f.name) && !/^[._]/.test(f.name) && names.indexOf(f.name.toLowerCase()) === i);
+  $('upBtn').disabled = FILES.length ? (!ok || !s) : false;
+  $('upBtn').textContent = FILES.length ? `อัปโหลด ${FILES.length} ไฟล์เข้า “${s ? s.name : ''}”` : 'เลือกไฟล์ .html';
+}
+$('fileList').addEventListener('click', e => { const b = e.target.closest('[data-rm]'); if (b) { FILES.splice(+b.dataset.rm, 1); renderFiles(); } });
+$('fileList').addEventListener('input', e => { const i = e.target.dataset && e.target.dataset.name; if (i !== undefined) { FILES[+i].name = e.target.value.trim(); updTags(); } });
+function updTags(){ const keep = document.activeElement, pos = keep && keep.selectionStart, id = keep && keep.dataset && keep.dataset.name; renderFiles(); if (id !== undefined && id !== null) { const n = document.querySelector(`[data-name="${id}"]`); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch(e){} } } }
+
+function toB64(buf){ const u = new Uint8Array(buf); let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); }
+function titleOf(buf){
+  try { const t = new TextDecoder('utf-8').decode(buf).replace(/<!--[\s\S]*?-->/g, '').match(/<title>([\s\S]*?)<\/title>/i); return t ? t[1].replace(/\s+/g, ' ').trim().split('|')[0].trim() : ''; } catch(e){ return ''; }
+}
+async function addFiles(list){
+  $('status').innerHTML = '';
+  for (const f of list) {
+    if (!/\.html?$/i.test(f.name)) continue;
+    const buf = await f.arrayBuffer();
+    const name = f.name.replace(/\.htm$/i, '.html');
+    FILES = FILES.filter(x => x.name.toLowerCase() !== name.toLowerCase());
+    FILES.push({ name, b64: toB64(buf), size: buf.byteLength, title: titleOf(buf) });
+  }
+  renderFiles();
+}
+$('file').addEventListener('change', async e => { await addFiles(e.target.files); e.target.value = ''; });
+const drop = $('drop');
+['dragenter','dragover'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add('drag'); }));
+['dragleave','drop'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove('drag'); }));
+drop.addEventListener('drop', e => { if (e.dataTransfer && e.dataTransfer.files) addFiles(e.dataTransfer.files); });
+
+$('upBtn').onclick = async () => {
+  const s = curSubject(); if (!FILES.length) { $('file').click(); return; } if (!s) return;
+  const total = FILES.reduce((a, f) => a + f.size, 0);
+  if (total > 3 * 1024 * 1024) { $('status').innerHTML = '<div class="msg bad">ไฟล์รวมใหญ่เกิน 3 MB ให้แบ่งอัปโหลดทีละชุด</div>'; return; }
+  const b = $('upBtn'); b.disabled = true; b.textContent = 'กำลังอัปโหลด...'; $('status').innerHTML = '';
+  try {
+    const j = await api('upload', { subject: s.id, files: FILES.map(f => ({ name: f.name, b64: f.b64 })) });
+    $('status').innerHTML = `<div class="msg ok">อัปโหลด ${j.count} ไฟล์สำเร็จ (commit ${esc(j.commit)})<br>เว็บกำลัง deploy ใหม่ ประมาณ 1 นาทีบทเรียนจะขึ้น</div>`;
+    FILES = []; renderFiles();
+    $('status').scrollIntoView({ behavior:'smooth', block:'center' });
+    setTimeout(() => loadSubjects().catch(() => {}), 70000);
+  } catch(e){ $('status').innerHTML = `<div class="msg bad">${esc(e.message)}</div>`; renderFiles(); }
+};
+
+async function enter(){ PICK = true; await loadSubjects(); showPanel(true); }
+(async () => {
+  if (!TOKEN) return;
+  try { await api('check'); await enter(); } catch(e){ /* ยังไม่ล็อกอิน */ }
+})();
+</script>
+</body>
+</html>
