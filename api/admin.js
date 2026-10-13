@@ -6,6 +6,7 @@
 //   GITHUB_TOKEN     (จำเป็น) fine-grained token ที่มีสิทธิ์ Contents: Read and write ของ repo นี้
 //   GITHUB_REPO      (จำเป็น) เช่น  yourname/content-hub
 //   GITHUB_BRANCH    (ไม่บังคับ) ค่าเริ่มต้น main
+//   GITHUB_DIR       (ไม่บังคับ) ถ้าโปรเจกต์อยู่ในโฟลเดอร์ย่อยของ repo ใส่ชื่อโฟลเดอร์นั้น
 //   ADMIN_PASSWORD   (ไม่บังคับ) ถ้าไม่ตั้ง จะใช้ zazaq123
 //   ADMIN_SECRET     (ไม่บังคับ) ข้อความสุ่มสำหรับเซ็น token
 const crypto = require('crypto');
@@ -37,6 +38,37 @@ async function gh(path, opt = {}) {
   const j = await r.json().catch(() => ({}));
   if (!r.ok) { const e = new Error(j.message || ('GitHub error ' + r.status)); e.status = r.status; throw e; }
   return j;
+}
+
+const BASE = String(process.env.GITHUB_DIR || '').replace(/^\/+|\/+$/g, '');   // ถ้าโปรเจกต์อยู่ในโฟลเดอร์ย่อยของ repo
+const P = p => (BASE ? BASE + '/' : '') + p;
+const bad = (m, status) => { const e = new Error(m); e.status = status || 500; return e; };
+
+async function verify(repo, branch, subject) {
+  try { await gh(`/repos/${repo}`); }
+  catch (e) {
+    if ([401, 403, 404].includes(e.status)) throw bad(`เข้า repo "${repo}" ไม่ได้ — เช็ก GITHUB_REPO ว่าสะกดถูก (ชื่อบัญชี/ชื่อrepo) และ token ได้เลือก repo นี้ + สิทธิ์ Contents: Read and write`);
+    throw e;
+  }
+  try { await gh(`/repos/${repo}/branches/${encodeURIComponent(branch)}`); }
+  catch (e) { if (e.status === 404) throw bad(`ไม่พบ branch "${branch}" — ตั้ง GITHUB_BRANCH ให้ตรงกับ branch ที่ Vercel deploy`); throw e; }
+  try { return await gh(`/repos/${repo}/contents/${P('content/' + subject).split('/').map(encodeURIComponent).join('/')}?ref=${encodeURIComponent(branch)}`); }
+  catch (e) {
+    if (e.status !== 404) throw e;
+    let root = '';
+    try { const r = await gh(`/repos/${repo}/contents/${BASE ? BASE.split('/').map(encodeURIComponent).join('/') : ''}?ref=${encodeURIComponent(branch)}`); root = (Array.isArray(r) ? r.map(x => x.name) : []).slice(0, 25).join(', '); } catch (e2) {}
+    throw bad(`ไม่พบโฟลเดอร์ ${P('content/' + subject)} ใน repo (branch ${branch}). ที่เห็นที่ราก: ${root || '-'} — ถ้าโฟลเดอร์ content/ อยู่ในโฟลเดอร์ย่อย ให้ตั้ง GITHUB_DIR เป็นชื่อโฟลเดอร์นั้น`);
+  }
+}
+
+async function commitTree(repo, branch, tree, message) {
+  const ref = await gh(`/repos/${repo}/git/ref/heads/${encodeURIComponent(branch)}`);
+  const headSha = ref.object.sha;
+  const head = await gh(`/repos/${repo}/git/commits/${headSha}`);
+  const nt = await gh(`/repos/${repo}/git/trees`, { method: 'POST', body: { base_tree: head.tree.sha, tree } });
+  const commit = await gh(`/repos/${repo}/git/commits`, { method: 'POST', body: { message: message.slice(0, 250), tree: nt.sha, parents: [headSha] } });
+  await gh(`/repos/${repo}/git/refs/heads/${encodeURIComponent(branch)}`, { method: 'PATCH', body: { sha: commit.sha } });
+  return commit.sha.slice(0, 7);
 }
 
 const SUBJECT_RE = /^[A-Za-z0-9][A-Za-z0-9_-]{0,80}$/;
@@ -76,24 +108,31 @@ module.exports = async (req, res) => {
         seen.add(f.name.toLowerCase());
       }
 
-      // วิชาต้องมีอยู่จริง
-      try { await gh(`/repos/${repo}/contents/content/${encodeURIComponent(subject)}?ref=${encodeURIComponent(branch)}`); }
-      catch (e) { return res.status(404).json({ error: e.status === 404 ? `ไม่พบวิชา "${subject}" ใน content/ ของ repo` : e.message }); }
-
-      // commit เดียวสำหรับทุกไฟล์ (Vercel deploy ครั้งเดียว)
-      const ref = await gh(`/repos/${repo}/git/ref/heads/${encodeURIComponent(branch)}`);
-      const headSha = ref.object.sha;
-      const head = await gh(`/repos/${repo}/git/commits/${headSha}`);
+      await verify(repo, branch, subject);
       const tree = [];
       for (const f of files) {
         const blob = await gh(`/repos/${repo}/git/blobs`, { method: 'POST', body: { content: f.b64, encoding: 'base64' } });
-        tree.push({ path: `content/${subject}/${f.name}`, mode: '100644', type: 'blob', sha: blob.sha });
+        tree.push({ path: P(`content/${subject}/${f.name}`), mode: '100644', type: 'blob', sha: blob.sha });
       }
-      const nt = await gh(`/repos/${repo}/git/trees`, { method: 'POST', body: { base_tree: head.tree.sha, tree } });
-      const names = files.map(f => f.name).join(', ');
-      const commit = await gh(`/repos/${repo}/git/commits`, { method: 'POST', body: { message: `admin: อัปโหลดบทเรียน ${subject}: ${names}`.slice(0, 250), tree: nt.sha, parents: [headSha] } });
-      await gh(`/repos/${repo}/git/refs/heads/${encodeURIComponent(branch)}`, { method: 'PATCH', body: { sha: commit.sha } });
-      return res.json({ ok: true, count: files.length, commit: commit.sha.slice(0, 7) });
+      const commit = await commitTree(repo, branch, tree, `admin: อัปโหลดบทเรียน ${subject}: ${files.map(f => f.name).join(', ')}`);
+      return res.json({ ok: true, count: files.length, commit });
+    }
+
+    if (b.action === 'delete') {
+      if (!process.env.GITHUB_TOKEN || !process.env.GITHUB_REPO)
+        return res.status(500).json({ error: 'ยังไม่ได้ตั้งค่า GITHUB_TOKEN / GITHUB_REPO ใน Vercel' });
+      const repo = process.env.GITHUB_REPO, branch = process.env.GITHUB_BRANCH || 'main';
+      const subject = String(b.subject || '');
+      if (!SUBJECT_RE.test(subject)) return res.status(400).json({ error: 'ชื่อวิชาไม่ถูกต้อง' });
+      const names = Array.isArray(b.files) ? b.files.map(String) : [];
+      if (!names.length || names.length > 20) return res.status(400).json({ error: 'เลือกไฟล์ 1–20 ไฟล์' });
+      for (const n of names) if (!FILE_RE.test(n) || /^[._]/.test(n)) return res.status(400).json({ error: `ชื่อไฟล์ไม่ถูกต้อง: ${n}` });
+      const listing = await verify(repo, branch, subject);
+      const have = new Set((Array.isArray(listing) ? listing : []).map(x => x.name));
+      for (const n of names) if (!have.has(n)) return res.status(404).json({ error: `ไม่พบไฟล์ ${n} ใน repo (อาจถูกลบไปแล้ว)` });
+      const tree = names.map(n => ({ path: P(`content/${subject}/${n}`), mode: '100644', type: 'blob', sha: null }));
+      const commit = await commitTree(repo, branch, tree, `admin: ลบบทเรียน ${subject}: ${names.join(', ')}`);
+      return res.json({ ok: true, count: names.length, commit });
     }
 
     res.status(400).json({ error: 'unknown action' });
