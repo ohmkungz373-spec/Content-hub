@@ -20,5 +20,12 @@ fs.cpSync(CONTENT, path.join(OUT, 'content'), {
 fs.writeFileSync(path.join(OUT, 'subjects.json'), JSON.stringify(data));
 fs.copyFileSync(path.join(ROOT, 'index.html'), path.join(OUT, 'index.html'));
 
+// ไฟล์ PWA (ติดตั้งเป็นแอป) — คัดลอกไปไว้ที่รากของ public/
+for (const f of ['manifest.webmanifest', 'sw.js', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'favicon-32.png']) {
+  const src = path.join(ROOT, f);
+  if (fs.existsSync(src)) fs.copyFileSync(src, path.join(OUT, f));
+  else console.warn('[build] ไม่พบไฟล์ PWA:', f);
+}
+
 const n = data.subjects.reduce((s, x) => s + x.chapters.length, 0);
 console.log(`[build] เสร็จ: ${data.subjects.length} วิชา, ${n} บทเรียน → public/`);
