@@ -34,6 +34,12 @@ http.createServer((req, res) => {
     });
   }
 
+  // หน้า admin (ใช้อัปโหลดได้เฉพาะตอน deploy บน Vercel)
+  if (p === '/admin-dashboard' || p === '/admin-dashboard/') {
+    return fs.readFile(path.join(ROOT, 'admin.html'), (err, buf) =>
+      err ? send(res, 500, 'text/plain', 'admin.html missing') : send(res, 200, MIME['.html'], buf));
+  }
+
   // ทุกหน้าที่ไม่มีนามสกุล (/, /physics, /physics/01-intro) → index.html
   if (!path.extname(p) || p === '/index.html') {
     return fs.readFile(path.join(ROOT, 'index.html'), (err, buf) =>

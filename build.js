@@ -19,6 +19,7 @@ fs.cpSync(CONTENT, path.join(OUT, 'content'), {
 });
 fs.writeFileSync(path.join(OUT, 'subjects.json'), JSON.stringify(data));
 fs.copyFileSync(path.join(ROOT, 'index.html'), path.join(OUT, 'index.html'));
+if (fs.existsSync(path.join(ROOT, 'admin.html'))) fs.copyFileSync(path.join(ROOT, 'admin.html'), path.join(OUT, 'admin.html'));   // หน้า /admin-dashboard
 
 // ไฟล์ PWA (ติดตั้งเป็นแอป) — คัดลอกไปไว้ที่รากของ public/
 for (const f of ['manifest.webmanifest', 'sw.js', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'favicon-32.png']) {
