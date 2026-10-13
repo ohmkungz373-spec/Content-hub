@@ -6,13 +6,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#080d1b">
+<meta name="theme-color" content="#eef3fb">
 <script>
 /* สลับโหมดมืด/สว่างตามเว็บหลัก (อ่านจาก localStorage "hub-theme" + ฟังการเปลี่ยนแบบสด) */
 (function(){
   function g(){try{return localStorage.getItem("hub-theme")}catch(e){return null}}
   function a(v){document.documentElement.setAttribute("data-theme",v);var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=v==="light"?"#eef3fb":"#080d1b"}
-  a(g()||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"));
+  a(g()||"light");
   addEventListener("storage",function(e){if(e.key==="hub-theme"&&e.newValue)a(e.newValue)});
   addEventListener("message",function(e){if(e.data&&e.data.hubTheme)a(e.data.hubTheme)});
 })();
@@ -2049,6 +2049,382 @@ html body .qx-review-head h4{font-size:21px!important}
 html body .to-top{width:42px!important;height:42px!important}
 html body .to-top svg{width:19px!important;height:19px!important}
 </style>
+<style id="review-compact">
+/* ═════════ ป๊อปอัพเฉลย: เล็กลง กระชับ + จุดเด่นคือวงแหวนคะแนนและการ์ดแยกสีถูก/ผิด (วางท้ายสุด) ═════════ */
+html[data-theme] body .qx-review-sheet{--ok:#4ade80;--bad:#fb7185;--hl:#7dd3fc;--cardbg:#101a36;--ring-bg:rgba(255,255,255,.12)}
+html[data-theme="light"] body .qx-review-sheet{--ok:#15803d;--bad:#be123c;--hl:#1d4ed8;--cardbg:#fff;--ring-bg:rgba(15,23,42,.1)}
+html[data-theme] body .qx-review-sheet{width:min(560px,100%)!important;max-height:min(82dvh,720px)!important;border-radius:20px!important;box-shadow:0 20px 56px rgba(0,0,0,.5)!important}
+html[data-theme] body .qx-review-drag{padding:6px 0 0!important;margin:0!important}
+html[data-theme] body .qx-review-drag span{width:36px!important;height:4px!important}
+
+/* หัว: แถวเดียว วงแหวนคะแนน + ชื่อ + ปุ่มปิดเล็ก */
+html[data-theme] body .qx-review-head{padding:10px 14px 12px!important;gap:10px!important;align-items:center!important;
+  background:linear-gradient(120deg,rgba(37,99,235,.28),rgba(6,182,212,.10) 60%,transparent)!important}
+html[data-theme="light"] body .qx-review-head{background:linear-gradient(120deg,#e3eeff,#f1fbff 60%,#fff)!important}
+html[data-theme] body .qx-review-heading{display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:center;min-width:0}
+html[data-theme] body .qx-review-kicker{grid-column:2;grid-row:1;font-size:11px!important;font-weight:600!important;letter-spacing:0!important;opacity:.85;line-height:1.2}
+html[data-theme] body .qx-review-head h4{grid-column:2;grid-row:2;margin:1px 0 0!important;font-size:17px!important;line-height:1.25!important}
+html[data-theme] body .qx-review-head p{display:none!important}
+html[data-theme] body .qx-review-summary{grid-column:1;grid-row:1/3;position:relative;width:52px;height:52px;margin:0!important;padding:0!important;border:0!important;background:none!important;border-radius:50%!important;
+  display:grid!important;place-items:center;font-size:0!important}
+html[data-theme] body .qx-review-summary::before{content:"";position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(var(--ok) calc(var(--pct,0)*1%),var(--ring-bg) 0);
+  -webkit-mask:radial-gradient(circle,transparent 18px,#000 19px);mask:radial-gradient(circle,transparent 18px,#000 19px)}
+html[data-theme] body .qx-review-summary span:last-child{display:none}
+html[data-theme] body .qx-review-summary-score{font-size:12.5px!important;font-weight:800!important;color:var(--ink)!important;position:relative}
+html[data-theme] body .qx-review-close{width:32px!important;height:32px!important;border-radius:10px!important;font-size:19px!important;box-shadow:none!important;
+  background:rgba(255,255,255,.08)!important;border:1px solid var(--line)!important;color:var(--ink)!important}
+html[data-theme="light"] body .qx-review-close{background:#fff!important}
+
+/* ตัวกรอง: แถบสลับแบบ segmented */
+html[data-theme] body .qx-review-filters{margin:10px 14px 0!important;padding:3px!important;gap:3px!important;border:1px solid var(--line)!important;border-radius:12px!important;background:color-mix(in srgb,var(--ink) 5%,transparent)!important}
+html[data-theme] body .qx-review-filter{min-height:30px!important;padding:0 8px!important;border:0!important;border-radius:9px!important;font-size:12.5px!important;font-weight:600!important;gap:6px!important;background:transparent!important;box-shadow:none!important}
+html[data-theme] body .qx-review-filter[aria-pressed="true"]{color:#fff!important;background:linear-gradient(135deg,var(--g1),var(--g2))!important;font-weight:700!important;box-shadow:0 3px 10px color-mix(in srgb,var(--c) 40%,transparent)!important}
+html[data-theme] body .qx-review-filter .count{min-width:18px!important;height:18px!important;padding:0 5px!important;font-size:11px!important}
+
+/* รายการ + การ์ดโจทย์ */
+html[data-theme] body .qx-review-list{padding:10px 14px 18px!important;gap:10px!important}
+html[data-theme] body .qx-review-list .qx-rv{padding:11px 12px 12px 15px!important;border-radius:14px!important;box-shadow:none!important;background:var(--cardbg)!important}
+html[data-theme] body .qx-review-list .qx-rv::before{width:4px!important}
+html[data-theme] body .qx-review-list .qx-rv-h{gap:9px!important;align-items:center!important}
+html[data-theme] body .qx-review-list .qx-no{width:28px!important;height:28px!important;border-radius:9px!important;font-size:12px!important;box-shadow:none!important}
+html[data-theme] body .qx-review-list .qx-rv-q{padding-top:0!important;font-size:14.5px!important;line-height:1.5!important;font-weight:600!important}
+html[data-theme] body .qx-review-list .qx-rv-status{margin-top:0!important;padding:2px 9px!important;font-size:11.5px!important;gap:3px!important}
+
+/* คำตอบของคุณ / เฉลย: เทียบข้างกันเสมอ */
+html[data-theme] body .qx-review-list .qx-rv-a{grid-template-columns:1fr 1fr!important;gap:8px!important;margin:10px 0 0!important}
+html[data-theme] body .qx-review-list .qx-rv-answer-row{padding:7px 10px!important;border-radius:10px!important;gap:1px!important;min-width:0}
+html[data-theme] body .qx-review-list .qx-rv-label{font-size:11px!important;font-weight:700!important;letter-spacing:0!important}
+html[data-theme] body .qx-review-list .qx-rv-label::before{width:6px!important;height:6px!important;margin-right:5px!important}
+html[data-theme] body .qx-review-list .qx-rv-answer{font-size:13.5px!important;line-height:1.45!important;overflow-wrap:anywhere}
+
+/* คำอธิบาย: แถบแนวตั้งสีม่วง ไม่เป็นกล่องหนัก */
+html[data-theme] body .qx-review-list .qx-exp,
+html[data-theme] body .qx-review-list .qx-rv.ok .qx-exp{margin-top:9px!important;border:0!important;border-left:3px solid #a78bfa!important;border-radius:4px 10px 10px 4px!important;
+  background:color-mix(in srgb,#8b5cf6 11%,transparent)!important}
+html[data-theme="light"] body .qx-review-list .qx-exp,
+html[data-theme="light"] body .qx-review-list .qx-rv.ok .qx-exp{background:#f5f0ff!important;border-color:#a78bfa!important}
+html[data-theme] body .qx-review-list .qx-exp-h,
+html[data-theme] body .qx-review-list .qx-rv.ok .qx-exp-h{padding:6px 11px 0!important;gap:6px!important;background:none!important;border:0!important}
+html[data-theme] body .qx-review-list .qx-exp-ico{width:18px!important;height:18px!important;border:0!important;background:none!important}
+html[data-theme] body .qx-review-list .qx-exp-ico .hi{width:15px!important;height:15px!important}
+html[data-theme] body .qx-review-list .qx-exp-h b,
+html[data-theme] body .qx-review-list .qx-rv.ok .qx-exp-h b{font-size:12.5px!important}
+html[data-theme] body .qx-review-list .qx-exp-t{padding:2px 11px 9px!important;font-size:13.5px!important;line-height:1.7!important}
+
+@media(max-width:560px){
+  html[data-theme] body .qx-review-sheet{max-height:80dvh!important;border-radius:18px 18px 0 0!important}
+  html[data-theme] body .qx-review-head{padding:8px 12px 10px!important}
+  html[data-theme] body .qx-review-filters{margin:8px 12px 0!important}
+  html[data-theme] body .qx-review-list{padding:10px 12px 16px!important}
+  html[data-theme] body .qx-review-list .qx-rv-q{font-size:14px!important}
+}
+</style>
+<style id="review-flair">
+/* ═════════ เพิ่มลูกเล่นป๊อปอัพเฉลยอีกนิด (วางท้ายสุด) ═════════ */
+html[data-theme] body .qx-review-sheet{position:relative;border-color:color-mix(in srgb,var(--hl) 35%,var(--line))!important;
+  box-shadow:0 20px 56px rgba(0,0,0,.5),0 0 0 1px color-mix(in srgb,var(--hl) 12%,transparent),0 -6px 40px rgba(56,189,248,.12)!important}
+html[data-theme] body .qx-review-sheet::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;z-index:3;
+  background:linear-gradient(90deg,#2563eb,#22d3ee,#4ade80,#a78bfa)}
+/* หัว: แสงฟุ้งหลังวงแหวน */
+html[data-theme] body .qx-review-head{background:
+  radial-gradient(120px 90px at 36px 50%,color-mix(in srgb,var(--ok) 28%,transparent),transparent),
+  linear-gradient(120deg,rgba(37,99,235,.30),rgba(6,182,212,.10) 60%,transparent)!important}
+html[data-theme="light"] body .qx-review-head{background:
+  radial-gradient(120px 90px at 36px 50%,rgba(34,197,94,.22),transparent),
+  linear-gradient(120deg,#e3eeff,#f1fbff 60%,#fff)!important}
+html[data-theme] body .qx-review-summary{width:56px;height:56px}
+html[data-theme] body .qx-review-summary::before{
+  background:conic-gradient(from 0deg,#22d3ee,var(--ok) calc(var(--pct,0)*1%),var(--ring-bg) 0);
+  -webkit-mask:radial-gradient(circle,transparent 19px,#000 20px);mask:radial-gradient(circle,transparent 19px,#000 20px);
+  filter:drop-shadow(0 0 6px color-mix(in srgb,var(--ok) 55%,transparent))}
+html[data-theme] body .qx-review-summary-score{font-size:13.5px!important}
+html[data-theme] body .qx-review-head h4{font-size:18px!important;font-weight:800!important}
+html[data-theme] body .qx-review-kicker{color:var(--hl)!important;opacity:1}
+
+/* การ์ด: แสงมุมบนตามสีถูก/ผิด + เงาตัวเลข */
+html[data-theme] body .qx-review-list .qx-rv.ok{background:radial-gradient(220px 90px at 100% 0,rgba(34,197,94,.16),transparent),var(--cardbg)!important}
+html[data-theme] body .qx-review-list .qx-rv.bad{background:radial-gradient(220px 90px at 100% 0,rgba(239,68,68,.18),transparent),var(--cardbg)!important}
+html[data-theme] body .qx-review-list .qx-no{box-shadow:0 4px 12px rgba(34,197,94,.4),inset 0 1px 0 rgba(255,255,255,.3)!important}
+html[data-theme] body .qx-review-list .qx-rv.bad .qx-no{box-shadow:0 4px 12px rgba(239,68,68,.4),inset 0 1px 0 rgba(255,255,255,.3)!important}
+html[data-theme] body .qx-review-list .qx-rv-status.ok{background:linear-gradient(135deg,#16a34a,#22c55e)!important;color:#fff!important;border-color:transparent!important}
+html[data-theme] body .qx-review-list .qx-rv-status.bad{background:linear-gradient(135deg,#dc2626,#f87171)!important;color:#fff!important;border-color:transparent!important}
+
+/* คำตอบ: ไอคอน ✓ / ✕ ท้ายหัวข้อ */
+html[data-theme] body .qx-review-list .qx-rv-answer-row{position:relative}
+html[data-theme] body .qx-review-list .qx-rv-answer-row.correct::after,
+html[data-theme] body .qx-review-list .qx-rv-answer-row.yours.selected-ok::after,
+html[data-theme] body .qx-review-list .qx-rv-answer-row.yours.selected-bad::after{
+  content:"✓";position:absolute;right:8px;top:7px;width:17px;height:17px;border-radius:50%;display:grid;place-items:center;
+  font-size:10.5px;font-weight:800;color:#fff;background:#22c55e}
+html[data-theme] body .qx-review-list .qx-rv-answer-row.yours.selected-bad::after{content:"✕";background:#ef4444}
+
+/* คำอธิบาย: ไอคอนหลอดไฟเป็นชิปเรืองแสง */
+html[data-theme] body .qx-review-list .qx-exp{box-shadow:0 0 18px rgba(139,92,246,.12)}
+html[data-theme] body .qx-review-list .qx-exp-ico{width:22px!important;height:22px!important;border-radius:7px!important;
+  background:linear-gradient(135deg,rgba(250,204,21,.28),rgba(251,146,60,.2))!important;border:1px solid rgba(250,204,21,.4)!important}
+
+/* เปิดป๊อปอัพ: การ์ดไล่เข้าทีละใบ (ครั้งเดียว) */
+@keyframes rvIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+html[data-theme] body .qx-review-list .qx-rv{animation:rvIn .35s ease both}
+html[data-theme] body .qx-review-list .qx-rv:nth-child(2){animation-delay:.06s}
+html[data-theme] body .qx-review-list .qx-rv:nth-child(3){animation-delay:.12s}
+html[data-theme] body .qx-review-list .qx-rv:nth-child(n+4){animation-delay:.18s}
+@media(prefers-reduced-motion:reduce){html[data-theme] body .qx-review-list .qx-rv{animation:none}}
+</style>
+<style id="review-calm">
+/* ═════════ ป๊อปอัพเฉลย: โทนนิ่งลง + คำอธิบายสีส้มเหลือง + เปิดเร็วแบบสไลด์ขึ้น (วางท้ายสุด) ═════════ */
+/* เร็ว: เลิกเบลอพื้นหลัง (หนักเครื่อง) เลิกเอฟเฟกต์ฟุ้ง/ไล่การ์ดทีละใบ */
+html body .qx-review-ov{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:rgba(3,8,22,.7)!important;animation:qzFade .14s ease-out!important}
+html[data-theme="light"] body .qx-review-ov{background:rgba(15,23,42,.45)!important}
+html[data-theme] body .qx-review-list .qx-rv{animation:none!important}
+html[data-theme] body .qx-review-summary::before{filter:none!important}
+
+/* สไลด์ขึ้นจากด้านล่าง (ลากปิดยังใช้ได้ เพราะไม่ค้างสถานะท้ายแอนิเมชัน) */
+@keyframes rvUp{from{transform:translate3d(0,100%,0)}to{transform:translate3d(0,0,0)}}
+@keyframes rvUpC{from{opacity:0;transform:translate3d(0,48px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+html[data-theme] body .qx-review-sheet{animation:rvUpC .24s cubic-bezier(.2,.85,.25,1) backwards!important;will-change:transform}
+@media(max-width:560px){html[data-theme] body .qx-review-sheet{animation:rvUp .26s cubic-bezier(.2,.85,.25,1) backwards!important}}
+@media(prefers-reduced-motion:reduce){html[data-theme] body .qx-review-sheet,html body .qx-review-ov{animation:none!important}}
+
+/* โทนนิ่ง: ตัดแสงฟุ้ง แถบรุ้ง เงาเรืองออก */
+html[data-theme] body .qx-review-sheet{border-color:var(--line)!important;box-shadow:0 16px 40px rgba(0,0,0,.45)!important;--cardbg:#0f1830}
+html[data-theme="light"] body .qx-review-sheet{--cardbg:#fff}
+html[data-theme] body .qx-review-sheet::before{height:2px;background:linear-gradient(90deg,#2563eb,#38bdf8)}
+html[data-theme] body .qx-review-head{background:linear-gradient(180deg,rgba(37,99,235,.16),transparent)!important}
+html[data-theme="light"] body .qx-review-head{background:linear-gradient(180deg,#eef4ff,#fff)!important}
+html[data-theme] body .qx-review-summary::before{background:conic-gradient(var(--ok) calc(var(--pct,0)*1%),var(--ring-bg) 0)!important}
+html[data-theme] body .qx-review-kicker{color:var(--muted)!important}
+
+/* ตัวกรอง: ตัวที่เลือกเป็นสีเรียบ */
+html[data-theme] body .qx-review-filter[aria-pressed="true"]{background:var(--g1)!important;box-shadow:none!important}
+html[data-theme] body .qx-review-filter:nth-child(1)[aria-pressed="true"]{background:#2563eb!important}
+
+/* การ์ด: เรียบ ไม่มีแสงมุม ป้ายสถานะเป็นสีอ่อนมีกรอบ */
+html[data-theme] body .qx-review-list{background:color-mix(in srgb,var(--ink) 3%,var(--bg))!important}
+html[data-theme="light"] body .qx-review-list{background:#f3f6fb!important}
+html[data-theme] body .qx-review-list .qx-rv.ok,html[data-theme] body .qx-review-list .qx-rv.bad{background:var(--cardbg)!important}
+html[data-theme] body .qx-review-list .qx-no{box-shadow:none!important;background:#16a34a!important}
+html[data-theme] body .qx-review-list .qx-rv.bad .qx-no{background:#dc2626!important;box-shadow:none!important}
+html[data-theme] body .qx-review-list .qx-rv-status.ok{background:rgba(34,197,94,.14)!important;color:var(--ok)!important;border:1px solid rgba(34,197,94,.4)!important}
+html[data-theme] body .qx-review-list .qx-rv-status.bad{background:rgba(239,68,68,.13)!important;color:var(--bad)!important;border:1px solid rgba(239,68,68,.4)!important}
+html[data-theme] body .qx-review-list .qx-rv-answer-row.correct::after,
+html[data-theme] body .qx-review-list .qx-rv-answer-row.yours.selected-ok::after,
+html[data-theme] body .qx-review-list .qx-rv-answer-row.yours.selected-bad::after{width:15px;height:15px;font-size:9.5px;top:8px}
+
+/* คำอธิบาย: ส้มเหลือง */
+html[data-theme] body .qx-review-list .qx-exp,
+html[data-theme] body .qx-review-list .qx-rv.ok .qx-exp{border-left:3px solid #f59e0b!important;box-shadow:none!important;
+  background:rgba(245,158,11,.10)!important}
+html[data-theme="light"] body .qx-review-list .qx-exp,
+html[data-theme="light"] body .qx-review-list .qx-rv.ok .qx-exp{background:#fff7e6!important;border-color:#f59e0b!important}
+html[data-theme] body .qx-review-list .qx-exp-h b,
+html[data-theme] body .qx-review-list .qx-rv.ok .qx-exp-h b{color:#fbbf24!important}
+html[data-theme="light"] body .qx-review-list .qx-exp-h b,
+html[data-theme="light"] body .qx-review-list .qx-rv.ok .qx-exp-h b{color:#b45309!important}
+html[data-theme] body .qx-review-list .qx-exp-ico{background:rgba(245,158,11,.18)!important;border:1px solid rgba(245,158,11,.45)!important}
+html[data-theme] body .qx-review-list .qx-exp-t{color:var(--ink)!important}
+</style>
+<style id="review-focus">html body .qx-review-close:focus-visible{outline:1.5px solid color-mix(in srgb,var(--ink) 35%,transparent)!important;outline-offset:1px}</style>
+<style id="review-formula">
+/* ═════════ ช่องในเฉลยคำตอบ = หน้าตาเดียวกับกรอบสูตร (วางท้ายสุด) ═════════ */
+html[data-theme] body .qx-review-sheet{--fm-bg:linear-gradient(160deg,#2a2208,#1d1806);--fm-bd:#f59e0b;--fm-tx:#fde68a;--fm-hi:#fbbf24;--fm-in:rgba(0,0,0,.35);--fm-eq:#fef3c7}
+html[data-theme="light"] body .qx-review-sheet{--fm-bg:linear-gradient(160deg,#fff8e1,#fdeeb8);--fm-bd:#f59e0b;--fm-tx:#78350f;--fm-hi:#b45309;--fm-in:rgba(255,255,255,.75);--fm-eq:#78350f}
+
+html[data-theme] body .qx-review-list{background:color-mix(in srgb,var(--ink) 3%,var(--bg))!important}
+html[data-theme] body .qx-review-list .qx-rv,
+html[data-theme] body .qx-review-list .qx-rv.ok,
+html[data-theme] body .qx-review-list .qx-rv.bad{
+  background:var(--fm-bg)!important;border:1.5px solid var(--fm-bd)!important;color:var(--fm-tx)!important;
+  padding:12px 13px 13px!important;border-radius:16px!important;box-shadow:0 8px 22px rgba(245,158,11,.12)!important}
+html[data-theme] body .qx-review-list .qx-rv::before{display:none!important}
+html[data-theme] body .qx-review-list .qx-rv-q{color:var(--fm-eq)!important}
+
+/* ช่องคำตอบ = กล่องเส้นประแบบ f-eq */
+html[data-theme] body .qx-review-list .qx-rv .qx-rv-a .qx-rv-answer-row,
+html[data-theme] body .qx-review-list .qx-rv .qx-rv-a .qx-rv-answer-row.yours,
+html[data-theme] body .qx-review-list .qx-rv .qx-rv-a .qx-rv-answer-row.correct,
+html[data-theme] body .qx-review-list .qx-rv .qx-rv-a .qx-rv-answer-row.yours.selected-ok,
+html[data-theme] body .qx-review-list .qx-rv .qx-rv-a .qx-rv-answer-row.yours.selected-bad,
+html[data-theme] body .qx-review-list .qx-rv .qx-rv-a .qx-rv-answer-row.yours.unanswered{
+  background:var(--fm-in)!important;border:1.5px dashed var(--fm-bd)!important;border-radius:12px!important}
+html[data-theme] body .qx-review-list .qx-rv .qx-rv-a .qx-rv-answer-row .qx-rv-label{color:var(--fm-hi)!important}
+html[data-theme] body .qx-review-list .qx-rv .qx-rv-a .qx-rv-answer-row .qx-rv-answer,
+html[data-theme] body .qx-review-list .qx-rv .qx-rv-a .qx-rv-answer-row .qx-rv-answer b{color:var(--fm-eq)!important}
+
+/* คำอธิบาย: ต่อท้ายในกรอบเดียวกัน คั่นด้วยเส้นประ */
+html[data-theme] body .qx-review-list .qx-exp,
+html[data-theme="light"] body .qx-review-list .qx-exp,
+html[data-theme] body .qx-review-list .qx-rv.ok .qx-exp,
+html[data-theme="light"] body .qx-review-list .qx-rv.ok .qx-exp{
+  margin-top:11px!important;padding-top:9px;border:0!important;border-top:1.5px dashed var(--fm-bd)!important;border-radius:0!important;background:none!important;box-shadow:none!important}
+html[data-theme] body .qx-review-list .qx-exp-h,
+html[data-theme] body .qx-review-list .qx-rv.ok .qx-exp-h{padding:0 0 3px!important}
+html[data-theme] body .qx-review-list .qx-exp-h b,
+html[data-theme="light"] body .qx-review-list .qx-exp-h b,
+html[data-theme] body .qx-review-list .qx-rv.ok .qx-exp-h b{color:var(--fm-hi)!important}
+html[data-theme] body .qx-review-list .qx-exp-t{padding:0 !important;color:var(--fm-tx)!important}
+html[data-theme] body .qx-review-list .qx-exp-t b{color:var(--fm-hi)!important}
+
+/* สไลด์ขึ้นช้าลงนิด */
+html[data-theme] body .qx-review-sheet{animation-duration:.4s!important;animation-timing-function:cubic-bezier(.22,.8,.3,1)!important}
+@media(max-width:560px){html[data-theme] body .qx-review-sheet{animation-duration:.42s!important}}
+html body .qx-review-ov{animation-duration:.25s!important}
+</style>
+<style id="review-colors">
+/* ═════════ แยกสีถูก/ผิดให้ชัด + ความสูงคงที่ + ข้อความเมื่อไม่มีข้อ (วางท้ายสุด) ═════════ */
+/* ความสูงคงที่: กรองแล้วว่างก็ไม่หดลง */
+html[data-theme] body .qx-review-sheet{height:min(80dvh,720px)!important;max-height:none!important}
+@media(max-width:560px){html[data-theme] body .qx-review-sheet{height:80dvh!important}}
+html[data-theme] body .qx-review-list{flex:1 1 0!important;min-height:0!important;overflow-y:auto!important}
+
+/* ข้อความเมื่อไม่มีข้อในหมวดนั้น */
+.qx-rv-empty{display:grid;place-items:center;align-content:center;gap:6px;min-height:200px;padding:24px;text-align:center;
+  border:1.5px dashed var(--line);border-radius:16px;color:var(--muted);font-size:14.5px;line-height:1.6}
+.qx-rv-empty[hidden]{display:none}
+.qx-rv-empty b{display:block;font-size:16px;color:var(--ink)}
+
+/* สีตามผล: ตอบถูก = เขียว · ตอบผิด = แดง · คำอธิบาย = ส้มเหลือง */
+html[data-theme] body .qx-review-sheet{
+  --ok-bg:linear-gradient(160deg,#0d2a1a,#0a1d12);--ok-bd:#22c55e;--ok-tx:#bbf7d0;--ok-hi:#4ade80;--ok-eq:#dcfce7;
+  --no-bg:linear-gradient(160deg,#2e1015,#1f0a0e);--no-bd:#ef4444;--no-tx:#fecaca;--no-hi:#fca5a5;--no-eq:#fee2e2}
+html[data-theme="light"] body .qx-review-sheet{
+  --ok-bg:linear-gradient(160deg,#ecfdf3,#d3f3df);--ok-bd:#22c55e;--ok-tx:#14532d;--ok-hi:#15803d;--ok-eq:#14532d;
+  --no-bg:linear-gradient(160deg,#fff1f2,#fcdadf);--no-bd:#ef4444;--no-tx:#7f1d1d;--no-hi:#be123c;--no-eq:#7f1d1d}
+
+html[data-theme] body .qx-review-list .qx-rv.ok{background:var(--ok-bg)!important;border-color:var(--ok-bd)!important;color:var(--ok-tx)!important;box-shadow:0 8px 22px rgba(34,197,94,.12)!important}
+html[data-theme] body .qx-review-list .qx-rv.bad{background:var(--no-bg)!important;border-color:var(--no-bd)!important;color:var(--no-tx)!important;box-shadow:0 8px 22px rgba(239,68,68,.12)!important}
+html[data-theme] body .qx-review-list .qx-rv.ok .qx-rv-q{color:var(--ok-eq)!important}
+html[data-theme] body .qx-review-list .qx-rv.bad .qx-rv-q{color:var(--no-eq)!important}
+
+/* ช่องคำตอบ: เส้นประสีตามผล */
+html[data-theme] body .qx-review-list .qx-rv .qx-rv-a .qx-rv-answer-row.correct,
+html[data-theme] body .qx-review-list .qx-rv .qx-rv-a .qx-rv-answer-row.yours.selected-ok{border-color:var(--ok-bd)!important;background:color-mix(in srgb,#22c55e 12%,transparent)!important}
+html[data-theme] body .qx-review-list .qx-rv .qx-rv-a .qx-rv-answer-row.yours.selected-bad{border-color:var(--no-bd)!important;background:color-mix(in srgb,#ef4444 14%,transparent)!important}
+html[data-theme] body .qx-review-list .qx-rv .qx-rv-a .qx-rv-answer-row.correct .qx-rv-label,
+html[data-theme] body .qx-review-list .qx-rv .qx-rv-a .qx-rv-answer-row.yours.selected-ok .qx-rv-label{color:var(--ok-hi)!important}
+html[data-theme] body .qx-review-list .qx-rv .qx-rv-a .qx-rv-answer-row.yours.selected-bad .qx-rv-label{color:var(--no-hi)!important}
+html[data-theme] body .qx-review-list .qx-rv.ok .qx-rv-a .qx-rv-answer-row .qx-rv-answer,
+html[data-theme] body .qx-review-list .qx-rv.ok .qx-rv-a .qx-rv-answer-row .qx-rv-answer b{color:var(--ok-eq)!important}
+html[data-theme] body .qx-review-list .qx-rv.bad .qx-rv-a .qx-rv-answer-row .qx-rv-answer,
+html[data-theme] body .qx-review-list .qx-rv.bad .qx-rv-a .qx-rv-answer-row .qx-rv-answer b{color:var(--no-eq)!important}
+html[data-theme] body .qx-review-list .qx-rv.bad .qx-rv-a .qx-rv-answer-row.correct .qx-rv-answer,
+html[data-theme] body .qx-review-list .qx-rv.bad .qx-rv-a .qx-rv-answer-row.correct .qx-rv-answer b{color:var(--ok-eq)!important}
+
+/* คำอธิบาย: คงส้มเหลือง ให้เห็นเป็นส่วนแยก */
+html[data-theme] body .qx-review-list .qx-rv .qx-exp{border-top-color:#f59e0b!important}
+html[data-theme] body .qx-review-list .qx-rv .qx-exp-h b,
+html[data-theme] body .qx-review-list .qx-rv .qx-exp-t b{color:#fbbf24!important}
+html[data-theme="light"] body .qx-review-list .qx-rv .qx-exp-h b,
+html[data-theme="light"] body .qx-review-list .qx-rv .qx-exp-t b{color:#b45309!important}
+html[data-theme] body .qx-review-list .qx-rv .qx-exp-t{color:inherit!important}
+</style>
+<style id="review-balance">
+/* ═════════ สมดุลสี: การ์ดเป็นกลาง สีใช้เฉพาะจุด (ผล/คำตอบ/คำอธิบาย) (วางท้ายสุด) ═════════ */
+html[data-theme] body .qx-review-list .qx-rv,
+html[data-theme] body .qx-review-list .qx-rv.ok,
+html[data-theme] body .qx-review-list .qx-rv.bad{
+  background:var(--cardbg)!important;border:1px solid var(--line)!important;color:var(--ink)!important;
+  padding:12px 13px 13px 17px!important;border-radius:16px!important;box-shadow:0 6px 18px rgba(0,0,0,.18)!important}
+html[data-theme="light"] body .qx-review-list .qx-rv,
+html[data-theme="light"] body .qx-review-list .qx-rv.ok,
+html[data-theme="light"] body .qx-review-list .qx-rv.bad{box-shadow:0 4px 14px rgba(27,42,80,.08)!important}
+html[data-theme] body .qx-review-list .qx-rv::before{display:block!important;width:5px!important}
+html[data-theme] body .qx-review-list .qx-rv.ok .qx-rv-q,
+html[data-theme] body .qx-review-list .qx-rv.bad .qx-rv-q{color:var(--ink)!important;font-size:15px!important;font-weight:700!important}
+
+/* เลขข้อ + ป้ายสถานะ */
+html[data-theme] body .qx-review-list .qx-no{box-shadow:0 4px 10px rgba(34,197,94,.3)!important}
+html[data-theme] body .qx-review-list .qx-rv.bad .qx-no{box-shadow:0 4px 10px rgba(239,68,68,.3)!important}
+
+/* ช่องคำตอบ: พื้นสีอ่อนเต็มช่อง + เส้นขอบทึบบาง (ไม่ใช่เส้นประ) */
+html[data-theme] body .qx-review-list .qx-rv .qx-rv-a .qx-rv-answer-row.correct,
+html[data-theme] body .qx-review-list .qx-rv .qx-rv-a .qx-rv-answer-row.yours.selected-ok{
+  border:1px solid color-mix(in srgb,#22c55e 50%,transparent)!important;background:color-mix(in srgb,#22c55e 13%,var(--cardbg))!important}
+html[data-theme] body .qx-review-list .qx-rv .qx-rv-a .qx-rv-answer-row.yours.selected-bad{
+  border:1px solid color-mix(in srgb,#ef4444 50%,transparent)!important;background:color-mix(in srgb,#ef4444 13%,var(--cardbg))!important}
+html[data-theme] body .qx-review-list .qx-rv .qx-rv-a .qx-rv-answer-row.yours.unanswered{
+  border:1px solid var(--line)!important;background:transparent!important}
+html[data-theme] body .qx-review-list .qx-rv.ok .qx-rv-a .qx-rv-answer-row .qx-rv-answer,
+html[data-theme] body .qx-review-list .qx-rv.ok .qx-rv-a .qx-rv-answer-row .qx-rv-answer b,
+html[data-theme] body .qx-review-list .qx-rv.bad .qx-rv-a .qx-rv-answer-row .qx-rv-answer,
+html[data-theme] body .qx-review-list .qx-rv.bad .qx-rv-a .qx-rv-answer-row .qx-rv-answer b{color:var(--ink)!important}
+html[data-theme] body .qx-review-list .qx-rv.bad .qx-rv-a .qx-rv-answer-row.correct .qx-rv-answer,
+html[data-theme] body .qx-review-list .qx-rv.bad .qx-rv-a .qx-rv-answer-row.correct .qx-rv-answer b{color:var(--ok)!important}
+html[data-theme] body .qx-review-list .qx-rv .qx-rv-a .qx-rv-answer-row.yours.selected-bad .qx-rv-answer b{text-decoration:none;opacity:1}
+
+/* คำอธิบาย: กล่องส้มเหลืองอ่อน มีแถบซ้าย */
+html[data-theme] body .qx-review-list .qx-rv .qx-exp,
+html[data-theme="light"] body .qx-review-list .qx-rv .qx-exp{
+  margin-top:10px!important;padding:8px 12px 10px!important;border:0!important;border-left:3px solid #f59e0b!important;
+  border-radius:4px 12px 12px 4px!important;background:rgba(245,158,11,.11)!important}
+html[data-theme="light"] body .qx-review-list .qx-rv .qx-exp{background:#fff6df!important}
+html[data-theme] body .qx-review-list .qx-rv .qx-exp-t{color:var(--ink)!important;padding:0!important}
+html[data-theme] body .qx-review-list .qx-rv .qx-exp-h{padding:0 0 3px!important}
+</style>
+<style id="review-balance2">
+html[data-theme] body .qx-review-list .qx-rv.ok .qx-exp,html[data-theme] body .qx-review-list .qx-rv.bad .qx-exp,
+html[data-theme="light"] body .qx-review-list .qx-rv.ok .qx-exp,html[data-theme="light"] body .qx-review-list .qx-rv.bad .qx-exp{
+  margin-top:10px!important;padding:8px 12px 10px!important;border:0!important;border-left:3px solid #f59e0b!important;
+  border-radius:4px 12px 12px 4px!important;background:rgba(245,158,11,.11)!important}
+html[data-theme="light"] body .qx-review-list .qx-rv.ok .qx-exp,html[data-theme="light"] body .qx-review-list .qx-rv.bad .qx-exp{background:#fff6df!important}
+html[data-theme] body .qx-review-list .qx-rv .qx-rv-a .qx-rv-answer-row.yours.selected-bad .qx-rv-answer b,
+html[data-theme] body .qx-review-list .qx-rv .qx-rv-a .qx-rv-answer-row.yours.selected-bad .qx-rv-answer b span{color:var(--bad)!important}
+html[data-theme] body .qx-review-list .qx-rv .qx-rv-a .qx-rv-answer-row .qx-rv-answer .g{color:var(--ink)!important}
+</style>
+<style id="review-icons">
+/* ไอคอน ถูก/กากบาท: วาดเป็นภาพเอง ไม่ใช้ตัวอักษร + ปิดเฉลยแล้วสไลด์ลง */
+html body .qx-review-list .qx-rv-status.ok::before,
+html body .qx-review-list .qx-rv-status.bad::before{
+  content:"";display:inline-block;width:12px;height:12px;flex:none;font-size:0;background:currentColor;
+  -webkit-mask:center/contain no-repeat;mask:center/contain no-repeat}
+html body .qx-review-list .qx-rv-status.ok::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E")}
+html body .qx-review-list .qx-rv-status.bad::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E")}
+html[data-theme] body .qx-review-list .qx-rv-answer-row.correct::after,
+html[data-theme] body .qx-review-list .qx-rv-answer-row.yours.selected-ok::after,
+html[data-theme] body .qx-review-list .qx-rv-answer-row.yours.selected-bad::after{
+  content:"";font-size:0;display:block;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E") center/62% 62% no-repeat,#22c55e}
+html[data-theme] body .qx-review-list .qx-rv-answer-row.yours.selected-bad::after{
+  content:"";background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E") center/58% 58% no-repeat,#ef4444}
+
+@keyframes rvDown{from{transform:translate3d(0,0,0)}to{transform:translate3d(0,100vh,0)}}
+@keyframes rvOvOut{0%,35%{opacity:1}100%{opacity:0}}
+html body .qx-review-ov.closing{animation:rvOvOut .3s linear forwards!important;pointer-events:none}
+html[data-theme] body .qx-review-ov.closing .qx-review-sheet{animation:rvDown .3s cubic-bezier(.5,0,.9,.6) forwards!important}
+</style>
+<style id="review-smooth">
+/* ═════════ แอนิเมชันเฉลยให้ลื่นขึ้น: เส้นโค้งเดียวกันทั้งเปิด/ปิด สไลด์แท้ ไม่จาง (วางท้ายสุด) ═════════ */
+@keyframes rvOpenM{from{transform:translate3d(0,100%,0)}to{transform:translate3d(0,0,0)}}
+@keyframes rvOpenD{from{opacity:0;transform:translate3d(0,56px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes rvOutM{from{transform:translate3d(0,0,0)}to{transform:translate3d(0,100%,0)}}
+@keyframes rvOutD{from{opacity:1;transform:translate3d(0,0,0)}to{opacity:0;transform:translate3d(0,calc(50vh + 50%),0)}}
+@keyframes rvFadeIn{from{opacity:0}to{opacity:1}}
+
+/* เปิด */
+html body .qx-review-ov{animation:rvFadeIn .3s ease-out both!important}
+html[data-theme] body .qx-review-sheet{animation:rvOpenD .42s cubic-bezier(.32,.72,0,1) backwards!important;will-change:transform;backface-visibility:hidden}
+@media(max-width:560px){html[data-theme] body .qx-review-sheet{animation:rvOpenM .46s cubic-bezier(.32,.72,0,1) backwards!important}}
+
+/* ปิด: แผ่นสไลด์ลงจนพ้นจอ พื้นหลังค่อยๆ โปร่งใส (ไม่ใช้ opacity ทั้งก้อน เลยไม่กระตุก) */
+html[data-theme] body .qx-review-ov.closing{animation:none!important;pointer-events:none;
+  background:rgba(3,8,22,0)!important;transition:background-color .36s ease-out}
+html[data-theme] body .qx-review-ov.closing .qx-review-sheet{animation:rvOutD .36s cubic-bezier(.4,0,.6,1) forwards!important}
+@media(max-width:560px){html[data-theme] body .qx-review-ov.closing .qx-review-sheet{animation:rvOutM .38s cubic-bezier(.32,.72,0,1) forwards!important}}
+@media(prefers-reduced-motion:reduce){html body .qx-review-ov,html[data-theme] body .qx-review-sheet,html[data-theme] body .qx-review-ov.closing .qx-review-sheet{animation:none!important}}
+</style>
+<style id="quit-popup">
+/* ป๊อปอัพยืนยันออกจากข้อสอบ: เด้งขึ้นกลางจอ */
+@keyframes qzBounce{0%{opacity:0;transform:translateY(18px) scale(.86)}55%{opacity:1;transform:translateY(-3px) scale(1.035)}80%{transform:translateY(1px) scale(.992)}100%{opacity:1;transform:none}}
+html body .qx-ov.quit{background:rgba(3,8,22,.62);backdrop-filter:none;-webkit-backdrop-filter:none;animation:qzFade .2s ease-out}
+html[data-theme="light"] body .qx-ov.quit{background:rgba(15,23,42,.42)}
+html body .qx-ov.quit .qx-sheet{animation:qzBounce .42s cubic-bezier(.22,.9,.3,1) both;will-change:transform}
+.qx-quit-acts{display:grid;gap:9px;margin-top:16px}
+.qx-btn.danger{color:#ef4444;border-color:rgba(239,68,68,.45);background:rgba(239,68,68,.08)}
+.qx-btn.danger:hover{background:rgba(239,68,68,.16)}
+html[data-theme="light"] .qx-btn.danger{color:#be123c;border-color:rgba(190,18,60,.35);background:rgba(239,68,68,.07)}
+@media(prefers-reduced-motion:reduce){html body .qx-ov.quit,html body .qx-ov.quit .qx-sheet{animation:none}}
+</style>
 </head>
 <body>
 
@@ -2397,7 +2773,7 @@ function qzPracN(N){
   return N<=5?N:Math.min(N,15,Math.max(5,Math.round(N*0.4)));
 }
 function qzIntro(){
-  clearInterval(QZ.tm); qzCdKill(); qzCloseReview(); QZ.view="intro";
+  clearInterval(QZ.tm); qzCdKill(); qzCloseReview(true); QZ.view="intro";
   const area=qzArea(); if(!area) return;
   const N=getQuiz().length;
   if(!N){ area.innerHTML='<p class="small">ยังไม่มีข้อสอบในชุดนี้</p>'; return; }
@@ -2449,7 +2825,7 @@ function qzBuild(only,mode){
 function qzStart(mode,only){
   QZ.mode=mode; QZ.only=(only&&only.length)?only:null; QZ.i=0; QZ.sec=0; QZ.streak=0; QZ.maxStreak=0;
   QZ.submitted=false; QZ.stopped=false; QZ.confirm=false; QZ.view="play"; QZ._bar=0;
-  qzCdKill(); qzCloseReview();
+  qzCdKill(); qzCloseReview(true);
   qzBuild(QZ.only,mode);
   clearInterval(QZ.tm);
   QZ.tm=setInterval(()=>{
@@ -2521,7 +2897,7 @@ function qzPlay(anim){
       ${fb}
     </div>
     ${ctrl}
-    <button type="button" class="qx-link qx-swap" onclick="qzQuit()">${hi("grid",{c:"currentColor"})} เลือกโหมดใหม่</button>
+    <button type="button" class="qx-link qx-swap" onclick="qzQuitAsk()">${hi("grid",{c:"currentColor"})} เลือกโหมดใหม่</button>
     ${QZ.confirm?qzConfirmHtml():""}
   </div>`;
   const bi=document.getElementById("qxBarI");
@@ -2580,7 +2956,23 @@ function qzAsk(){
   if(!u) return qzFinish();
   QZ.confirm=true; qzPlay(false);
 }
+function qzQuitAsk(){ qzCdStop(); QZ.confirm="quit"; qzPlay(false); }
+function qzQuitCancel(){ QZ.confirm=false; qzPlay(false); }
+function qzQuitHtml(){
+  const prac=QZ.mode==="practice", done=QZ.items.filter(x=>x.pick!=null).length, N=QZ.items.length;
+  return `<div class="qx-ov quit" onclick="if(event.target===this)qzQuitCancel()" role="dialog" aria-modal="true"><div class="qx-sheet">
+    <div class="qx-sheet-ico">${hi("warn")}</div>
+    <h4>${prac?"ออกจากโหมดฝึก?":"ออกจากการสอบ?"}</h4>
+    <p>ตอบไปแล้ว ${done} จาก ${N} ข้อ</p>
+    <p class="w">ถ้าออกตอนนี้ คำตอบและเวลาที่ทำไว้จะหายทั้งหมด</p>
+    <div class="qx-quit-acts">
+      <button type="button" class="qx-btn pri wide" onclick="qzQuitCancel()">${prac?"ทำต่อ":"สอบต่อ"}</button>
+      <button type="button" class="qx-btn wide danger" onclick="qzQuit()">ออกและเลือกโหมดใหม่</button>
+    </div>
+  </div></div>`;
+}
 function qzConfirmHtml(){
+  if(QZ.confirm==="quit") return qzQuitHtml();
   const N=QZ.items.length, miss=QZ.items.map((x,k)=>x.pick==null?k:-1).filter(k=>k>=0);
   if(!miss.length) return "";
   return `<div class="qx-ov" onclick="if(event.target===this)qzBack()"><div class="qx-sheet">
@@ -2671,13 +3063,13 @@ function qzOpenReview(){
   document.body.insertAdjacentHTML("beforeend",`<div class="qx-review-ov" id="qxReviewModal" role="dialog" aria-modal="true" aria-labelledby="qxReviewTitle" onclick="if(event.target===this)qzCloseReview()">
     <section class="qx-review-sheet">
       <div class="qx-review-drag" aria-label="ปัดลงเพื่อปิดหน้าต่างเฉลย"><span></span></div>
-      <div class="qx-review-head"><div class="qx-review-heading"><span class="qx-review-kicker">ทบทวนผลการทำแบบทดสอบ</span><h4 id="qxReviewTitle">เฉลยคำตอบ</h4><p>ดูคำตอบที่เลือก เทียบกับคำตอบที่ถูกต้องได้ทีละข้อ</p><div class="qx-review-summary"><span class="qx-review-summary-score">${R.ok} / ${R.T}</span><span>ข้อที่ตอบถูก</span></div></div><button type="button" class="qx-review-close" onclick="qzCloseReview()" aria-label="ปิดหน้าต่างเฉลย"><span aria-hidden="true">×</span></button></div>
+      <div class="qx-review-head"><div class="qx-review-heading"><span class="qx-review-kicker">ทบทวนผลการทำแบบทดสอบ</span><h4 id="qxReviewTitle">เฉลยคำตอบ</h4><p>ดูคำตอบที่เลือก เทียบกับคำตอบที่ถูกต้องได้ทีละข้อ</p><div class="qx-review-summary" style="--pct:${Math.round(R.ok/Math.max(1,R.T)*100)}"><span class="qx-review-summary-score">${R.ok} / ${R.T}</span><span>ข้อที่ตอบถูก</span></div></div><button type="button" class="qx-review-close" onclick="qzCloseReview()" aria-label="ปิดหน้าต่างเฉลย"><span aria-hidden="true">×</span></button></div>
       <div class="qx-review-filters" role="group" aria-label="แบ่งประเภทเฉลย">
         <button type="button" class="qx-review-filter" aria-pressed="true" onclick="qzReviewFilter('all',this)">ทั้งหมด <span class="count">${R.T}</span></button>
         <button type="button" class="qx-review-filter" aria-pressed="false" onclick="qzReviewFilter('correct',this)">ตอบถูก <span class="count">${QZ.items.filter(x=>x.pick!=null&&qzOk(x)).length}</span></button>
         <button type="button" class="qx-review-filter" aria-pressed="false" onclick="qzReviewFilter('wrong',this)">ตอบผิด <span class="count">${QZ.items.filter(x=>x.pick!=null&&!qzOk(x)).length}</span></button>
       </div>
-      <div class="qx-review-list">${qzReviewHtml()}</div>
+      <div class="qx-review-list">${qzReviewHtml()}<div class="qx-rv-empty" hidden></div></div>
     </section>
   </div>`);
   document.documentElement.classList.add("qz-review-open"); document.body.classList.add("qz-review-open");
@@ -2714,10 +3106,10 @@ function qzOpenReview(){
     },{passive:false});
     const end=()=>{
       if(st!==2){ st=0; return; } st=0;
-      sheet.style.transition="transform .26s cubic-bezier(.2,.8,.2,1)";
+      sheet.style.transition="transform .3s cubic-bezier(.32,.72,0,1)";
       if(dy>sheet.offsetHeight*.22||vy>.55){
         sheet.style.transform="translate3d(0,105%,0)"; modal.style.transition="background .26s"; modal.style.background="rgba(3,8,22,0)";
-        setTimeout(qzCloseReview,240);
+        setTimeout(()=>qzCloseReview(true),290);
       } else { sheet.style.transform=""; modal.style.background=""; }
     };
     sheet.addEventListener("touchend",end,{passive:true});
@@ -2730,14 +3122,31 @@ function qzReviewFilter(kind,button){
   modal.querySelectorAll(".qx-review-list .qx-rv").forEach(card=>{
     card.hidden=kind!=="all"&&card.dataset.qzCategory!==kind;
   });
+  const box=modal.querySelector(".qx-rv-empty"), lst=modal.querySelector(".qx-review-list");
+  if(box){
+    const any=[...modal.querySelectorAll(".qx-review-list .qx-rv")].some(c=>!c.hidden);
+    box.hidden=any;
+    if(!any) box.innerHTML="<b>"+(kind==="correct"?"ไม่มีข้อที่คุณตอบถูก":kind==="wrong"?"ไม่มีข้อที่คุณตอบผิด":"ไม่มีข้อให้แสดง")+"</b><span>"+(kind==="correct"?"ลองทบทวนเนื้อหาแล้วทำใหม่อีกครั้ง":kind==="wrong"?"เยี่ยมมาก ตอบถูกครบทุกข้อ":"")+"</span>";
+  }
+  if(lst) lst.scrollTop=0;
 }
-function qzCloseReview(){
+function qzCloseReview(immediate){
   QZ.reviewOpen=false;
-  const modal=document.getElementById("qxReviewModal"); if(modal) modal.remove();
-  document.documentElement.classList.remove("qz-review-open"); document.body.classList.remove("qz-review-open");
+  const modal=document.getElementById("qxReviewModal");
+  const cleanup=()=>{
+    if(modal) modal.remove();
+    if(!document.getElementById("qxReviewModal")){
+      document.documentElement.classList.remove("qz-review-open"); document.body.classList.remove("qz-review-open");
+    }
+  };
+  if(!modal||immediate===true||matchMedia("(prefers-reduced-motion: reduce)").matches){ cleanup(); return; }
+  if(modal.classList.contains("closing")) return;
+  modal.removeAttribute("id"); modal.classList.add("closing");   // ปล่อย id เผื่อเปิดใหม่ทันที
+  setTimeout(cleanup,400);
 }
 
 document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&QZ.reviewOpen) qzCloseReview(); });
+document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&QZ.confirm==="quit"&&QZ.view==="play") qzQuitCancel(); });
 function qzConfetti(){
   if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const box=document.createElement("div"); box.className="qx-conf";
