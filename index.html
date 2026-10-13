@@ -644,40 +644,90 @@ html:not([data-theme="light"]) .search:focus-within{box-shadow:0 0 0 3px #5cc8f5
 html:not([data-theme="light"]) .startcard::after{display:none}
 html:not([data-theme="light"]) #subjBox{box-shadow:0 -12px 36px #0007}
 
-/* ===== ปุ่ม + ป็อปอัพตารางเรียน ===== */
-header.top .ttbtn{flex:none;width:42px;height:42px;min-height:42px;padding:0;display:grid;place-items:center;border-radius:14px;margin-left:auto;color:var(--cyan)}
-header.top .ttbtn svg{width:21px;height:21px}
-header.top .ttbtn + .themebtn{margin-left:0}
-#ttBg{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center}
-#ttBg.hidden{display:none!important}
-#ttBg .mback{position:absolute;inset:0;background:#000b;animation:mfade .25s both}
-html[data-theme="light"] #ttBg .mback{background:#0b1b4080}
-#ttBox{position:relative;width:100%;max-width:440px;max-height:86dvh;overflow:auto;overscroll-behavior:contain;padding:12px 12px 16px;background:linear-gradient(var(--s3),var(--s1));border:1px solid var(--line2);border-bottom:0;border-radius:24px 24px 0 0;animation:msheet .32s cubic-bezier(.22,1,.36,1)}
-@media(min-width:640px){#ttBg{align-items:center;padding:20px}#ttBox{border-radius:24px;border-bottom:1px solid var(--line2);animation:mpop .25s ease}}
-#ttBox .tt-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-#ttBox .tt-head h2{margin:0;font-size:16px;line-height:1.25}
-#ttBox .tt-head small{color:var(--muted);font-size:11.5px;display:block}
-#ttBox .tt-x{margin-left:auto;flex:none;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--ink) 7%,transparent);border:1px solid var(--line);color:var(--ink)}
-#ttBox .tt-x svg{width:14px;height:14px}
-.tt-stats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-.tt-stats .pill{font-size:12px;padding:1px 10px}
-table.tt{border-collapse:separate;border-spacing:2px;table-layout:fixed;width:100%}
-table.tt th{font-size:10px;font-weight:600;color:var(--muted);text-align:center;padding:0}
-table.tt th.day{width:26px;color:var(--ink);font-size:12px}
-table.tt tr.today th.day{color:var(--cyan)}
-table.tt td{padding:0;height:34px}
-.tt-c{display:grid;place-items:center;width:100%;height:100%;padding:3px;border-radius:8px;background:color-mix(in srgb,var(--c) 22%,transparent);border:1px solid color-mix(in srgb,var(--c) 55%,transparent);transition:.12s}
-.tt-c:hover{transform:scale(1.1);background:color-mix(in srgb,var(--c) 38%,transparent)}
-.tt-c .sic{width:100%;height:100%;display:block}
-table.tt td.e{background:color-mix(in srgb,var(--ink) 4%,transparent);border-radius:8px}
-.tt-list{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
-.tt-s{display:flex;align-items:center;gap:7px;text-align:left;width:100%;min-width:0;padding:6px 8px;border-radius:12px;border:1px solid color-mix(in srgb,var(--c) 40%,var(--line));background:color-mix(in srgb,var(--c) 10%,var(--panel))}
-.tt-s .ic2{flex:none;width:24px;height:24px}
-.tt-s .ic2 .sic{width:100%;height:100%;display:block}
-.tt-s .t{min-width:0;flex:1;font-size:12.5px;line-height:1.25;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tt-s .n{flex:none;font-size:12px;font-weight:700;color:var(--cyan)}
-html[data-theme="light"] .tt-s .n{color:#0369a1}
-.tt-hint{color:var(--muted);font-size:11.5px;margin:8px 2px 0;text-align:center}
+/* ===== บันทึกการบ้าน ===== */
+header.top .hwbtn{position:relative;flex:none;width:42px;height:42px;min-height:42px;padding:0;display:grid;place-items:center;border-radius:14px;margin-left:auto;color:var(--cyan)}
+header.top .hwbtn svg{width:21px;height:21px}
+header.top .hwbtn + .themebtn{margin-left:0}
+.hwbtn .bd{position:absolute;top:-6px;right:-6px;min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:linear-gradient(135deg,#f43f5e,#ef4444);color:#fff;font-size:11px;font-weight:700;line-height:19px;text-align:center;border:2px solid var(--bg);box-shadow:0 2px 8px #ef444466}
+#hwBg{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center}
+#hwBg.hidden{display:none!important}
+#hwBg .mback{position:absolute;inset:0;background:#000b;animation:mfade .25s both}
+html[data-theme="light"] #hwBg .mback{background:#0b1b4080}
+#hwBox{position:relative;width:100%;max-width:480px;max-height:92dvh;overflow:auto;overscroll-behavior:contain;padding:6px 14px 22px;background:linear-gradient(var(--s3),var(--s1));border:1px solid var(--line2);border-bottom:0;border-radius:28px 28px 0 0;animation:msheet .34s cubic-bezier(.22,1,.36,1);box-shadow:0 -16px 50px #0006}
+html[data-theme="light"] #hwBox{box-shadow:0 -8px 30px #1b2a5026}
+@media(min-width:640px){#hwBg{align-items:center;padding:20px}#hwBox{border-radius:28px;border-bottom:1px solid var(--line2);max-height:86dvh;animation:mpop .25s ease}#hwBox .grab{display:none}}
+.hw-top{touch-action:none;cursor:grab}
+#hwBox .grab{display:block;width:44px;height:5px;border-radius:9px;background:var(--line2);margin:4px auto 8px}
+.hw-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.hw-head .logo2{flex:none;width:44px;height:44px;border-radius:15px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#3b82f6,#06b6d4);box-shadow:0 8px 20px #3b82f655}
+.hw-head .logo2 svg{width:23px;height:23px}
+.hw-head h2{margin:0;font-size:18px;line-height:1.2}
+.hw-head small{display:block;color:var(--muted);font-size:12.5px}
+.hw-x{margin-left:auto;flex:none;width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--ink) 7%,transparent);border:1px solid var(--line);color:var(--ink)}
+.hw-x svg{width:15px;height:15px}
+.hw-prog{height:7px;border-radius:9px;background:color-mix(in srgb,var(--ink) 9%,transparent);overflow:hidden;margin:0 0 14px}
+.hw-prog i{display:block;height:100%;width:0;border-radius:9px;background:linear-gradient(90deg,#22c55e,#06b6d4);transition:width .5s cubic-bezier(.22,1,.36,1)}
+.hw-form{display:grid;gap:10px;padding:12px;border:1px solid var(--line);border-radius:20px;background:var(--panel)}
+.hw-row{display:flex;gap:8px}
+.hw-form input[type=text]{flex:1;min-width:0;font:inherit;font-size:16px;color:var(--ink);background:var(--s2);border:1px solid var(--line);border-radius:13px;padding:11px 13px;outline:0;transition:.15s}
+.hw-form input:focus{border-color:var(--blue);box-shadow:0 0 0 3px color-mix(in srgb,var(--blue) 25%,transparent)}
+.hw-add{flex:none;width:46px;border-radius:13px;display:grid;place-items:center;color:#fff;font-size:26px;line-height:1;background:linear-gradient(135deg,#2563eb,#0ea5e9);box-shadow:0 8px 18px #2563eb55;transition:.12s}
+.hw-add:active{transform:scale(.92)}
+.hw-lab{font-size:11.5px;color:var(--muted);margin:0 0 5px 3px;font-weight:500;letter-spacing:.2px}
+.hw-subj{display:grid;grid-auto-flow:column;grid-template-rows:repeat(2,auto);gap:7px;overflow-x:auto;padding:2px 2px 8px;margin:0 -2px;scrollbar-width:none;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.hw-subj::-webkit-scrollbar{display:none}
+.sch{scroll-snap-align:start;display:flex;align-items:center;gap:7px;max-width:190px;padding:4px 12px 4px 5px;border-radius:999px;border:1.5px solid var(--line);background:var(--s2);font-size:13px;font-weight:500;white-space:nowrap;transition:.14s;color:var(--ink)}
+.sch .si{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--c,#64748b) 18%,transparent)}
+.sch .si .sic{width:19px;height:19px;display:block}
+.sch .si svg.gen{width:15px;height:15px;color:var(--muted)}
+.sch .nm{overflow:hidden;text-overflow:ellipsis}
+.sch.on{border-color:var(--c,var(--blue));background:color-mix(in srgb,var(--c,var(--blue)) 18%,var(--s2));font-weight:600;box-shadow:0 4px 14px color-mix(in srgb,var(--c,var(--blue)) 30%,transparent)}
+.sch:active{transform:scale(.95)}
+.hw-dates{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.dch{padding:6px 13px;border-radius:999px;border:1.5px solid var(--line);background:var(--s2);font-size:13px;font-weight:500;transition:.14s}
+.dch.on{background:linear-gradient(135deg,#2563eb,#0ea5e9);border-color:transparent;color:#fff;font-weight:600}
+.hw-dates input[type=date]{flex:1;min-width:130px;font:inherit;font-size:14px;color:var(--ink);background:var(--s2);border:1.5px solid var(--line);border-radius:999px;padding:5px 12px;outline:0}
+.hw-seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;margin:14px 0 10px;border-radius:14px;background:color-mix(in srgb,var(--ink) 7%,transparent)}
+.hw-tab{padding:8px;border-radius:11px;font-size:13.5px;color:var(--muted);font-weight:500;transition:.15s}
+.hw-tab.on{background:var(--panel);color:var(--ink);font-weight:600;box-shadow:0 2px 8px #0003}
+.hw-tab b{display:inline-block;min-width:20px;margin-left:5px;padding:0 6px;border-radius:9px;background:color-mix(in srgb,var(--ink) 10%,transparent);font-size:12px}
+.hw-tab.on b{background:var(--blue);color:#fff}
+.hw-list{display:grid;gap:9px}
+.hw-sw{position:relative;border-radius:18px;overflow:hidden;user-select:none;-webkit-user-select:none}
+.hw-sw.new{animation:hwin .35s cubic-bezier(.22,1,.36,1)}
+@keyframes hwin{from{opacity:0;transform:translateY(-10px) scale(.97)}}
+.hw-sw .bg{position:absolute;inset:0;display:flex;align-items:center;gap:8px;padding:0 20px;color:#fff;font-weight:600;font-size:14px;opacity:0;transition:opacity .12s}
+.hw-sw .bg svg{width:22px;height:22px;transition:transform .15s}
+.hw-sw .bg.l{background:linear-gradient(90deg,#16a34a,#22c55e);justify-content:flex-start}
+.hw-sw .bg.r{background:linear-gradient(270deg,#dc2626,#ef4444);justify-content:flex-end}
+.hw-sw[data-dir=r] .bg.l,.hw-sw[data-dir=l] .bg.r{opacity:1}
+.hw-sw[data-ok="1"] .bg svg{transform:scale(1.3)}
+.hw-it{position:relative;display:flex;align-items:center;gap:11px;padding:11px 10px 11px 14px;border:1px solid var(--line);border-left:5px solid var(--c,#64748b);border-radius:18px;background:var(--panel);touch-action:pan-y;cursor:grab;will-change:transform}
+.hw-it.late{background:color-mix(in srgb,#ef4444 7%,var(--panel))}
+.hw-ck{flex:none;width:28px;height:28px;border-radius:50%;border:2px solid var(--line2);display:grid;place-items:center;color:transparent;transition:.18s}
+.hw-ck svg{width:15px;height:15px}
+.hw-ck:hover{border-color:#22c55e}
+.hw-it.done .hw-ck{background:#22c55e;border-color:#22c55e;color:#fff;transform:scale(1.06)}
+.hw-it .tx{min-width:0;flex:1}
+.hw-it .tx b{display:block;font-size:15px;line-height:1.35;word-break:break-word;font-weight:600}
+.hw-it.done .tx b{text-decoration:line-through;color:var(--muted);font-weight:500}
+.hw-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:5px}
+.hw-tag{display:inline-flex;align-items:center;gap:4px;padding:2px 9px 2px 3px;border-radius:999px;font-size:11.5px;font-weight:500;background:color-mix(in srgb,var(--c) 15%,transparent);color:var(--ink);max-width:100%}
+.hw-tag .sic{width:17px;height:17px;display:block;flex:none}
+.hw-tag span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hw-due{padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:600;background:color-mix(in srgb,var(--ink) 8%,transparent);color:var(--muted)}
+.hw-due.late{background:#ef444422;color:#ef4444}
+.hw-due.soon{background:#f59e0b24;color:#d97706}
+.hw-due.ok{background:#22c55e22;color:#16a34a}
+.hw-del{flex:none;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;color:var(--muted);opacity:.7}
+.hw-del:hover{color:#ef4444;opacity:1}
+.hw-del svg{width:16px;height:16px}
+.hw-empty{text-align:center;color:var(--muted);padding:26px 8px 18px;font-size:14px;line-height:1.7}
+.hw-empty big{display:block;font-size:38px;margin-bottom:2px}
+.hw-hint{text-align:center;color:var(--muted);font-size:11.5px;margin-top:10px}
+.hw-clear{display:block;margin:12px auto 0;color:var(--muted);font-size:12.5px;text-decoration:underline}
+#hwToast{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:2;display:flex;align-items:center;gap:14px;padding:10px 12px 10px 16px;border-radius:14px;background:#111827;color:#fff;font-size:13.5px;box-shadow:0 10px 30px #0008;animation:hwin .25s both;white-space:nowrap}
+#hwToast button{color:#38bdf8;font-weight:700;padding:2px 6px}
 </style>
 </head>
 <body>
@@ -686,7 +736,7 @@ html[data-theme="light"] .tt-s .n{color:#0369a1}
     <button class="btn hidden" id="backBtn" aria-label="ย้อนกลับ"></button>
     <div class="logo" id="logo">◆ CONTENT <span>HUB</span></div>
     <div class="crumb" id="crumb"></div>
-    <button class="btn ttbtn" id="ttBtn" type="button" aria-label="ตารางเรียน" title="ตารางเรียน"></button>
+    <button class="btn hwbtn" id="hwBtn" type="button" aria-label="บันทึกการบ้าน" title="บันทึกการบ้าน"></button>
     <button class="btn themebtn" id="themeBtn" type="button"></button>
   </div>
 </header>
@@ -717,7 +767,7 @@ html[data-theme="light"] .tt-s .n{color:#0369a1}
   <div class="vframe" id="vframe"></div>
 </section>
 
-<div class="hidden" id="ttBg"><div class="mback"></div><div id="ttBox" role="dialog" aria-modal="true" aria-label="ตารางเรียน"></div></div>
+<div class="hidden" id="hwBg"><div class="mback"></div><div id="hwBox" role="dialog" aria-modal="true" aria-label="บันทึกการบ้าน"></div></div>
 <div class="hidden" id="subjBg"><div class="mback"></div><div id="subjBox" role="dialog" aria-modal="true"></div></div>
 <div class="sheet-bg hidden" id="sheetBg"><div class="sheet" id="sheet"></div></div>
 <button class="totop" id="toTop" type="button" aria-label="กลับขึ้นข้างบน"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button>
@@ -1151,61 +1201,181 @@ $('themeBtn').onclick = () => {
   requestAnimationFrame(() => requestAnimationFrame(() => noTrans(false)));
 };
 
-/* ---------- ตารางเรียน ม.4/14 ภาคเรียนที่ 1 ปีการศึกษา 2569 (แสดงเฉพาะวิชาที่มีในโฟลเดอร์ content) ---------- */
-const TT_PERIODS = [0,1,2,3,'พัก',4,5,6,7,8,9,10];
-const TT_COLOR = {'ท31101':'#ef4444','ว31201':'#10b981','ว31221':'#0ea5e9','ว31241':'#22c55e','ว31181':'#06b6d4','ว31261':'#14b8a6','ว33103':'#84cc16',
-  'อ31101':'#3b82f6','อ31201':'#6366f1','อ31211':'#8b5cf6','พ31101':'#65a30d','พ31201':'#16a34a','ส31101':'#ec4899','ส31111':'#d946ef',
-  'ค31101':'#f59e0b','ค31201':'#f97316','ง31201':'#ca8a04','ศ31101':'#e11d48'};
-// รหัสในตาราง -> รหัสที่ใช้ใน content (กรณีรหัสไม่ตรงกัน)
-const TT_ALIAS = {'ว33103':'ว31103','ศ31101':'ศ31201'};
-const TT_DAYS = [
- ['จ.',['จิตศึกษา','อ31101','อ31101','อ31201','อ31201','พัก','ว31201','ว31201','ค31101','ค31101','ส31111']],
- ['อ.',['','ง31201','ศ31101','ว31261','พ31101','ท31101','พัก','ว31181','ว31181','ว31241','อ31211']],
- ['พ.',['','เลือกเสรี','เลือกเสรี','ว31241','ว31241','ว33103','พัก','พ31201','ส31101','ส31101','อบรมคุณธรรม']],
- ['พฤ.',['','ว31221','ว31221','ค31201','ค31201','พัก','','ชุมนุม','ชุมนุม','','']],
- ['ศ.',['','ง31901','ว33103','ว33103','ว31201','ว31201','พัก','ค31201','ค31201','ท31101','ว31221']]
-];
-const ttBase = c => String(c||'').replace(/\s+/g,'').replace(/-\d+$/,'');
-function ttFind(code){
-  if (!Array.isArray(SUBJECTS)) return null;
-  const want = ttBase(TT_ALIAS[code] || code);
-  return SUBJECTS.find(x => ttBase(x.code) === want) || null;
+/* ---------- บันทึกการบ้าน (เก็บในเครื่องด้วย localStorage) ---------- */
+const HW_KEY = 'hub-homework';
+const HW_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3.5h11a3 3 0 0 1 3 3V20.5H8a3 3 0 0 1-3-3z"/><path d="M5 17.5a3 3 0 0 1 3-3h11"/><path d="M9.5 8.5l1.8 1.8 3.4-3.6"/></svg>';
+const HW_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const HW_TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
+const HW_GEN = '<svg class="gen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
+let hwTab = 'todo', hwDraft = {subj:'', due:''}, hwNew = '', hwToastT = 0, hwLast = null;
+function hwLoad(){ try { const a = JSON.parse(store.get(HW_KEY) || '[]'); return Array.isArray(a) ? a : []; } catch(e) { return []; } }
+function hwSave(a){ store.set(HW_KEY, JSON.stringify(a)); hwBadge(); }
+const hwCol = s => { try { return catOf(s).color || '#3b82f6'; } catch(e) { return '#3b82f6'; } };
+const hwToday = () => { const d = new Date(); d.setHours(0,0,0,0); return d; };
+const hwIso = d => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+const hwPlus = n => { const d = hwToday(); d.setDate(d.getDate() + n); return hwIso(d); };
+function hwDays(due){ if (!due) return null; const [y,m,d] = due.split('-').map(Number); return Math.round((new Date(y,m-1,d) - hwToday()) / 864e5); }
+function hwDueText(due){
+  const n = hwDays(due); if (n === null) return {t:'ไม่กำหนดส่ง', c:''};
+  const [y,m,d] = due.split('-').map(Number);
+  const dt = new Date(y,m-1,d).toLocaleDateString('th-TH',{day:'numeric',month:'short'});
+  if (n < 0) return {t:`เลยมา ${-n} วัน`, c:'late'};
+  if (n === 0) return {t:'ส่งวันนี้', c:'soon'};
+  if (n === 1) return {t:'ส่งพรุ่งนี้', c:'soon'};
+  return {t:`ส่ง ${dt} · อีก ${n} วัน`, c:''};
 }
-function ttRender(){
-  const cnt = {};
-  TT_DAYS.forEach(d => d[1].forEach(c => { if (c && c !== 'พัก' && ttFind(c)) cnt[c] = (cnt[c]||0) + 1; }));
-  const codes = Object.keys(cnt).sort((a,b) => (ttFind(a).order - ttFind(b).order) || a.localeCompare(b));
-  const total = codes.reduce((n,c) => n + cnt[c], 0);
-  // แสดงเฉพาะคอลัมน์ (คาบ) ที่มีวิชาในระบบ ไม่เอาคอลัมน์พัก
-  const cols = [];
-  TT_PERIODS.forEach((p,i) => { if (p !== 'พัก' && TT_DAYS.some(d => cnt[d[1][i]])) cols.push(i); });
-  const todayIdx = [-1,0,1,2,3,4,-1][new Date().getDay()];
-  const cell = c => {
-    const sub = c && cnt[c] ? ttFind(c) : null;
-    if (!sub) return '<td class="e"></td>';
-    return `<td><button class="tt-c" style="--c:${TT_COLOR[c]||'#64748b'}" data-code="${_esc(c)}" title="${_esc(sub.name)}">${subjIcon(sub.icon, sub.name)}</button></td>`;
+function hwBadge(){
+  const n = hwLoad().filter(x => !x.done).length, b = $('hwBtn');
+  const old = b.querySelector('.bd'); if (old) old.remove();
+  if (n) { const e = document.createElement('span'); e.className = 'bd'; e.textContent = n > 99 ? '99+' : n; b.appendChild(e); }
+}
+function hwRender(keepTitle){
+  const title = keepTitle ? ($('hwT') ? $('hwT').value : '') : '';
+  const all = hwLoad(), todo = all.filter(x => !x.done), done = all.filter(x => x.done);
+  todo.sort((a,b) => (a.due || '9999').localeCompare(b.due || '9999') || a.ts - b.ts);
+  done.sort((a,b) => (b.doneTs || 0) - (a.doneTs || 0));
+  const list = hwTab === 'todo' ? todo : done;
+  const pct = all.length ? Math.round(done.length / all.length * 100) : 0;
+  const late = todo.filter(x => hwDays(x.due) !== null && hwDays(x.due) < 0).length;
+  const sub = all.length ? (todo.length ? `ค้าง ${todo.length} รายการ${late ? ' · เลยกำหนด ' + late : ''}` : 'ทำครบทุกอย่างแล้ว 🎉') : 'จดการบ้านไว้ที่นี่';
+  const chips = `<button class="sch ${!hwDraft.subj?'on':''}" data-subj=""><span class="si">${HW_GEN}</span><span class="nm">ทั่วไป</span></button>` +
+    (SUBJECTS || []).map(s => `<button class="sch ${hwDraft.subj===s.id?'on':''}" data-subj="${_esc(s.id)}" style="--c:${hwCol(s)}"><span class="si">${subjIcon(s.icon, s.name)}</span><span class="nm">${_esc(s.name)}</span></button>`).join('');
+  const dch = [['พรุ่งนี้',1],['3 วัน',3],['1 สัปดาห์',7]].map(([t,n]) => `<button class="dch ${hwDraft.due===hwPlus(n)?'on':''}" data-d="${hwPlus(n)}">${t}</button>`).join('');
+  const item = (x,i) => {
+    const s = (SUBJECTS || []).find(z => z.id === x.subj), du = x.done ? {t:'ส่งแล้ว', c:'ok'} : hwDueText(x.due);
+    return `<div class="hw-sw ${x.id===hwNew?'new':''}" data-id="${x.id}">
+      <div class="bg l">${HW_CHECK}<span>${x.done?'ย้อนกลับ':'เสร็จแล้ว'}</span></div>
+      <div class="bg r"><span>ลบ</span>${HW_TRASH}</div>
+      <div class="hw-it ${x.done?'done':''} ${du.c==='late'?'late':''}" style="--c:${s?hwCol(s):'#64748b'}">
+        <button class="hw-ck" data-act="tog" aria-label="ทำเสร็จแล้ว">${HW_CHECK}</button>
+        <div class="tx"><b>${_esc(x.title)}</b><div class="hw-meta">${s ? `<span class="hw-tag" style="--c:${hwCol(s)}">${subjIcon(s.icon, s.name)}<span>${_esc(s.name)}</span></span>` : ''}<span class="hw-due ${du.c}">${_esc(du.t)}</span></div></div>
+        <button class="hw-del" data-act="del" aria-label="ลบ">${HW_TRASH}</button>
+      </div></div>`;
   };
-  $('ttBox').innerHTML = `
-    <div class="tt-head"><div><h2>ตารางเรียน ม.4/14</h2><small>ภาคเรียนที่ 1 ปีการศึกษา 2569</small></div><button class="tt-x" data-ttclose="1" aria-label="ปิด">${X_ICON}</button></div>
-    <div class="tt-stats"><span class="pill"><b>${total}</b> คาบ/สัปดาห์</span><span class="pill"><b>${codes.length}</b> วิชา</span></div>
-    <table class="tt"><thead><tr><th class="day"></th>${cols.map(i=>`<th>${TT_PERIODS[i]}</th>`).join('')}</tr></thead><tbody>${
-      TT_DAYS.map((d,r)=>`<tr class="${r===todayIdx?'today':''}"><th class="day">${d[0]}</th>${cols.map(i=>cell(d[1][i])).join('')}</tr>`).join('')
-    }</tbody></table>
-    <div class="tt-list">${codes.map(c=>{const sub=ttFind(c);return `<button class="tt-s" style="--c:${TT_COLOR[c]||'#64748b'}" data-code="${_esc(c)}"><span class="ic2">${subjIcon(sub.icon, sub.name)}</span><span class="t">${_esc(sub.name)}</span><span class="n">${cnt[c]}</span></button>`;}).join('')}</div>
-    <div class="tt-hint">ตัวเลข = จำนวนคาบ/สัปดาห์ • แตะวิชาเพื่อเลือกบทเรียน</div>`;
+  const keepScroll = $('hwSubj') ? $('hwSubj').scrollLeft : 0;
+  $('hwBox').innerHTML = `
+    <div class="hw-top"><i class="grab"></i>
+      <div class="hw-head"><span class="logo2">${HW_ICON}</span><div><h2>บันทึกการบ้าน</h2><small>${sub}</small></div><button class="hw-x" data-hwclose="1" aria-label="ปิด">${X_ICON}</button></div></div>
+    <div class="hw-prog" title="เสร็จแล้ว ${pct}%"><i style="width:${pct}%"></i></div>
+    <div class="hw-form">
+      <div class="hw-row"><input id="hwT" type="text" maxlength="200" placeholder="จดการบ้านใหม่…" autocomplete="off" value="${_esc(title)}"><button class="hw-add" id="hwAdd" type="button" aria-label="เพิ่ม">+</button></div>
+      <div><div class="hw-lab">วิชา</div><div class="hw-subj" id="hwSubj">${chips}</div></div>
+      <div><div class="hw-lab">กำหนดส่ง</div><div class="hw-dates">${dch}<input id="hwD" type="date" value="${_esc(hwDraft.due)}" aria-label="เลือกวันที่"></div></div>
+    </div>
+    <div class="hw-seg"><button class="hw-tab ${hwTab==='todo'?'on':''}" data-tab="todo">ยังไม่เสร็จ<b>${todo.length}</b></button><button class="hw-tab ${hwTab==='done'?'on':''}" data-tab="done">เสร็จแล้ว<b>${done.length}</b></button></div>
+    <div class="hw-list">${list.length ? list.map(item).join('') : (hwTab==='todo' ? '<div class="hw-empty"><big>🎉</big>ไม่มีการบ้านค้าง<br>จดการบ้านใหม่ได้ที่ช่องด้านบน</div>' : '<div class="hw-empty"><big>📭</big>ยังไม่มีการบ้านที่เสร็จ</div>')}</div>
+    ${list.length ? '<div class="hw-hint">ปัดขวา = เสร็จ · ปัดซ้าย = ลบ</div>' : ''}
+    ${hwTab==='done' && done.length ? '<button class="hw-clear" data-act="clear">ล้างรายการที่เสร็จแล้ว</button>' : ''}`;
+  $('hwSubj').scrollLeft = keepScroll; hwNew = '';
 }
-function ttOpen(){ ttRender(); $('ttBg').classList.remove('hidden'); $('ttBox').scrollTop = 0; }
-function ttClose(){ $('ttBg').classList.add('hidden'); }
-$('ttBtn').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M3 10h18M8 2.5v4M16 2.5v4M8 14h.01M12 14h.01M16 14h.01M8 17.5h.01M12 17.5h.01"/></svg>';
-$('ttBtn').onclick = ttOpen;
-$('ttBg').addEventListener('click', e => {
-  if (e.target.classList.contains('mback') || e.target.closest('[data-ttclose]')) return ttClose();
-  const b = e.target.closest('[data-code]'); if (!b) return;
-  const sub = ttFind(b.dataset.code); if (!sub) return;
-  ttClose();
-  go('/' + sub.id, {m:1});   // เปิดป็อปอัพรายการบทเรียนของวิชานั้น
+function hwToast(msg, undo){
+  const old = $('hwToast'); if (old) old.remove(); clearTimeout(hwToastT);
+  const t = document.createElement('div'); t.id = 'hwToast';
+  t.innerHTML = `<span>${msg}</span>${undo ? '<button data-act="undo">เลิกทำ</button>' : ''}`;
+  $('hwBg').appendChild(t); hwToastT = setTimeout(() => t.remove(), 4000);
+}
+function hwAdd(){
+  const inp = $('hwT'), t = inp.value.trim();
+  if (!t) { inp.focus(); inp.style.borderColor = '#ef4444'; setTimeout(() => inp.style.borderColor = '', 900); return; }
+  const a = hwLoad(), id = Date.now().toString(36) + Math.random().toString(36).slice(2,5);
+  a.push({id, subj: hwDraft.subj, title: t, due: hwDraft.due, done: false, ts: Date.now()});
+  hwSave(a); hwNew = id; hwTab = 'todo'; hwRender(false); $('hwT').focus({preventScroll:true});
+}
+function hwOpen(){
+  hwDraft.due = ''; hwRender(); const b = $('hwBox'); b.style.transition = b.style.transform = ''; $('hwBg').querySelector('.mback').style.opacity = '';
+  $('hwBg').classList.remove('hidden'); b.scrollTop = 0;
+}
+function hwClose(){
+  const bg = $('hwBg'); if (bg.classList.contains('hidden')) return;
+  const b = $('hwBox'), k = bg.querySelector('.mback'), mob = matchMedia('(max-width:639px)').matches;
+  b.style.transition = 'transform .24s cubic-bezier(.4,0,.9,.6), opacity .24s'; k.style.transition = 'opacity .24s'; k.style.opacity = '0';
+  if (mob) b.style.transform = 'translate3d(0,100%,0)'; else { b.style.transform = 'translateY(12px) scale(.97)'; b.style.opacity = '0'; }
+  setTimeout(() => { bg.classList.add('hidden'); b.style.transition = b.style.transform = b.style.opacity = ''; k.style.transition = k.style.opacity = ''; const t = $('hwToast'); if (t) t.remove(); }, 240);
+}
+$('hwBtn').innerHTML = HW_ICON;
+$('hwBtn').onclick = hwOpen;
+function hwCommit(id, dir){          // dir: 'r' = เสร็จ/ย้อนกลับ, 'l' = ลบ
+  const a = hwLoad(), i = a.findIndex(z => z.id === id); if (i < 0) return;
+  if (dir === 'r') { a[i].done = !a[i].done; a[i].doneTs = a[i].done ? Date.now() : 0; hwSave(a); }
+  else { hwLast = {item: a[i], idx: i}; a.splice(i,1); hwSave(a); hwToast('ลบการบ้านแล้ว', true); }
+  const st = $('hwBox').scrollTop; hwRender(true); $('hwBox').scrollTop = st;
+}
+$('hwBg').addEventListener('click', e => {
+  if (e.target.classList.contains('mback') || e.target.closest('[data-hwclose]')) return hwClose();
+  if (e.target.closest('#hwAdd')) return hwAdd();
+  const sc = e.target.closest('[data-subj]');
+  if (sc) { hwDraft.subj = sc.dataset.subj; document.querySelectorAll('#hwSubj .sch').forEach(c => c.classList.toggle('on', c === sc)); return; }
+  const dc = e.target.closest('[data-d]');
+  if (dc) { hwDraft.due = hwDraft.due === dc.dataset.d ? '' : dc.dataset.d; $('hwD').value = hwDraft.due; document.querySelectorAll('.dch').forEach(c => c.classList.toggle('on', c.dataset.d === hwDraft.due)); return; }
+  const tab = e.target.closest('[data-tab]'); if (tab) { hwTab = tab.dataset.tab; return hwRender(true); }
+  const act = e.target.closest('[data-act]'); if (!act) return;
+  if (act.dataset.act === 'undo') { if (hwLast) { const a = hwLoad(); a.splice(Math.min(hwLast.idx, a.length), 0, hwLast.item); hwSave(a); hwLast = null; const t = $('hwToast'); if (t) t.remove(); hwRender(true); } return; }
+  if (act.dataset.act === 'clear') { hwSave(hwLoad().filter(x => !x.done)); return hwRender(true); }
+  const it = act.closest('.hw-sw'); if (!it) return;
+  hwCommit(it.dataset.id, act.dataset.act === 'tog' ? 'r' : 'l');
 });
-window.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('ttBg').classList.contains('hidden')) ttClose(); });
+$('hwBg').addEventListener('change', e => {
+  if (e.target.id !== 'hwD') return;
+  hwDraft.due = e.target.value; document.querySelectorAll('.dch').forEach(c => c.classList.toggle('on', c.dataset.d === hwDraft.due));
+});
+$('hwBg').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'hwT') { e.preventDefault(); hwAdd(); } });
+window.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('hwBg').classList.contains('hidden')) hwClose(); });
+
+/* ปัดรายการ: ขวา = เสร็จ / ซ้าย = ลบ */
+(function(){
+  const box = $('hwBox'); let sw = null, fr = null, sx = 0, sy = 0, dx = 0, mode = 0, pid = null;
+  const TH = 90;
+  box.addEventListener('pointerdown', e => {
+    if (e.button > 0) return;
+    const f = e.target.closest('.hw-it'); if (!f || e.target.closest('button')) return;
+    fr = f; sw = f.parentNode; sx = e.clientX; sy = e.clientY; dx = 0; mode = 0; pid = e.pointerId; f.style.transition = 'none';
+  });
+  box.addEventListener('pointermove', e => {
+    if (!fr || e.pointerId !== pid) return;
+    const mx = e.clientX - sx, my = e.clientY - sy;
+    if (!mode) {
+      if (Math.abs(mx) > 8 && Math.abs(mx) > Math.abs(my)) { mode = 1; try { fr.setPointerCapture(pid); } catch(_) {} }
+      else if (Math.abs(my) > 8) mode = 2;
+    }
+    if (mode === 1) {
+      dx = mx; fr.style.transform = `translate3d(${dx}px,0,0)`;
+      sw.dataset.dir = dx > 0 ? 'r' : 'l'; sw.dataset.ok = Math.abs(dx) > TH ? '1' : '';
+    }
+  });
+  const end = () => {
+    if (!fr) return;
+    const f = fr, w = sw, d = dx, m = mode; fr = null; sw = null; pid = null;
+    if (m === 1 && Math.abs(d) > TH) {
+      const dir = d > 0 ? 'r' : 'l';
+      f.style.transition = 'transform .2s ease-in'; f.style.transform = `translate3d(${dir === 'r' ? 110 : -110}%,0,0)`;
+      setTimeout(() => hwCommit(w.dataset.id, dir), 190);
+    } else {
+      f.style.transition = 'transform .25s cubic-bezier(.22,1,.36,1)'; f.style.transform = '';
+      setTimeout(() => { f.style.transition = ''; delete w.dataset.dir; delete w.dataset.ok; }, 260);
+    }
+  };
+  box.addEventListener('pointerup', end); box.addEventListener('pointercancel', end);
+})();
+
+/* ลากหัวป็อปอัพลงเพื่อปิด */
+(function(){
+  const box = $('hwBox'), back = () => $('hwBg').querySelector('.mback'); let on = false, sy = 0, dy = 0, pid = null;
+  box.addEventListener('pointerdown', e => {
+    if (!matchMedia('(max-width:639px)').matches || !e.target.closest('.hw-top') || e.target.closest('button')) return;
+    on = true; sy = e.clientY; dy = 0; pid = e.pointerId; try { box.setPointerCapture(pid); } catch(_) {} box.style.transition = 'none';
+  });
+  box.addEventListener('pointermove', e => {
+    if (!on || e.pointerId !== pid) return;
+    dy = Math.max(0, e.clientY - sy); box.style.transform = `translate3d(0,${dy}px,0)`; back().style.opacity = String(Math.max(0, 1 - dy / 320));
+  });
+  const end = () => {
+    if (!on) return; on = false;
+    if (dy > 110) hwClose();
+    else { box.style.transition = 'transform .25s cubic-bezier(.22,1,.36,1)'; box.style.transform = ''; back().style.opacity = ''; setTimeout(() => box.style.transition = '', 260); }
+  };
+  box.addEventListener('pointerup', end); box.addEventListener('pointercancel', end);
+})();
+hwBadge();
 </script>
 </body>
 </html>
