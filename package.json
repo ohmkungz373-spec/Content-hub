@@ -2,9 +2,13 @@
   "name": "content-hub",
   "version": "1.0.0",
   "private": true,
-  "description": "Content Hub - \u0e40\u0e19\u0e37\u0e49\u0e2d\u0e2b\u0e32 \u0e21.4 \u0e40\u0e17\u0e2d\u0e21 2",
+  "description": "Content Hub - เนื้อหา ม.4 เทอม 2",
   "scripts": {
     "start": "node server.js",
     "build": "node build.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.0",
+    "web-push": "^3.6.7"
   }
 }
