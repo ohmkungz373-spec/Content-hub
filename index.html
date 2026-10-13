@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0a1020">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
@@ -17,8 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
-input,textarea,[contenteditable],.search input{-webkit-user-select:text!important;user-select:text!important;-webkit-touch-callout:default!important}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{--bg:#080d1b;--s0:#0b1226;--s1:#0f1830;--s2:#111b36;--s3:#152248;--line2:#2a3d6e;--panel:var(--s1);--panel2:#16224a;--line:#1e2d57;--ink:#eaf0ff;--muted:#8499c4;--blue:#3b82f6;--cyan:#38bdf8;--acc:#3b82f6;color-scheme:dark}
 html{scroll-behavior:smooth}
 body{margin:0;font-family:"IBM Plex Sans Thai",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;min-height:100dvh}
@@ -1674,6 +1673,16 @@ window.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('hwBg').c
   box.addEventListener('pointerup', end); box.addEventListener('pointercancel', end);
 })();
 hwBadge();
+
+/* ปิดซูม (pinch / double-tap) */
+document.addEventListener('gesturestart', e => e.preventDefault(), {passive:false});
+document.addEventListener('gesturechange', e => e.preventDefault(), {passive:false});
+let _lastTouchEnd = 0;
+document.addEventListener('touchend', e => {
+  const now = Date.now();
+  if (now - _lastTouchEnd <= 300) e.preventDefault();
+  _lastTouchEnd = now;
+}, {passive:false});
 
 if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
 
