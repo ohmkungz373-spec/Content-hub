@@ -1466,7 +1466,7 @@ function hwTimeOpen(){
 }
 let hwTab = 'todo', hwDraft = {subj:'', due:'', time:''}, hwNew = '', hwToastT = 0, hwLast = null;
 function hwLoad(){ try { const a = JSON.parse(store.get(HW_KEY) || '[]'); return Array.isArray(a) ? a : []; } catch(e) { return []; } }
-function hwSave(a){ store.set(HW_KEY, JSON.stringify(a)); hwBadge(); }
+function hwSave(a){ store.set(HW_KEY, JSON.stringify(a)); hwBadge(); if (typeof pushSyncSoon === 'function') pushSyncSoon(); }
 const hwCol = s => { try { return catOf(s).color || '#3b82f6'; } catch(e) { return '#3b82f6'; } };
 const hwToday = () => { const d = new Date(); d.setHours(0,0,0,0); return d; };
 const hwIso = d => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
@@ -1768,17 +1768,57 @@ async function nfShow(title, body, url, tag){
   } catch(e) {}
   try { new Notification(title, opt); } catch(e) {}
 }
+const NF_PUSH = 'hub-push';
+const pushActive = () => store.get(NF_PUSH) === '1';
+const pushKey = s => { const b = atob((s + '='.repeat((4 - s.length % 4) % 4)).replace(/-/g, '+').replace(/_/g, '/')); return Uint8Array.from(b, c => c.charCodeAt(0)); };
+const swReady = () => Promise.race([navigator.serviceWorker.ready, new Promise((_, rej) => setTimeout(() => rej(new Error('sw timeout')), 6000))]);
+function pushItems(){
+  return hwLoad().filter(x => !x.done && x.due).map(x => {
+    const [y, m, d] = x.due.split('-').map(Number), [hh, mm] = (x.time || '23:59').split(':').map(Number);
+    const sj = (SUBJECTS || []).find(z => z.id === x.subj);
+    return { id: String(x.id), title: x.title, at: new Date(y, m - 1, d, hh, mm).getTime(), time: x.time || '', subj: sj ? sj.name : '' };
+  });
+}
+async function pushPost(action){
+  const reg = await navigator.serviceWorker.getRegistration(); if (!reg) return false;
+  const sub = await reg.pushManager.getSubscription(); if (!sub) return false;
+  const r = await fetch('/api/sync', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action, subscription: sub.toJSON(), items: action === 'sync' ? pushItems() : [] }) });
+  return r.ok;
+}
+let _pst = 0;
+function pushSyncSoon(){ if (!pushActive() || !nfEnabled()) return; clearTimeout(_pst); _pst = setTimeout(() => { pushPost('sync').catch(() => {}); }, 1200); }
+async function pushEnable(){
+  try {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return false;
+    const r = await fetch('/api/vapid', { cache: 'no-store' }); if (!r.ok) return false;
+    const j = await r.json(); if (!j.publicKey) return false;
+    const reg = await swReady();
+    let sub = await reg.pushManager.getSubscription();
+    if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: pushKey(j.publicKey) });
+    if (!(await pushPost('sync'))) return false;
+    store.set(NF_PUSH, '1'); return true;
+  } catch(e) { return false; }
+}
+async function pushDisable(){
+  try {
+    await pushPost('unsubscribe').catch(() => {});
+    const reg = await navigator.serviceWorker.getRegistration();
+    const sub = reg && await reg.pushManager.getSubscription(); if (sub) await sub.unsubscribe();
+  } catch(e) {}
+  store.set(NF_PUSH, '0');
+}
 async function nfToggle(){
   if (!nfSupported) { nfToast('เบราว์เซอร์นี้ยังไม่รองรับการแจ้งเตือน'); return; }
-  if (nfEnabled()) { store.set(NF_PREF, '0'); nfPaint(); nfToast('ปิดการแจ้งเตือนแล้ว'); return; }
+  if (nfEnabled()) { store.set(NF_PREF, '0'); await pushDisable(); nfPaint(); nfToast('ปิดการแจ้งเตือนแล้ว'); return; }
   if (Notification.permission === 'denied') { nfToast('การแจ้งเตือนถูกบล็อกไว้ — เปิดได้ที่การตั้งค่าของเบราว์เซอร์/เครื่อง'); return; }
   let perm = Notification.permission;
   if (perm !== 'granted') { try { perm = await Notification.requestPermission(); } catch(e) {} }
-  if (perm === 'granted') {
-    store.set(NF_PREF, '1'); nfPaint(); nfToast('เปิดการแจ้งเตือนแล้ว');
-    nfShow('เปิดการแจ้งเตือนแล้ว 🔔', 'จะเตือนการบ้านใกล้ส่งและบทเรียนใหม่', '/', 'hub-test');
-    nfCheck();
-  } else { nfPaint(); nfToast('ยังไม่ได้อนุญาตการแจ้งเตือน'); }
+  if (perm !== 'granted') { nfPaint(); nfToast('ยังไม่ได้อนุญาตการแจ้งเตือน'); return; }
+  store.set(NF_PREF, '1'); nfPaint();
+  const ok = await pushEnable();
+  nfToast(ok ? 'เปิดแล้ว — แจ้งเตือนได้แม้ปิดแอป' : 'เปิดแล้ว — แจ้งเตือนเฉพาะตอนเปิดแอป');
+  nfShow('เปิดการแจ้งเตือนแล้ว 🔔', 'จะเตือนการบ้านใกล้ส่งและบทเรียนใหม่', '/', 'hub-test');
+  nfCheck();
 }
 
 // เตือนการบ้าน: ล่วงหน้า 1 วัน / 1 ชั่วโมง / เมื่อเลยกำหนด (ครั้งเดียวต่อขั้น)
@@ -1821,13 +1861,13 @@ function nfNewLessons(){
     store.set(NF_KNOWN, JSON.stringify(cur));   // ยังไม่ได้เปิดแจ้งเตือน: อัปเดตรายการไว้เฉย ๆ
   }
 }
-function nfCheck(){ if (nfEnabled()) nfHomework(); nfNewLessons(); }
+function nfCheck(){ if (pushActive() && nfEnabled()) return; if (nfEnabled()) nfHomework(); nfNewLessons(); }   // ถ้าใช้ push จากเซิร์ฟเวอร์อยู่ ไม่ต้องเตือนซ้ำในเครื่อง
 
 $('notifBtn').onclick = nfToggle;
 nfPaint();
 setInterval(nfCheck, 60000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) nfCheck(); });
-addEventListener('load', () => setTimeout(nfCheck, 1500));
+addEventListener('load', () => setTimeout(() => { nfCheck(); pushSyncSoon(); }, 1500));
 
 if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
 

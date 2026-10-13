@@ -24,6 +24,6 @@ self.addEventListener('push', e => {
   let d = {};
   try { d = e.data ? e.data.json() : {}; } catch (err) { d = { body: e.data && e.data.text() }; }
   e.waitUntil(self.registration.showNotification(d.title || 'Content Hub', {
-    body: d.body || '', icon: '/icon-192.png', badge: '/favicon-32.png', data: { url: d.url || '/' }
+    body: d.body || '', icon: '/icon-192.png', badge: '/favicon-32.png', tag: d.tag || undefined, data: { url: d.url || '/' }
   }));
 });
