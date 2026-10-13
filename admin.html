@@ -33,14 +33,13 @@ h2{font-size:16px;font-weight:600;margin:0}
 
 label{display:block;font-size:13.5px;color:var(--muted);margin:0 0 6px}
 input,select{width:100%;font:inherit;color:var(--ink);background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:11px 13px;min-height:48px;outline:0;transition:border-color .15s,box-shadow .15s}
-select{appearance:none;-webkit-appearance:none;padding-right:40px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='8' fill='none' stroke='%238fa0c8' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M1 1l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 15px center}
 input:focus,select:focus{border-color:var(--acc);box-shadow:0 0 0 3px #8b9bff30}
 button{font:inherit;color:inherit;cursor:pointer;border:0;border-radius:12px;min-height:48px;padding:0 18px;font-weight:600;transition:transform .1s,opacity .15s,background .15s}
 button:active:not(:disabled){transform:scale(.98)}
 :focus-visible{outline:2px solid var(--acc2);outline-offset:2px}
-.pri{background:linear-gradient(135deg,#6d7dff,#38c8c0);color:#071022;width:100%;font-size:15.5px}
+.pri{background:linear-gradient(135deg,#6d7dff,#38c8c0);color:#071022;width:100%;font-size:16px;min-height:56px;border-radius:14px}
 .pri:disabled{opacity:.4;cursor:default}
-#loginBtn{margin-top:14px}
+#loginBtn{margin-top:14px;min-height:50px}
 .ghost{background:var(--panel2);border:1px solid var(--line);min-height:40px;padding:0 14px;font-size:14px;color:var(--ink)}
 .ghost:hover{background:#243158}
 .err{color:#fca5a5;font-size:14px;margin-top:10px;min-height:22px}
@@ -86,7 +85,36 @@ button:active:not(:disabled){transform:scale(.98)}
 .msg.bad{background:#f8717118;border:1px solid #f8717155;color:#fecaca}
 .hint{font-size:13px;color:var(--muted);margin-top:10px}
 
-/* sticky upload bar */
+
+/* subject chips + tabs */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin:0 -2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;min-height:42px;padding:0 16px;border-radius:999px;background:var(--panel);border:1px solid var(--line);color:var(--muted);font-size:14px;font-weight:600;white-space:nowrap}
+.chip[aria-pressed=true]{background:var(--acc);border-color:var(--acc);color:#0b1020}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:var(--panel);border:1px solid var(--line);border-radius:14px;margin:4px 0 16px}
+.tab{min-height:44px;background:none;color:var(--muted);border-radius:10px;font-size:15px}
+.tab[aria-selected=true]{background:var(--panel2);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.tab .pill{margin-left:6px;padding:0 8px;font-size:12px}
+/* manage list */
+.tools{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.tools .ghost{min-height:36px;font-size:13.5px}
+.tools .sel{margin-left:auto;font-size:13.5px;color:var(--muted)}
+.chs .row{cursor:pointer}
+.chs .row.on{background:#8b9bff1c}
+.ck{flex:none;width:24px;height:24px;border-radius:8px;border:2px solid #3a4a80;display:grid;place-items:center;color:transparent;font-size:14px;font-weight:700}
+.row.on .ck{background:var(--acc);border-color:var(--acc);color:#0b1020}
+.edit{flex:none;background:var(--panel2);border:1px solid var(--line);min-height:36px;padding:0 12px;font-size:13px;border-radius:10px;color:var(--ink)}
+.dangerbtn{background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;width:100%;font-size:15.5px}
+/* dialog */
+.ov{position:fixed;inset:0;background:#050810cc;display:flex;align-items:flex-end;justify-content:center;padding:16px;z-index:20}
+.dlg{width:100%;max-width:440px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px;margin-bottom:env(safe-area-inset-bottom,0px)}
+.dlg h3{margin:0 0 6px;font-size:17px}
+.dlg p{margin:0 0 14px;color:var(--muted);font-size:14px;word-break:break-word;white-space:pre-line}
+.dlg .btns{display:flex;gap:10px;margin-top:14px}
+.dlg .btns button{flex:1}
+@media (min-width:600px){.ov{align-items:center}}
+
+/* sticky bar */
 .bar{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(to top,var(--bg) 60%,transparent);z-index:5}
 .bar .in{max-width:620px;margin:0 auto}
 
@@ -123,32 +151,40 @@ button:active:not(:disabled){transform:scale(.98)}
       <button class="ghost" id="logoutBtn" type="button">ออกจากระบบ</button>
     </div>
 
-    <section class="card">
-      <div class="head"><span class="step">1</span><h2>เลือกวิชา</h2></div>
-      <label for="subj" class="hidden">วิชา</label>
-      <select id="subj"></select>
-      <div class="head" style="margin:18px 0 10px"><h2 style="font-size:14.5px;color:var(--muted);font-weight:500">บทที่มีอยู่แล้ว</h2><span class="pill"><span id="cnt">0</span> บท</span></div>
-      <div class="chs" id="chs"></div>
-      <div class="hint">บทเรียงตามชื่อไฟล์ ให้ขึ้นต้นชื่อด้วยตัวเลข เช่น 05-เรื่องใหม่.html</div>
+    <div class="chips" id="chips" role="group" aria-label="เลือกวิชา"></div>
+    <input type="hidden" id="subj">
+    <div class="tabs" role="tablist">
+      <button class="tab" id="tabUp" role="tab" aria-selected="true" type="button">อัปโหลดบทใหม่</button>
+      <button class="tab" id="tabMg" role="tab" aria-selected="false" type="button">จัดการบท<span class="pill"><span id="cnt">0</span></span></button>
+    </div>
+
+    <section id="viewUp">
+      <div class="card">
+        <label class="pick" id="drop">
+          <span class="ic" aria-hidden="true">＋</span>
+          <b>แตะเพื่อเลือกไฟล์ .html</b>
+          <span>เลือกได้หลายไฟล์ หรือลากมาวางที่นี่</span>
+          <input id="file" type="file" accept=".html,text/html" multiple>
+        </label>
+        <div id="fileList"></div>
+        <div class="hint">ไฟล์ที่ชื่อซ้ำจะถูกเขียนทับ · ชื่อบทดึงจากแท็ก &lt;title&gt; · หลังอัปโหลด เว็บจะ deploy ใหม่ประมาณ 1 นาที</div>
+      </div>
     </section>
 
-    <section class="card">
-      <div class="head"><span class="step">2</span><h2>เลือกไฟล์บทเรียน</h2></div>
-      <label class="pick" id="drop">
-        <span class="ic" aria-hidden="true">＋</span>
-        <b>แตะเพื่อเลือกไฟล์ .html</b>
-        <span>เลือกได้หลายไฟล์ หรือลากมาวางที่นี่</span>
-        <input id="file" type="file" accept=".html,text/html" multiple>
-      </label>
-      <div id="fileList"></div>
-      <div id="status" role="status"></div>
-      <div class="hint">ไฟล์ที่ชื่อซ้ำจะถูกเขียนทับ · ชื่อบทดึงจากแท็ก &lt;title&gt; · หลังอัปโหลด เว็บจะ deploy ใหม่ประมาณ 1 นาที</div>
+    <section id="viewMg" class="hidden">
+      <div class="card">
+        <div class="tools"><button class="ghost" id="selAll" type="button">เลือกทั้งหมด</button><span class="sel" id="selInfo"></span></div>
+        <div class="chs" id="chs"></div>
+        <div class="hint">แตะที่บทเพื่อเลือกหลายบท แล้วกดลบที่แถบด้านล่าง · ปุ่ม “แก้ชื่อ” ใช้เปลี่ยนชื่อไฟล์ (ลำดับบทเรียงตามชื่อไฟล์)</div>
+      </div>
     </section>
+    <div id="status" role="status"></div>
   </div>
 </div>
 
 <div class="bar hidden" id="bar"><div class="in">
-  <button class="pri" id="upBtn" type="button" disabled>อัปโหลดเข้าวิชานี้</button>
+  <button class="pri" id="upBtn" type="button">เลือกไฟล์ .html</button>
+  <button class="pri dangerbtn hidden" id="delBtn" type="button">ลบที่เลือก</button>
 </div></div>
 
 <script>
@@ -167,8 +203,8 @@ async function api(action, data){
   return j;
 }
 
-function showPanel(on){ $('loginView').classList.toggle('hidden', on); $('panelView').classList.toggle('hidden', !on); $('bar').classList.toggle('hidden', !on); }
-function logout(){ TOKEN = ''; ss.del('hub-admin'); showPanel(false); $('pw').value = ''; }
+function showPanel(on){ $('loginView').classList.toggle('hidden', on); $('panelView').classList.toggle('hidden', !on); updBar(); }
+function logout(){ TOKEN = ''; SEL.clear(); ss.del('hub-admin'); showPanel(false); $('pw').value = ''; }
 
 async function login(){
   const b = $('loginBtn'); $('loginErr').textContent = ''; b.disabled = true; b.textContent = 'กำลังตรวจสอบ...';
@@ -181,32 +217,83 @@ $('pw').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
 $('logoutBtn').onclick = logout;
 $('eye').onclick = () => { const p = $('pw'), show = p.type === 'password'; p.type = show ? 'text' : 'password'; $('eye').textContent = show ? 'ซ่อน' : 'แสดง'; };
 
+let SEL = new Set(), TAB = 'up';
+function ask(o){
+  return new Promise(res => {
+    const ov = document.createElement('div'); ov.className = 'ov';
+    ov.innerHTML = `<div class="dlg" role="dialog" aria-modal="true"><h3>${esc(o.title)}</h3><p>${esc(o.body || '')}</p>${o.input !== undefined ? `<input id="dlgIn" value="${esc(o.input)}">` : ''}<div class="btns"><button class="ghost" data-x="0" type="button">ยกเลิก</button><button class="${o.danger ? 'dangerbtn' : 'pri'}" data-x="1" type="button" style="min-height:48px">${esc(o.ok || 'ตกลง')}</button></div></div>`;
+    document.body.appendChild(ov);
+    const inp = ov.querySelector('#dlgIn'); (inp || ov.querySelector('[data-x="1"]')).focus();
+    const done = v => { ov.remove(); res(v); };
+    ov.addEventListener('click', e => { if (e.target === ov) done(null); const x = e.target.closest('[data-x]'); if (x) done(x.dataset.x === '1' ? (inp ? inp.value.trim() : true) : null); });
+    ov.addEventListener('keydown', e => { if (e.key === 'Escape') done(null); if (e.key === 'Enter' && inp) done(inp.value.trim()); });
+  });
+}
 async function loadSubjects(){
   const d = await (await fetch('/subjects.json', { cache:'no-store' })).json();
   SUBJECTS = d.subjects || [];
   const cur = $('subj').value;
-  $('subj').innerHTML = SUBJECTS.map(s => `<option value="${esc(s.id)}">${esc((s.code ? s.code + ' · ' : '') + s.name)}</option>`).join('');
-  if (cur && SUBJECTS.some(s => s.id === cur)) $('subj').value = cur;
-  renderChs(); renderFiles();
+  $('subj').value = SUBJECTS.some(s => s.id === cur) ? cur : (SUBJECTS[0] ? SUBJECTS[0].id : '');
+  renderChips(); renderChs(); renderFiles();
 }
+function renderChips(){
+  $('chips').innerHTML = SUBJECTS.map(s => `<button class="chip" data-sid="${esc(s.id)}" aria-pressed="${s.id === $('subj').value}" type="button">${esc((s.code ? s.code + ' · ' : '') + s.name)}</button>`).join('');
+}
+$('chips').addEventListener('click', e => { const b = e.target.closest('[data-sid]'); if (!b) return; $('subj').value = b.dataset.sid; SEL.clear(); renderChips(); renderChs(); renderFiles(); });
 function curSubject(){ return SUBJECTS.find(s => s.id === $('subj').value); }
+function setTab(t){
+  TAB = t; $('viewUp').classList.toggle('hidden', t !== 'up'); $('viewMg').classList.toggle('hidden', t !== 'mg');
+  $('tabUp').setAttribute('aria-selected', t === 'up'); $('tabMg').setAttribute('aria-selected', t === 'mg'); $('status').innerHTML = ''; updBar();
+}
+$('tabUp').onclick = () => setTab('up'); $('tabMg').onclick = () => setTab('mg');
+function updBar(){
+  const up = TAB === 'up', n = SEL.size;
+  $('upBtn').classList.toggle('hidden', !up); $('delBtn').classList.toggle('hidden', up || !n);
+  $('bar').classList.toggle('hidden', !TOKEN || (!up && !n));
+  $('delBtn').textContent = `ลบที่เลือก (${n} บท)`;
+}
 function renderChs(){
   const s = curSubject(), list = s ? s.chapters : [];
+  SEL = new Set([...SEL].filter(f => list.some(c => c.file === f)));
   $('cnt').textContent = list.length;
-  $('chs').innerHTML = list.length ? list.map((c, i) => `<div class="row"><span class="n">${i + 1}</span><div class="tx" title="${esc(c.file)}"><div class="tt">${esc(c.title)}</div><div class="ff">${esc(c.file)}</div></div><button class="del" data-del="${i}" type="button">ลบ</button></div>`).join('') : '<div class="empty">ยังไม่มีบทเรียนในวิชานี้<br>เริ่มจากเลือกไฟล์ในขั้นตอนที่ 2</div>';
+  $('chs').innerHTML = list.length ? list.map((c, i) => `<div class="row${SEL.has(c.file) ? ' on' : ''}" data-i="${i}"><span class="ck" aria-hidden="true">✓</span><span class="n">${i + 1}</span><div class="tx" title="${esc(c.file)}"><div class="tt">${esc(c.title)}</div><div class="ff">${esc(c.file)}</div></div><button class="edit" data-edit="${i}" type="button">แก้ชื่อ</button></div>`).join('') : '<div class="empty">ยังไม่มีบทเรียนในวิชานี้<br>ไปที่แท็บ “อัปโหลดบทใหม่” เพื่อเพิ่ม</div>';
+  $('selInfo').textContent = SEL.size ? `เลือก ${SEL.size} จาก ${list.length}` : '';
+  $('selAll').textContent = list.length && SEL.size === list.length ? 'ยกเลิกทั้งหมด' : 'เลือกทั้งหมด';
+  $('selAll').classList.toggle('hidden', !list.length); updBar();
 }
+$('selAll').onclick = () => { const s = curSubject(), l = s ? s.chapters : []; if (SEL.size === l.length) SEL.clear(); else l.forEach(c => SEL.add(c.file)); renderChs(); };
 $('chs').addEventListener('click', async e => {
-  const bt = e.target.closest('[data-del]'); if (!bt) return;
-  const s = curSubject(), c = s && s.chapters[+bt.dataset.del]; if (!c) return;
-  if (!confirm(`ลบบท "${c.title}"\n(${c.file}) ออกจากวิชา ${s.name} ?\n\nลบแล้วกู้คืนผ่านหน้านี้ไม่ได้`)) return;
-  bt.disabled = true; bt.textContent = '...'; $('status').innerHTML = '';
-  try {
-    const j = await api('delete', { subject: s.id, files: [c.file] });
-    s.chapters.splice(+bt.dataset.del, 1); renderChs(); renderFiles();
-    $('status').innerHTML = `<div class="msg ok">ลบ ${esc(c.file)} แล้ว (commit ${esc(j.commit)})<br>เว็บกำลัง deploy ใหม่ ประมาณ 1 นาทีบทจะหายจากหน้าเว็บ</div>`;
-  } catch(err){ bt.disabled = false; bt.textContent = 'ลบ'; $('status').innerHTML = `<div class="msg bad">${esc(err.message)}</div>`; }
+  const s = curSubject(); if (!s) return;
+  const ed = e.target.closest('[data-edit]');
+  if (ed) {
+    const c = s.chapters[+ed.dataset.edit]; if (!c) return;
+    const nn = await ask({ title: 'แก้ชื่อไฟล์', body: `ชื่อเดิม: ${c.file}\nขึ้นต้นด้วยตัวเลขเพื่อกำหนดลำดับ เช่น 05-เรื่องใหม่.html`, input: c.file, ok: 'บันทึกชื่อ' });
+    if (nn === null || nn === c.file) return;
+    if (!FILE_RE.test(nn) || /^[._]/.test(nn) || s.chapters.some(x => x !== c && x.file.toLowerCase() === nn.toLowerCase())) { $('status').innerHTML = '<div class="msg bad">ชื่อไฟล์ไม่ถูกต้องหรือซ้ำกับบทอื่น (ต้องลงท้าย .html)</div>'; return; }
+    $('status').innerHTML = '';
+    try {
+      const j = await api('rename', { subject: s.id, from: c.file, to: nn });
+      c.file = nn; s.chapters.sort((a, b) => a.file.localeCompare(b.file, 'th', { numeric:true })); SEL.clear(); renderChs();
+      $('status').innerHTML = `<div class="msg ok">เปลี่ยนชื่อเป็น ${esc(nn)} แล้ว${j && j.commit ? ' (commit ' + esc(j.commit) + ')' : ''}<br>เว็บกำลัง deploy ใหม่ ประมาณ 1 นาที</div>`;
+    } catch(err){ $('status').innerHTML = `<div class="msg bad">${esc(err.message)}</div>`; }
+    return;
+  }
+  const row = e.target.closest('[data-i]'); if (!row) return;
+  const c = s.chapters[+row.dataset.i]; if (!c) return;
+  SEL.has(c.file) ? SEL.delete(c.file) : SEL.add(c.file); renderChs();
 });
-$('subj').onchange = () => { renderChs(); renderFiles(); };
+$('delBtn').onclick = async () => {
+  const s = curSubject(), files = [...SEL]; if (!s || !files.length) return;
+  const ok = await ask({ title: `ลบ ${files.length} บท?`, body: files.map(f => '• ' + f).join('\n') + `\n\nจากวิชา ${s.name} · ลบแล้วกู้คืนผ่านหน้านี้ไม่ได้`, ok: 'ลบเลย', danger: true });
+  if (!ok) return;
+  const b = $('delBtn'); b.disabled = true; b.textContent = 'กำลังลบ...'; $('status').innerHTML = '';
+  try {
+    const j = await api('delete', { subject: s.id, files });
+    s.chapters = s.chapters.filter(c => !files.includes(c.file)); SEL.clear(); renderChs(); renderFiles();
+    $('status').innerHTML = `<div class="msg ok">ลบ ${files.length} บทแล้ว (commit ${esc(j.commit)})<br>เว็บกำลัง deploy ใหม่ ประมาณ 1 นาทีบทจะหายจากหน้าเว็บ</div>`;
+  } catch(err){ $('status').innerHTML = `<div class="msg bad">${esc(err.message)}</div>`; }
+  b.disabled = false; updBar();
+};
 
 const FILE_RE = /^[^\\/:*?"<>|\u0000-\u001f]{1,100}\.html$/i;
 function renderFiles(){
@@ -220,8 +307,8 @@ function renderFiles(){
       <div class="t">ชื่อบท: <b>${f.title ? esc(f.title) : '(ไม่พบ &lt;title&gt; จะใช้ชื่อไฟล์แทน)'}</b> · ${(f.size / 1024).toFixed(0)} KB</div>${tag}</div>`;
   }).join('');
   const ok = FILES.length && FILES.every((f, i) => FILE_RE.test(f.name) && !/^[._]/.test(f.name) && names.indexOf(f.name.toLowerCase()) === i);
-  $('upBtn').disabled = !ok || !s;
-  $('upBtn').textContent = FILES.length ? `อัปโหลด ${FILES.length} ไฟล์เข้า “${s ? s.name : ''}”` : 'อัปโหลดเข้าวิชานี้';
+  $('upBtn').disabled = FILES.length ? (!ok || !s) : false;
+  $('upBtn').textContent = FILES.length ? `อัปโหลด ${FILES.length} ไฟล์เข้า “${s ? s.name : ''}”` : 'เลือกไฟล์ .html';
 }
 $('fileList').addEventListener('click', e => { const b = e.target.closest('[data-rm]'); if (b) { FILES.splice(+b.dataset.rm, 1); renderFiles(); } });
 $('fileList').addEventListener('input', e => { const i = e.target.dataset && e.target.dataset.name; if (i !== undefined) { FILES[+i].name = e.target.value.trim(); updTags(); } });
@@ -249,7 +336,7 @@ const drop = $('drop');
 drop.addEventListener('drop', e => { if (e.dataTransfer && e.dataTransfer.files) addFiles(e.dataTransfer.files); });
 
 $('upBtn').onclick = async () => {
-  const s = curSubject(); if (!s || !FILES.length) return;
+  const s = curSubject(); if (!FILES.length) { $('file').click(); return; } if (!s) return;
   const total = FILES.reduce((a, f) => a + f.size, 0);
   if (total > 3 * 1024 * 1024) { $('status').innerHTML = '<div class="msg bad">ไฟล์รวมใหญ่เกิน 3 MB ให้แบ่งอัปโหลดทีละชุด</div>'; return; }
   const b = $('upBtn'); b.disabled = true; b.textContent = 'กำลังอัปโหลด...'; $('status').innerHTML = '';
