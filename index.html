@@ -643,6 +643,41 @@ html:not([data-theme="light"]) .search input::placeholder{color:#8794b3}
 html:not([data-theme="light"]) .search:focus-within{box-shadow:0 0 0 3px #5cc8f526}
 html:not([data-theme="light"]) .startcard::after{display:none}
 html:not([data-theme="light"]) #subjBox{box-shadow:0 -12px 36px #0007}
+
+/* ===== ปุ่ม + ป็อปอัพตารางเรียน ===== */
+header.top .ttbtn{flex:none;width:42px;height:42px;min-height:42px;padding:0;display:grid;place-items:center;border-radius:14px;margin-left:auto;color:var(--cyan)}
+header.top .ttbtn svg{width:21px;height:21px}
+header.top .ttbtn + .themebtn{margin-left:0}
+#ttBg{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center}
+#ttBg.hidden{display:none!important}
+#ttBg .mback{position:absolute;inset:0;background:#000b;animation:mfade .25s both}
+html[data-theme="light"] #ttBg .mback{background:#0b1b4080}
+#ttBox{position:relative;width:100%;max-width:440px;max-height:86dvh;overflow:auto;overscroll-behavior:contain;padding:12px 12px 16px;background:linear-gradient(var(--s3),var(--s1));border:1px solid var(--line2);border-bottom:0;border-radius:24px 24px 0 0;animation:msheet .32s cubic-bezier(.22,1,.36,1)}
+@media(min-width:640px){#ttBg{align-items:center;padding:20px}#ttBox{border-radius:24px;border-bottom:1px solid var(--line2);animation:mpop .25s ease}}
+#ttBox .tt-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+#ttBox .tt-head h2{margin:0;font-size:16px;line-height:1.25}
+#ttBox .tt-head small{color:var(--muted);font-size:11.5px;display:block}
+#ttBox .tt-x{margin-left:auto;flex:none;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--ink) 7%,transparent);border:1px solid var(--line);color:var(--ink)}
+#ttBox .tt-x svg{width:14px;height:14px}
+.tt-stats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.tt-stats .pill{font-size:12px;padding:1px 10px}
+table.tt{border-collapse:separate;border-spacing:2px;table-layout:fixed;width:100%}
+table.tt th{font-size:10px;font-weight:600;color:var(--muted);text-align:center;padding:0}
+table.tt th.day{width:26px;color:var(--ink);font-size:12px}
+table.tt tr.today th.day{color:var(--cyan)}
+table.tt td{padding:0;height:34px}
+.tt-c{display:grid;place-items:center;width:100%;height:100%;padding:3px;border-radius:8px;background:color-mix(in srgb,var(--c) 22%,transparent);border:1px solid color-mix(in srgb,var(--c) 55%,transparent);transition:.12s}
+.tt-c:hover{transform:scale(1.1);background:color-mix(in srgb,var(--c) 38%,transparent)}
+.tt-c .sic{width:100%;height:100%;display:block}
+table.tt td.e{background:color-mix(in srgb,var(--ink) 4%,transparent);border-radius:8px}
+.tt-list{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.tt-s{display:flex;align-items:center;gap:7px;text-align:left;width:100%;min-width:0;padding:6px 8px;border-radius:12px;border:1px solid color-mix(in srgb,var(--c) 40%,var(--line));background:color-mix(in srgb,var(--c) 10%,var(--panel))}
+.tt-s .ic2{flex:none;width:24px;height:24px}
+.tt-s .ic2 .sic{width:100%;height:100%;display:block}
+.tt-s .t{min-width:0;flex:1;font-size:12.5px;line-height:1.25;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tt-s .n{flex:none;font-size:12px;font-weight:700;color:var(--cyan)}
+html[data-theme="light"] .tt-s .n{color:#0369a1}
+.tt-hint{color:var(--muted);font-size:11.5px;margin:8px 2px 0;text-align:center}
 </style>
 </head>
 <body>
@@ -651,6 +686,7 @@ html:not([data-theme="light"]) #subjBox{box-shadow:0 -12px 36px #0007}
     <button class="btn hidden" id="backBtn" aria-label="ย้อนกลับ"></button>
     <div class="logo" id="logo">◆ CONTENT <span>HUB</span></div>
     <div class="crumb" id="crumb"></div>
+    <button class="btn ttbtn" id="ttBtn" type="button" aria-label="ตารางเรียน" title="ตารางเรียน"></button>
     <button class="btn themebtn" id="themeBtn" type="button"></button>
   </div>
 </header>
@@ -681,6 +717,7 @@ html:not([data-theme="light"]) #subjBox{box-shadow:0 -12px 36px #0007}
   <div class="vframe" id="vframe"></div>
 </section>
 
+<div class="hidden" id="ttBg"><div class="mback"></div><div id="ttBox" role="dialog" aria-modal="true" aria-label="ตารางเรียน"></div></div>
 <div class="hidden" id="subjBg"><div class="mback"></div><div id="subjBox" role="dialog" aria-modal="true"></div></div>
 <div class="sheet-bg hidden" id="sheetBg"><div class="sheet" id="sheet"></div></div>
 <button class="totop" id="toTop" type="button" aria-label="กลับขึ้นข้างบน"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button>
@@ -1113,6 +1150,62 @@ $('themeBtn').onclick = () => {
   void document.body.offsetHeight;
   requestAnimationFrame(() => requestAnimationFrame(() => noTrans(false)));
 };
+
+/* ---------- ตารางเรียน ม.4/14 ภาคเรียนที่ 1 ปีการศึกษา 2569 (แสดงเฉพาะวิชาที่มีในโฟลเดอร์ content) ---------- */
+const TT_PERIODS = [0,1,2,3,'พัก',4,5,6,7,8,9,10];
+const TT_COLOR = {'ท31101':'#ef4444','ว31201':'#10b981','ว31221':'#0ea5e9','ว31241':'#22c55e','ว31181':'#06b6d4','ว31261':'#14b8a6','ว33103':'#84cc16',
+  'อ31101':'#3b82f6','อ31201':'#6366f1','อ31211':'#8b5cf6','พ31101':'#65a30d','พ31201':'#16a34a','ส31101':'#ec4899','ส31111':'#d946ef',
+  'ค31101':'#f59e0b','ค31201':'#f97316','ง31201':'#ca8a04','ศ31101':'#e11d48'};
+// รหัสในตาราง -> รหัสที่ใช้ใน content (กรณีรหัสไม่ตรงกัน)
+const TT_ALIAS = {'ว33103':'ว31103','ศ31101':'ศ31201'};
+const TT_DAYS = [
+ ['จ.',['จิตศึกษา','อ31101','อ31101','อ31201','อ31201','พัก','ว31201','ว31201','ค31101','ค31101','ส31111']],
+ ['อ.',['','ง31201','ศ31101','ว31261','พ31101','ท31101','พัก','ว31181','ว31181','ว31241','อ31211']],
+ ['พ.',['','เลือกเสรี','เลือกเสรี','ว31241','ว31241','ว33103','พัก','พ31201','ส31101','ส31101','อบรมคุณธรรม']],
+ ['พฤ.',['','ว31221','ว31221','ค31201','ค31201','พัก','','ชุมนุม','ชุมนุม','','']],
+ ['ศ.',['','ง31901','ว33103','ว33103','ว31201','ว31201','พัก','ค31201','ค31201','ท31101','ว31221']]
+];
+const ttBase = c => String(c||'').replace(/\s+/g,'').replace(/-\d+$/,'');
+function ttFind(code){
+  if (!Array.isArray(SUBJECTS)) return null;
+  const want = ttBase(TT_ALIAS[code] || code);
+  return SUBJECTS.find(x => ttBase(x.code) === want) || null;
+}
+function ttRender(){
+  const cnt = {};
+  TT_DAYS.forEach(d => d[1].forEach(c => { if (c && c !== 'พัก' && ttFind(c)) cnt[c] = (cnt[c]||0) + 1; }));
+  const codes = Object.keys(cnt).sort((a,b) => (ttFind(a).order - ttFind(b).order) || a.localeCompare(b));
+  const total = codes.reduce((n,c) => n + cnt[c], 0);
+  // แสดงเฉพาะคอลัมน์ (คาบ) ที่มีวิชาในระบบ ไม่เอาคอลัมน์พัก
+  const cols = [];
+  TT_PERIODS.forEach((p,i) => { if (p !== 'พัก' && TT_DAYS.some(d => cnt[d[1][i]])) cols.push(i); });
+  const todayIdx = [-1,0,1,2,3,4,-1][new Date().getDay()];
+  const cell = c => {
+    const sub = c && cnt[c] ? ttFind(c) : null;
+    if (!sub) return '<td class="e"></td>';
+    return `<td><button class="tt-c" style="--c:${TT_COLOR[c]||'#64748b'}" data-code="${_esc(c)}" title="${_esc(sub.name)}">${subjIcon(sub.icon, sub.name)}</button></td>`;
+  };
+  $('ttBox').innerHTML = `
+    <div class="tt-head"><div><h2>ตารางเรียน ม.4/14</h2><small>ภาคเรียนที่ 1 ปีการศึกษา 2569</small></div><button class="tt-x" data-ttclose="1" aria-label="ปิด">${X_ICON}</button></div>
+    <div class="tt-stats"><span class="pill"><b>${total}</b> คาบ/สัปดาห์</span><span class="pill"><b>${codes.length}</b> วิชา</span></div>
+    <table class="tt"><thead><tr><th class="day"></th>${cols.map(i=>`<th>${TT_PERIODS[i]}</th>`).join('')}</tr></thead><tbody>${
+      TT_DAYS.map((d,r)=>`<tr class="${r===todayIdx?'today':''}"><th class="day">${d[0]}</th>${cols.map(i=>cell(d[1][i])).join('')}</tr>`).join('')
+    }</tbody></table>
+    <div class="tt-list">${codes.map(c=>{const sub=ttFind(c);return `<button class="tt-s" style="--c:${TT_COLOR[c]||'#64748b'}" data-code="${_esc(c)}"><span class="ic2">${subjIcon(sub.icon, sub.name)}</span><span class="t">${_esc(sub.name)}</span><span class="n">${cnt[c]}</span></button>`;}).join('')}</div>
+    <div class="tt-hint">ตัวเลข = จำนวนคาบ/สัปดาห์ • แตะวิชาเพื่อเลือกบทเรียน</div>`;
+}
+function ttOpen(){ ttRender(); $('ttBg').classList.remove('hidden'); $('ttBox').scrollTop = 0; }
+function ttClose(){ $('ttBg').classList.add('hidden'); }
+$('ttBtn').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M3 10h18M8 2.5v4M16 2.5v4M8 14h.01M12 14h.01M16 14h.01M8 17.5h.01M12 17.5h.01"/></svg>';
+$('ttBtn').onclick = ttOpen;
+$('ttBg').addEventListener('click', e => {
+  if (e.target.classList.contains('mback') || e.target.closest('[data-ttclose]')) return ttClose();
+  const b = e.target.closest('[data-code]'); if (!b) return;
+  const sub = ttFind(b.dataset.code); if (!sub) return;
+  ttClose();
+  go('/' + sub.id, {m:1});   // เปิดป็อปอัพรายการบทเรียนของวิชานั้น
+});
+window.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('ttBg').classList.contains('hidden')) ttClose(); });
 </script>
 </body>
 </html>
