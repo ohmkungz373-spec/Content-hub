@@ -98,7 +98,7 @@ button:active:not(:disabled){transform:scale(.98)}
 /* manage list */
 .tools{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .tools .ghost{min-height:36px;font-size:13.5px}
-.tools .sel{margin-left:auto;font-size:13.5px;color:var(--muted)}
+.tools{flex-wrap:wrap}.tools .sel{margin-left:auto;white-space:nowrap;font-size:13.5px;color:var(--muted)}
 .chs .row{cursor:pointer}
 .chs .row.on{background:#8b9bff1c}
 .ck{flex:none;width:24px;height:24px;border-radius:8px;border:2px solid #3a4a80;display:grid;place-items:center;color:transparent;font-size:14px;font-weight:700}
@@ -150,6 +150,14 @@ button:active:not(:disabled){transform:scale(.98)}
 .ssr{margin-bottom:12px}#plist{max-height:46dvh;overflow:auto}
 .cur .chg{display:flex;align-items:center}
 .icg{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.ict{min-height:56px;padding:6px;border-radius:12px;background:var(--bg2);border:1px solid var(--line);font-size:11.5px;color:var(--muted)}.ict svg{width:100%;height:38px}.ict[aria-pressed=true]{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc);color:var(--ink)}
+.pov{z-index:40}.pk{max-width:480px}
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pc{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:12px;min-height:128px;border-radius:18px;border:1.5px solid color-mix(in srgb,var(--c) 38%,var(--line));background:linear-gradient(145deg,color-mix(in srgb,var(--c) 14%,var(--panel)),var(--panel));text-align:left;min-width:0;color:var(--ink)}
+.pc.on{border-color:var(--c);box-shadow:0 6px 18px color-mix(in srgb,var(--c) 32%,transparent)}
+.pc .si{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 18%,transparent)}.pc .si .sic{width:32px;height:32px}
+.pc b{display:block;font-size:14.5px;line-height:1.3;font-weight:600;width:100%;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.pc small{color:var(--muted);font-size:12px;margin-top:-4px}
+.pcn{position:absolute;top:10px;right:10px;font-size:12px;font-weight:700;border-radius:999px;padding:2px 9px;background:color-mix(in srgb,var(--c) 22%,var(--bg2));border:1px solid color-mix(in srgb,var(--c) 45%,transparent);color:var(--ink)}.pcn.zero{color:var(--muted);font-weight:500;background:var(--bg2);border-color:var(--line)}
 .home{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 16px}
 .act{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;padding:16px 14px;min-height:140px;border-radius:18px;background:var(--panel);border:1px solid var(--line);position:relative;overflow:hidden;color:var(--ink)}
 .act::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--c)}
@@ -253,8 +261,8 @@ function openSheet(title, html){
   document.body.appendChild(ov); document.body.style.overflow = 'hidden';
   return $('sheetBody');
 }
-function closeSheet(){ const o = $('sheet'); if (o) o.remove(); document.body.style.overflow = ''; }
-window.addEventListener('keydown', e => { if (e.key === 'Escape' && !document.querySelector('.ov:not(#sheet)')) closeSheet(); });
+function closeSheet(){ const p = $('pickOv'); if (p) p.remove(); const o = $('sheet'); if (o) o.remove(); document.body.style.overflow = ''; }
+window.addEventListener('keydown', e => { if (e.key !== 'Escape') return; const p = $('pickOv'); if (p) return p.remove(); if (!document.querySelector('.ov:not(#sheet)')) closeSheet(); });
 function ask(o){
   return new Promise(res => {
     const ov = document.createElement('div'); ov.className = 'ov'; ov.style.zIndex = 30;
@@ -296,32 +304,35 @@ async function loadSubjects(){
   $('nSub').textContent = SUBJECTS.length; $('nCh').textContent = SUBJECTS.reduce((n, s) => n + s.chapters.length, 0);
 }
 const cntHtml = n => `<span class="cnt${n ? '' : ' zero'}">${n} บท</span>`;
-const rowHtml = s => `<button class="srow" data-sid="${esc(s.id)}" aria-pressed="${s.id === CUR}" type="button"><span class="si">${subjIcon(s.icon, s.name)}</span><span class="tx"><b>${esc(s.name)}</b>${s.code ? `<small>${esc(s.code)}</small>` : ''}</span>${cntHtml(s.chapters.length)}</button>`;
-function listHtml(q){
-  q = String(q || '').trim().toLowerCase();
-  const h = CATS.map(c => {
-    const l = SUBJECTS.filter(s => catOf(s) === c && (!q || (s.name + ' ' + (s.code || '')).toLowerCase().includes(q))); if (!l.length) return '';
-    return `<div class="grp" style="--c:${c.color}"><div class="gh"><i></i>${esc(c.name)}<span>${l.length} วิชา</span></div>${l.map(rowHtml).join('')}</div>`;
-  }).join('');
-  return h || '<div class="hint" style="text-align:center">ไม่พบวิชา</div>';
+const cardHtml = s => `<button class="pc${s.id === CUR ? ' on' : ''}" data-sid="${esc(s.id)}" style="--c:${catOf(s).color}" type="button"><span class="pcn${s.chapters.length ? '' : ' zero'}">${s.chapters.length} บท</span><span class="si">${subjIcon(s.icon, s.name)}</span><b>${esc(s.name)}</b><small>${esc(s.code || '')}</small></button>`;
+/* ป็อปอัพเลือกวิชา — แบบเดียวกับหน้าเลือกวิชาในการบ้านของหน้าเว็บ */
+function pickPopup(onSel){
+  const old = $('pickOv'); if (old) old.remove();
+  const ov = document.createElement('div'); ov.className = 'ov pov'; ov.id = 'pickOv';
+  const many = SUBJECTS.length > 8;
+  const grid = q => { q = String(q || '').trim().toLowerCase(); const l = SUBJECTS.filter(s => !q || (s.name + ' ' + (s.code || '')).toLowerCase().includes(q)); return l.map(cardHtml).join('') || '<div class="hint" style="grid-column:1/-1;text-align:center">ไม่พบวิชา</div>'; };
+  ov.innerHTML = `<div class="dlg sheet pk" role="dialog" aria-label="เลือกวิชา"><div class="sh"><h3>เลือกวิชา</h3><button class="x" data-pclose type="button" aria-label="ปิด"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="sbody">${many ? '<input class="ssr" id="pq" placeholder="ค้นหาชื่อหรือรหัสวิชา" autocomplete="off">' : ''}<div class="pg" id="pg">${SUBJECTS.length ? grid() : '<div class="hint" style="grid-column:1/-1;text-align:center">ยังไม่มีวิชา — กด “เพิ่มวิชา” ก่อน</div>'}</div></div></div>`;
+  ov.addEventListener('mousedown', e => { if (e.target === ov) ov.remove(); });
+  ov.addEventListener('input', e => { if (e.target.id === 'pq') $('pg').innerHTML = grid(e.target.value); });
+  ov.addEventListener('click', e => {
+    if (e.target.closest('[data-pclose]')) return ov.remove();
+    const b = e.target.closest('[data-sid]'); if (!b) return;
+    CUR = b.dataset.sid; ov.remove(); onSel();
+  });
+  document.body.appendChild(ov);
 }
-/* แถบเลือกวิชาในป็อปอัพ: กดแล้วขยายรายการ เลือกแล้วพับ แล้วเรียก onPick */
+/* แถบวิชาที่เลือก: แตะแล้วเปิดป็อปอัพเลือกวิชา */
 function subjectBar(root, onPick){
-  const bar = document.createElement('div');
-  bar.innerHTML = '<button class="cur" type="button" aria-expanded="false"></button><div class="card hidden" id="picker"></div>';
-  root.prepend(bar);
-  const btn = bar.querySelector('.cur'), pk = bar.querySelector('#picker'); let open = !CUR;
+  const btn = document.createElement('button'); btn.className = 'cur'; btn.type = 'button'; root.prepend(btn);
   const paint = () => {
     const c = curSubject();
-    btn.setAttribute('aria-expanded', open); btn.style.setProperty('--c', c ? catOf(c).color : 'var(--muted)');
-    btn.innerHTML = c ? `<span class="si">${subjIcon(c.icon, c.name)}</span><div class="tx"><small>วิชาที่เลือก</small><b>${esc(c.name)}</b></div>${cntHtml(c.chapters.length)}<span class="chg">${open ? 'ปิด' : 'เปลี่ยน'}<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span>` : '<div class="tx"><b>แตะเพื่อเลือกวิชา</b></div><span class="chg">เลือก<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span>';
-    pk.classList.toggle('hidden', !open);
-    if (open) { pk.innerHTML = (SUBJECTS.length > 6 ? '<input class="ssr" id="pq" placeholder="ค้นหาชื่อหรือรหัสวิชา" autocomplete="off">' : '') + '<div id="plist">' + listHtml() + '</div>'; }
+    btn.style.setProperty('--c', c ? catOf(c).color : 'var(--muted)');
+    btn.innerHTML = c ? `<span class="si">${subjIcon(c.icon, c.name)}</span><div class="tx"><small>วิชาที่เลือก</small><b>${esc(c.name)}</b></div>${cntHtml(c.chapters.length)}<span class="chg">เปลี่ยน<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span>` : '<div class="tx"><b>แตะเพื่อเลือกวิชา</b></div><span class="chg">เลือก<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span>';
   };
-  btn.onclick = () => { open = !open; paint(); };
-  pk.addEventListener('input', e => { if (e.target.id === 'pq') $('plist').innerHTML = listHtml(e.target.value); });
-  pk.addEventListener('click', e => { const b = e.target.closest('[data-sid]'); if (!b) return; CUR = b.dataset.sid; open = false; paint(); onPick(); });
-  paint(); return paint;
+  const pick = () => pickPopup(() => { paint(); onPick(); });
+  btn.onclick = pick; paint();
+  if (!CUR) setTimeout(pick, 120);
+  return paint;
 }
 
 /* ---------- 1) เพิ่มวิชา ---------- */
