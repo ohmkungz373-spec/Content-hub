@@ -6,6 +6,8 @@
 <meta name="robots" content="noindex,nofollow">
 <title>Admin Dashboard | CONTENT HUB</title>
 <link rel="manifest" href="/admin.webmanifest">
+<script>/* โดเมนที่ขึ้นต้นด้วย admin (เช่น admin-xxx.vercel.app) = ติดตั้งเป็นแอปแยกได้เลย ไม่ชนกับแอปหลัก */
+if (/^admin[.-]/.test(location.hostname)) document.querySelector('link[rel="manifest"]').href = '/admin-sub.webmanifest';</script>
 <link rel="apple-touch-icon" href="/apple-touch-icon-admin.png">
 <link rel="icon" type="image/png" href="/icon-admin-192.png">
 <meta name="theme-color" content="#080d1b">

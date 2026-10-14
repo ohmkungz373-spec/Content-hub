@@ -28,7 +28,7 @@ if (!fs.existsSync(path.join(ROOT, 'admin.html'))) {
 fs.copyFileSync(path.join(ROOT, 'admin.html'), path.join(OUT, 'admin.html'));
 
 // ไฟล์ PWA (ติดตั้งเป็นแอป) — คัดลอกไปไว้ที่รากของ public/
-for (const f of ['manifest.webmanifest', 'admin.webmanifest', 'icon-admin-192.png', 'icon-admin-512.png', 'apple-touch-icon-admin.png', 'sw.js', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'favicon-32.png']) {
+for (const f of ['manifest.webmanifest', 'admin.webmanifest', 'admin-sub.webmanifest', 'icon-admin-192.png', 'icon-admin-512.png', 'apple-touch-icon-admin.png', 'sw.js', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'favicon-32.png']) {
   const src = path.join(ROOT, f);
   if (fs.existsSync(src)) fs.copyFileSync(src, path.join(OUT, f));
   else console.warn('[build] ไม่พบไฟล์ PWA:', f);
