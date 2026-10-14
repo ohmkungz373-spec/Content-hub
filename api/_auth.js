@@ -1,12 +1,14 @@
-// ใช้ร่วมกันใน api/ (ไฟล์ขึ้นต้น _ ไม่ถูก Vercel นับเป็น function)
+// ตั้งรหัสผ่านแอดมินที่นี่ที่เดียว (ใช้ร่วมกันทั้ง admin.js และ push-send.js)
+// ถ้าจะเปลี่ยนรหัส แก้บรรทัดล่างแล้ว commit
 const crypto = require('crypto');
-const PASS = process.env.ADMIN_PASSWORD;
-const SECRET = process.env.ADMIN_SECRET;
+
+const PASS = 'zazaq123';
+const SECRET = 'hub-admin:' + PASS;
+
 const sign = s => crypto.createHmac('sha256', SECRET).update(s).digest('base64url');
 const safeEq = (a, b) => { const x = Buffer.from(String(a)), y = Buffer.from(String(b)); return x.length === y.length && crypto.timingSafeEqual(x, y); };
 function validToken(t) {
-  if (!PASS || !SECRET) return false;
   const [exp, sig] = String(t || '').split('.');
   return !!(exp && sig && safeEq(sig, sign(exp)) && Number(exp) > Date.now());
 }
-module.exports = { validToken };
+module.exports = { PASS, SECRET, validToken };

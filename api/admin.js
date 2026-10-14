@@ -7,12 +7,10 @@
 //   GITHUB_REPO      (จำเป็น) เช่น  yourname/content-hub
 //   GITHUB_BRANCH    (ไม่บังคับ) ค่าเริ่มต้น main
 //   GITHUB_DIR       (ไม่บังคับ) ถ้าโปรเจกต์อยู่ในโฟลเดอร์ย่อยของ repo ใส่ชื่อโฟลเดอร์นั้น
-//   ADMIN_PASSWORD   (จำเป็น) รหัสผ่านแอดมิน
-//   ADMIN_SECRET     (จำเป็น) ข้อความสุ่มยาว ๆ สำหรับเซ็น token
+//   (รหัสผ่านแอดมินตั้งในไฟล์ api/_auth.js ไม่ใช้ Environment Variables)
 const crypto = require('crypto');
 
-const PASS = process.env.ADMIN_PASSWORD;
-const SECRET = process.env.ADMIN_SECRET;
+const { PASS, SECRET } = require('./_auth');   // รหัสผ่านอยู่ใน api/_auth.js
 const sign = s => crypto.createHmac('sha256', SECRET).update(s).digest('base64url');
 const safeEq = (a, b) => { const x = Buffer.from(String(a)), y = Buffer.from(String(b)); return x.length === y.length && crypto.timingSafeEqual(x, y); };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -78,7 +76,6 @@ module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   res.setHeader('X-Robots-Tag', 'noindex');
   if (req.method !== 'POST') return res.status(405).json({ error: 'method not allowed' });
-  if (!PASS || !SECRET) return res.status(500).json({ error: 'ยังไม่ได้ตั้ง ADMIN_PASSWORD / ADMIN_SECRET ใน Vercel' });
   let b;
   try { b = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {}); }
   catch (e) { return res.status(400).json({ error: 'ข้อมูลไม่ถูกต้อง' }); }
@@ -134,6 +131,29 @@ module.exports = async (req, res) => {
       const tree = names.map(n => ({ path: P(`content/${subject}/${n}`), mode: '100644', type: 'blob', sha: null }));
       const commit = await commitTree(repo, branch, tree, `admin: ลบบทเรียน ${subject}: ${names.join(', ')}`);
       return res.json({ ok: true, count: names.length, commit });
+    }
+
+    if (b.action === 'rename') {
+      if (!process.env.GITHUB_TOKEN || !process.env.GITHUB_REPO)
+        return res.status(500).json({ error: 'ยังไม่ได้ตั้งค่า GITHUB_TOKEN / GITHUB_REPO ใน Vercel' });
+      const repo = process.env.GITHUB_REPO, branch = process.env.GITHUB_BRANCH || 'main';
+      const subject = String(b.subject || '');
+      if (!SUBJECT_RE.test(subject)) return res.status(400).json({ error: 'ชื่อวิชาไม่ถูกต้อง' });
+      const from = String(b.from || ''), to = String(b.to || '').trim();
+      for (const n of [from, to]) if (!FILE_RE.test(n) || /^[._]/.test(n)) return res.status(400).json({ error: `ชื่อไฟล์ไม่ถูกต้อง: ${n}` });
+      if (from === to) return res.status(400).json({ error: 'ชื่อใหม่ซ้ำกับชื่อเดิม' });
+      const listing = await verify(repo, branch, subject);
+      const items = Array.isArray(listing) ? listing : [];
+      const src = items.find(x => x.name === from);
+      if (!src) return res.status(404).json({ error: `ไม่พบไฟล์ ${from} ใน repo (อาจถูกลบหรือเปลี่ยนชื่อไปแล้ว)` });
+      if (items.some(x => x.name.toLowerCase() === to.toLowerCase())) return res.status(409).json({ error: `มีไฟล์ชื่อ ${to} อยู่แล้ว` });
+      // commit เดียว: สร้างชื่อใหม่ชี้ไปที่เนื้อหาเดิม + ลบชื่อเก่า
+      const tree = [
+        { path: P(`content/${subject}/${to}`), mode: '100644', type: 'blob', sha: src.sha },
+        { path: P(`content/${subject}/${from}`), mode: '100644', type: 'blob', sha: null }
+      ];
+      const commit = await commitTree(repo, branch, tree, `admin: เปลี่ยนชื่อ ${subject}: ${from} -> ${to}`);
+      return res.json({ ok: true, commit });
     }
 
     res.status(400).json({ error: 'unknown action' });
