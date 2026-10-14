@@ -9,13 +9,17 @@ self.addEventListener('push', (event) => {
     try { data = { ...data, ...event.data.json() }; }
     catch (e) { data.body = event.data.text(); }
   }
-  event.waitUntil(self.registration.showNotification(data.title, {
-    body: data.body,
-    icon: '/icon-192.png',
-    badge: '/icon-192.png',
-    tag: data.tag || undefined,
-    data: { url: data.url || '/' }
-  }));
+  event.waitUntil((async () => {
+    await self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: '/icon-192.png',
+      badge: '/icon-192.png',
+      data: { url: data.url || '/' }
+    });
+    // ส่งให้หน้าเว็บที่เปิดอยู่บันทึกลงประวัติการแจ้งเตือนทันที
+    const wins = await clients.matchAll({ type: 'window', includeUncontrolled: true });
+    wins.forEach(w => w.postMessage({ type: 'push', title: data.title, body: data.body, url: data.url || '/', ts: Date.now() }));
+  })());
 });
 
 self.addEventListener('notificationclick', (event) => {
@@ -27,11 +31,14 @@ self.addEventListener('notificationclick', (event) => {
 
   event.waitUntil((async () => {
     const wins = await clients.matchAll({ type: 'window', includeUncontrolled: true });
-    for (const w of wins) {
-      if (w.url.startsWith(self.location.origin)) {
-        try { const c = await w.navigate(url.href); if (c) { await c.focus(); return; } } catch (e) {}
-      }
+    const mine = wins.filter(w => w.url.startsWith(self.location.origin));
+    if (mine.length) {
+      // มีหน้าเว็บ/แอปเปิดอยู่แล้ว → โฟกัส แล้วบอกให้ไปหน้านั้น (ไม่รีโหลด ใช้ได้ทั้งแอปที่ติดตั้งและเบราว์เซอร์)
+      const w = mine.find(x => x.focused) || mine[0];
+      try { await w.focus(); } catch (e) {}
+      w.postMessage({ type: 'open', url: url.pathname + url.search });
+      return;
     }
-    await clients.openWindow(url.href);
+    await clients.openWindow(url.href);   // ยังไม่เปิด → เปิดใหม่ที่ลิงก์นั้น (หน้าเว็บอ่าน ?s= / ?hw= แล้วพาไปเอง)
   })());
 });

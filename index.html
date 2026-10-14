@@ -1950,8 +1950,13 @@ function ntResolve(n){
   else if (kind === 'lesson') { const t = String(n.body || '').split(',')[0].trim(); if (t) i = s.chapters.findIndex(c => c.title === t); }
   return i >= 0 ? { s, i } : { s };
 }
-function ntGo(n){
-  const r = ntResolve(n); if (!r) return;
+async function ntGo(n){
+  let r = ntResolve(n);
+  if (!r) {   // เพิ่งอัปโหลด: รายการวิชายังเก่าอยู่ → โหลดใหม่แล้วลองอีกครั้ง
+    try { const d = await (await fetch('/subjects.json?t=' + Date.now(), { cache: 'no-store' })).json(); if (d.subjects) { SUBJECTS = d.subjects; if (typeof gridDirty !== 'undefined') gridDirty = true; } } catch(e) {}
+    r = ntResolve(n);
+  }
+  if (!r) return;
   if (r.hw !== undefined) { hwOpen(); if (r.hw && hwLoad().some(x => x.id === r.hw)) hwViewOpen(r.hw); return; }
   if (r.i !== undefined) go('/' + encodeURIComponent(r.s.id) + '/' + encodeURIComponent(r.s.chapters[r.i].id));
   else go('/' + encodeURIComponent(r.s.id), { m: 1 });
