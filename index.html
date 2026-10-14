@@ -557,6 +557,52 @@ header.top #pushBtn.ring svg{animation:bring .7s ease}
 html[data-theme="light"] header.top #pushBtn{color:#64748b}
 html[data-theme="light"] header.top #pushBtn.on{color:#16a34a;background:linear-gradient(145deg,#dcfce7,#f0fdf4);border-color:#86efac}
 
+/* --- กล่องประวัติการแจ้งเตือน --- */
+header.top #pushBtn::after{display:none}
+#pushBtn .nb{position:absolute;top:3px;right:3px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:linear-gradient(135deg,#f43f5e,#ef4444);color:#fff;font-size:10.5px;font-weight:700;line-height:1;display:grid;place-items:center;box-shadow:0 0 0 2px var(--bg);animation:nbpop .3s cubic-bezier(.3,1.6,.5,1)}
+@keyframes nbpop{from{transform:scale(0)}}
+#ntBg{position:fixed;inset:0;z-index:61;display:flex;align-items:flex-end;justify-content:center}
+#ntBg.hidden{display:none!important}
+#ntBg .mback{position:absolute;inset:0;background:#000b;animation:mfade .25s both}
+html[data-theme="light"] #ntBg .mback{background:#0b1b4080}
+#ntBox{position:relative;width:100%;max-width:480px;height:min(88dvh,720px);display:flex;flex-direction:column;overflow:hidden;padding:6px 14px 0;background:linear-gradient(var(--s3),var(--s1));border:1px solid var(--line2);border-bottom:0;border-radius:28px 28px 0 0;animation:msheet .34s cubic-bezier(.22,1,.36,1);box-shadow:0 -16px 50px #0006}
+html[data-theme="light"] #ntBox{box-shadow:0 -8px 30px #1b2a5026}
+#ntBox.out{transition:transform .22s cubic-bezier(.4,0,.9,.6),opacity .22s;transform:translate3d(0,100%,0)}
+@media(min-width:640px){#ntBg{align-items:center;padding:20px}#ntBox{border-radius:28px;border-bottom:1px solid var(--line2);height:min(80dvh,680px);animation:mpop .25s ease}#ntBox.out{transform:translateY(12px) scale(.97);opacity:0}}
+#ntBox .grab{width:44px;height:5px;border-radius:9px;background:var(--line2);margin:4px auto 8px;flex:none}
+.nt-h{display:flex;align-items:center;gap:10px;padding:4px 2px 10px;flex:none}
+.nt-h b{flex:1;font-size:19px}
+.nt-x{width:36px;height:36px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);display:grid;place-items:center;padding:0}
+.nt-x svg{width:16px;height:16px}
+.nt-sw{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 14px;border-radius:18px;border:1px solid var(--line2);background:color-mix(in srgb,var(--ink) 4%,transparent);flex:none;color:var(--ink)}
+.nt-sw .ti{flex:none;width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:color-mix(in srgb,var(--ink) 8%,transparent);color:var(--muted);transition:.2s}
+.nt-sw .ti svg{width:22px;height:22px}
+.nt-sw .tx{flex:1;min-width:0}.nt-sw .tx b{display:block;font-size:15px}.nt-sw .tx small{display:block;color:var(--muted);font-size:12.5px;line-height:1.35}
+.nt-sw .sw{flex:none;width:50px;height:30px;border-radius:99px;background:color-mix(in srgb,var(--ink) 22%,transparent);position:relative;transition:background .2s}
+.nt-sw .sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px #0005;transition:transform .2s cubic-bezier(.3,1.4,.5,1)}
+.nt-sw.on{border-color:#22c55e66;background:linear-gradient(145deg,#22c55e1f,#22c55e08)}
+.nt-sw.on .ti{background:#22c55e26;color:#4ade80}
+.nt-sw.on .sw{background:#22c55e}.nt-sw.on .sw::after{transform:translateX(20px)}
+.nt-sw:disabled{opacity:.6}
+.nt-lh{display:flex;align-items:center;padding:14px 4px 6px;flex:none}
+.nt-lh b{flex:1;font-size:13.5px;color:var(--muted);font-weight:600}
+.nt-lh button{border:0;background:none;color:var(--acc);font-size:13px;font-weight:600;padding:4px 6px}
+.nt-list{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;margin:0 -14px;padding:2px 14px 22px;padding-bottom:calc(22px + env(safe-area-inset-bottom,0px))}
+.nt-it{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;padding:12px;margin-top:8px;border-radius:16px;border:1px solid var(--line);background:color-mix(in srgb,var(--ink) 3%,transparent);color:var(--ink);position:relative;transition:transform .12s,background .15s}
+.nt-it:active{transform:scale(.985);background:color-mix(in srgb,var(--ink) 8%,transparent)}
+.nt-it.new{border-color:color-mix(in srgb,var(--c) 55%,transparent);background:color-mix(in srgb,var(--c) 9%,transparent)}
+.nt-it .ni{flex:none;width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 18%,transparent);color:var(--c)}
+.nt-it .ni svg{width:21px;height:21px}
+.nt-it .nx{flex:1;min-width:0}
+.nt-it .nx b{display:block;font-size:14.5px;line-height:1.35;overflow-wrap:anywhere}
+.nt-it .nx span{display:block;color:var(--muted);font-size:13px;line-height:1.4;margin-top:1px;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.nt-it .nx small{display:flex;align-items:center;gap:6px;margin-top:5px;font-size:12px;color:var(--muted)}
+.nt-it .nx small i{font-style:normal;color:var(--c);font-weight:600}
+.nt-it .go{flex:none;align-self:center;color:var(--muted);width:18px;height:18px}
+.nt-it.new::after{content:"";position:absolute;top:10px;right:10px;width:8px;height:8px;border-radius:50%;background:var(--c)}
+.nt-em{text-align:center;color:var(--muted);padding:44px 20px;font-size:14px}
+.nt-em svg{width:46px;height:46px;opacity:.5;margin-bottom:8px}
+
 /* --- แถบเลื่อนบท (ก่อนหน้า / ชื่อบท / ถัดไป) --- */
 .viewer .vbar{position:relative;display:flex;align-items:center;gap:10px;padding:10px 12px 13px;border-bottom:0;z-index:3;
  background:linear-gradient(180deg,var(--s3),var(--s1));box-shadow:0 14px 30px -16px #000d,inset 0 1px 0 #ffffff0f;animation:vbIn .4s cubic-bezier(.22,1,.36,1)}
@@ -923,6 +969,7 @@ header.top #pushBtn{color:var(--cyan)}
 </section>
 
 <div class="hidden" id="hwBg"><div class="mback"></div><div id="hwBox" role="dialog" aria-modal="true" aria-label="บันทึกการบ้าน"></div></div>
+<div class="hidden" id="ntBg"><div class="mback"></div><div id="ntBox" role="dialog" aria-modal="true" aria-label="การแจ้งเตือน"></div></div>
 <div class="hidden" id="subjBg"><div class="mback"></div><div id="subjBox" role="dialog" aria-modal="true"></div></div>
 <div class="sheet-bg hidden" id="sheetBg"><div class="sheet" id="sheet"></div></div>
 <button class="totop" id="toTop" type="button" aria-label="กลับขึ้นข้างบน"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button>
@@ -1363,7 +1410,10 @@ fetch('/subjects.json').then(r => r.json()).then(d => {
   const cfg = d.config || {};
   if (cfg.tagline) $('tagline').textContent = cfg.tagline;
   document.title = `${cfg.siteTitle || 'CONTENT HUB'} | ${cfg.tagline || ''}`;
+  const dl = location.search, dlGo = /[?&](s|hw)=/.test(dl);
+  if (dlGo) history.replaceState(null, '', '/');
   route();
+  if (dlGo) setTimeout(() => ntGo({ url: '/' + dl }), 80);      // เปิดจากการกดแจ้งเตือน → ไปวิชา/บท/การบ้านนั้นเลย
 }).catch(() => { $('grid').innerHTML = '<div class="msg">โหลดรายการวิชาไม่สำเร็จ ลองรีเฟรชหน้านี้</div>'; });
 
 /* ---------- โหมดสว่าง/มืด ---------- */
@@ -1781,6 +1831,7 @@ function pushPaint(on, busy){
   b.setAttribute('aria-pressed', on ? 'true' : 'false');
   b.title = b.ariaLabel = on ? 'เปิดการแจ้งเตือนอยู่ (กดเพื่อปิด)' : 'เปิดการแจ้งเตือน';
   if (!busy) { try { store.set('pushOn', on ? '1' : '0'); } catch(e) {} }
+  ntPaintSwitch();
 }
 async function pushState(){
   if (!pushOK) { $('pushBtn').innerHTML = BELL; $('pushBtn').classList.add('hidden'); return; }
@@ -1825,12 +1876,137 @@ async function pushToggle(){
   } catch(e) { pushToast('เปิดการแจ้งเตือนไม่สำเร็จ ลองใหม่อีกครั้ง'); pushPaint(false); pushState(); }
   finally { pushBusy = false; }
 }
-$('pushBtn').onclick = pushToggle;
 pushState();
 if (pushOK) setTimeout(() => {
   getPushKey().catch(() => {});                                   // โหลดคีย์ไว้ล่วงหน้า กดแล้วไม่ต้องรอ
   if (store.get('pushPend')) navigator.serviceWorker.ready.then(r => r.pushManager.getSubscription()).then(s => s && pushSave(s)).catch(() => {});
 }, 700);
+
+
+/* ---------- กล่องประวัติการแจ้งเตือน (กดกระดิ่ง) ---------- */
+const NT_KEY = 'ntHist', NT_CLR = {subject:'#a78bfa', lesson:'#4ade80', hw:'#fbbf24', other:'#38bdf8'};
+const NT_IC = {
+  subject:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M12 9v6M9 12h6"/></svg>',
+  lesson:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h4"/></svg>',
+  hw:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="5" width="12" height="16" rx="2"/><path d="M9 5V4h6v1M9 11h6M9 15h4"/></svg>',
+  other:BELL
+};
+const NT_LBL = {subject:'วิชาใหม่', lesson:'บทเรียนใหม่', hw:'การบ้าน', other:'ประกาศ'};
+const NT_GO = '<svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
+let NT = []; try { NT = JSON.parse(store.get(NT_KEY) || '[]'); } catch(e) {} if (!Array.isArray(NT)) NT = [];
+let ntFresh = new Set();
+function ntKind(title, url){
+  url = String(url || ''); title = String(title || '');
+  if (/[?&]hw=/.test(url) || /การบ้าน/.test(title)) return 'hw';
+  if (/[?&]c=/.test(url) || /บทเรียน/.test(title)) return 'lesson';
+  if (/[?&]s=/.test(url) || /วิชา/.test(title)) return 'subject';
+  return 'other';
+}
+function ntSave(){
+  NT.sort((a, b) => b.ts - a.ts); NT = NT.slice(0, 60);
+  store.set(NT_KEY, JSON.stringify(NT)); ntBadge();
+}
+function ntAdd(n){
+  n.ts = n.ts || Date.now();
+  if (NT.some(x => x.title === n.title && x.body === n.body && Math.abs(x.ts - n.ts) < 120000)) return false;   // กันซ้ำ
+  NT.push({ id: n.ts.toString(36) + Math.random().toString(36).slice(2, 6), title: n.title, body: n.body || '', url: n.url || '/', kind: n.kind || ntKind(n.title, n.url), ts: n.ts, read: false });
+  return true;
+}
+function ntBadge(){
+  const b = $('pushBtn'), o = b.querySelector('.nb'); if (o) o.remove();
+  const n = NT.filter(x => !x.read).length;
+  if (n) { const e = document.createElement('span'); e.className = 'nb'; e.textContent = n > 99 ? '99+' : n; b.appendChild(e); }
+}
+/* ดึงแจ้งเตือนที่เครื่องเพิ่งได้รับ (ที่ยังค้างในถาดแจ้งเตือน) เข้าประวัติ */
+async function ntCapture(){
+  if (!pushOK) return;
+  try {
+    const reg = await regP, list = await reg.getNotifications(); let ch = false;
+    list.forEach(n => {
+      if (n.data && n.data.local) return;                       // แจ้งเตือนการบ้านในเครื่อง บันทึกไว้เองแล้ว
+      const url = (n.data && n.data.url) || '/';
+      if (ntAdd({ title: n.title, body: n.body || '', url, ts: n.timestamp || Date.now() })) ch = true;
+    });
+    if (ch) { ntSave(); if (!$('ntBg').classList.contains('hidden')) ntRender(); }
+  } catch(e) {}
+}
+const ntAgo = ts => {
+  const m = Math.floor((Date.now() - ts) / 6e4);
+  if (m < 1) return 'เมื่อสักครู่'; if (m < 60) return m + ' นาทีที่แล้ว';
+  const h = Math.floor(m / 60); if (h < 24) return h + ' ชม.ที่แล้ว';
+  const d = new Date(ts); return d.getDate() + ' ' + ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'][d.getMonth()] + ' · ' + p2(d.getHours()) + ':' + p2(d.getMinutes());
+};
+/* ปลายทางของแจ้งเตือน: การบ้าน / บทเรียน / วิชา */
+function ntResolve(n){
+  let q; try { q = new URL(n.url || '/', location.origin); } catch(e) { q = new URL('/', location.origin); }
+  const sp = q.searchParams, kind = n.kind || ntKind(n.title, n.url);
+  if (kind === 'hw' || sp.has('hw')) return { hw: sp.get('hw') || '' };
+  const part = q.pathname.split('/').filter(Boolean).map(decodeURIComponent)[0];
+  let s = SUBJECTS.find(x => x.id === sp.get('s')) || SUBJECTS.find(x => x.id === part);
+  if (!s) { const nm = String(n.title || '').split(':').slice(1).join(':').trim(); if (nm) s = SUBJECTS.find(x => x.name === nm); }   // แจ้งเตือนรุ่นเก่า: เดาจากชื่อวิชา
+  if (!s) return null;
+  let i = -1; const key = sp.get('c');
+  if (key) i = s.chapters.findIndex(c => c.file === key || c.id === key || c.file === key + '.html');
+  else if (kind === 'lesson') { const t = String(n.body || '').split(',')[0].trim(); if (t) i = s.chapters.findIndex(c => c.title === t); }
+  return i >= 0 ? { s, i } : { s };
+}
+function ntGo(n){
+  const r = ntResolve(n); if (!r) return;
+  if (r.hw !== undefined) { hwOpen(); if (r.hw && hwLoad().some(x => x.id === r.hw)) hwViewOpen(r.hw); return; }
+  if (r.i !== undefined) go('/' + encodeURIComponent(r.s.id) + '/' + encodeURIComponent(r.s.chapters[r.i].id));
+  else go('/' + encodeURIComponent(r.s.id), { m: 1 });
+}
+function ntPaintSwitch(){
+  const b = $('ntSw'); if (!b) return;
+  const denied = pushOK && Notification.permission === 'denied';
+  b.classList.toggle('on', pushOn && !denied); b.setAttribute('aria-checked', pushOn && !denied ? 'true' : 'false'); b.disabled = !pushOK || denied;
+  $('ntSwTx').textContent = !pushOK ? 'เบราว์เซอร์นี้ไม่รองรับการแจ้งเตือน' : denied ? 'ถูกบล็อกในเบราว์เซอร์ เปิดได้ที่การตั้งค่าเว็บไซต์' : pushOn ? 'เปิดอยู่ · วิชาใหม่ บทเรียนใหม่ และกำหนดส่งการบ้าน' : 'ปิดอยู่ · แตะเพื่อเปิดรับแจ้งเตือน';
+}
+function ntRender(){
+  const box = $('ntBox');
+  const list = NT.length ? NT.map(n => { const k = NT_CLR[n.kind] ? n.kind : 'other';
+    return `<button class="nt-it${ntFresh.has(n.id) ? ' new' : ''}" data-nt="${esc(n.id)}" type="button" style="--c:${NT_CLR[k]}"><span class="ni">${NT_IC[k]}</span><span class="nx"><b>${esc(n.title)}</b>${n.body ? '<span>' + esc(n.body) + '</span>' : ''}<small><i>${NT_LBL[k]}</i>· ${ntAgo(n.ts)}</small></span>${NT_GO}</button>`; }).join('')
+    : `<div class="nt-em">${BELL}<br>ยังไม่มีประวัติการแจ้งเตือน<br><small>วิชาใหม่ บทเรียนใหม่ และเตือนการบ้านจะมาแสดงที่นี่</small></div>`;
+  box.innerHTML = `<div class="grab"></div><div class="nt-h"><b>การแจ้งเตือน</b><button class="nt-x" data-ntclose type="button" aria-label="ปิด">${X_ICON}</button></div>
+    <button class="nt-sw" id="ntSw" type="button" role="switch"><span class="ti">${BELL}</span><span class="tx"><b>รับการแจ้งเตือน</b><small id="ntSwTx"></small></span><span class="sw"></span></button>
+    <div class="nt-lh"><b>ประวัติ</b>${NT.length ? '<button type="button" data-ntclear>ล้างทั้งหมด</button>' : ''}</div>
+    <div class="nt-list">${list}</div>`;
+  ntPaintSwitch();
+}
+function ntOpen(){
+  const bg = $('ntBg'), box = $('ntBox'); box.classList.remove('out');
+  ntFresh = new Set(NT.filter(x => !x.read).map(x => x.id));
+  ntRender(); bg.classList.remove('hidden');
+  if (ntFresh.size) { NT.forEach(x => x.read = true); ntSave(); }
+  ntCapture();
+}
+function ntClose(instant){
+  const bg = $('ntBg'), box = $('ntBox'); if (bg.classList.contains('hidden')) return;
+  if (instant) { bg.classList.add('hidden'); return; }
+  box.classList.add('out'); bg.querySelector('.mback').style.cssText = 'transition:opacity .22s;opacity:0';
+  setTimeout(() => { bg.classList.add('hidden'); box.classList.remove('out'); bg.querySelector('.mback').style.cssText = ''; }, 220);
+}
+$('pushBtn').onclick = ntOpen;
+$('ntBg').addEventListener('click', e => {
+  if (e.target.classList.contains('mback') || e.target.closest('[data-ntclose]')) return ntClose();
+  if (e.target.closest('#ntSw')) return pushToggle();
+  if (e.target.closest('[data-ntclear]')) { NT = []; ntFresh = new Set(); ntSave(); return ntRender(); }
+  const it = e.target.closest('[data-nt]'); if (!it) return;
+  const n = NT.find(x => x.id === it.dataset.nt); if (!n) return;
+  ntClose(true); ntGo(n);
+});
+window.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('ntBg').classList.contains('hidden')) ntClose(); });
+if (pushOK) {
+  navigator.serviceWorker.addEventListener('message', e => {   // (ถ้า sw.js ส่งข้อความมา) บันทึกประวัติ / เปิดหน้าตามแจ้งเตือนที่เพิ่งกด
+    const d = e.data || {};
+    if (d.type === 'push' && d.title) { if (ntAdd({ title: d.title, body: d.body || '', url: d.url || '/', ts: d.ts })) { ntSave(); if (!$('ntBg').classList.contains('hidden')) ntRender(); } }
+    else if (d.type === 'open' && d.url) ntGo({ url: d.url });
+  });
+  setTimeout(ntCapture, 1200);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) ntCapture(); });
+  setInterval(ntCapture, 60000);
+}
+ntBadge();
 
 /* ---------- การบ้าน: ซิงก์กำหนดส่งไปเซิร์ฟเวอร์ (ส่งแจ้งเตือนตอนเช้า) + เตือนในเครื่อง ---------- */
 let hwSyncT = 0;
@@ -1860,9 +2036,11 @@ async function hwAlerts(){
   }
   if (!fire.length) return;
   store.set('hwAl', JSON.stringify(seen));
+  fire.forEach(({ x, st }) => ntAdd({ title: st === 'over' ? 'เลยกำหนดส่งการบ้านแล้ว' : st === 'h1' ? 'การบ้านเหลือไม่ถึง 1 ชั่วโมง' : 'ใกล้ถึงกำหนดส่งการบ้าน', body: x.title + (x.time ? ' · ' + x.time + ' น.' : ''), url: '/?hw=' + encodeURIComponent(x.id), kind: 'hw' }));
+  ntSave();
   try {
     const reg = await navigator.serviceWorker.ready;
-    fire.slice(0, 3).forEach(({ x, st }) => reg.showNotification(st === 'over' ? 'เลยกำหนดส่งการบ้านแล้ว' : st === 'h1' ? 'การบ้านเหลือไม่ถึง 1 ชั่วโมง' : 'ใกล้ถึงกำหนดส่งการบ้าน', { body: x.title + (x.time ? ' · ' + x.time + ' น.' : ''), icon: '/icon-192.png', badge: '/icon-192.png', tag: 'hw-' + x.id, data: { url: '/' } }));
+    fire.slice(0, 3).forEach(({ x, st }) => reg.showNotification(st === 'over' ? 'เลยกำหนดส่งการบ้านแล้ว' : st === 'h1' ? 'การบ้านเหลือไม่ถึง 1 ชั่วโมง' : 'ใกล้ถึงกำหนดส่งการบ้าน', { body: x.title + (x.time ? ' · ' + x.time + ' น.' : ''), icon: '/icon-192.png', badge: '/icon-192.png', tag: 'hw-' + x.id, data: { url: '/?hw=' + encodeURIComponent(x.id), local: true } }));
   } catch(e) {}
 }
 setTimeout(hwAlerts, 2500); setInterval(hwAlerts, 60000);

@@ -387,7 +387,7 @@ function subjectSheet(){
     try {
       const j = await api('addSubject', { id, name, code, icon: ICON_SEL, order });
       let note = DEPLOY + ' แล้ววิชาจะขึ้น';
-      if ($('fNotify').checked) { try { note = pushRes(await sendPush('มีวิชาใหม่: ' + name, 'เข้าไปดูเนื้อหาวิชาใหม่ได้เลย', '/')) + '<br>' + note; } catch(e){ note = 'ส่งแจ้งเตือนไม่สำเร็จ: ' + esc(e.message) + '<br>' + note; } }
+      if ($('fNotify').checked) { try { note = pushRes(await sendPush('มีวิชาใหม่: ' + name, 'เข้าไปดูเนื้อหาวิชาใหม่ได้เลย', '/?s=' + encodeURIComponent(id))) + '<br>' + note; } catch(e){ note = 'ส่งแจ้งเตือนไม่สำเร็จ: ' + esc(e.message) + '<br>' + note; } }
       $('fOut').innerHTML = okMsg(`สร้างวิชา “${esc(name)}” แล้ว (commit ${esc(j.commit)})`, note);
       g.textContent = 'เสร็จแล้ว'; setTimeout(() => loadSubjects().catch(() => {}), 70000);
     } catch(e){ $('fOut').innerHTML = badMsg(e.message); g.disabled = false; g.textContent = 'สร้างวิชา'; }
@@ -444,10 +444,11 @@ async function doUpload(){
   if (FILES.reduce((a, f) => a + f.size, 0) > 3 * 1024 * 1024) { $('fOut').innerHTML = badMsg('ไฟล์รวมใหญ่เกิน 3 MB ให้แบ่งอัปโหลดทีละชุด'); return; }
   const b = $('upBtn'); b.disabled = true; b.textContent = 'กำลังอัปโหลด...'; $('fOut').innerHTML = '';
   const titles = FILES.map(f => f.title || f.name.replace(/\.html$/i, ''));
+  const lessonUrl = '/?s=' + encodeURIComponent(s.id) + (FILES.length === 1 ? '&c=' + encodeURIComponent(FILES[0].name) : '');
   try {
     const j = await api('upload', { subject: s.id, files: FILES.map(f => ({ name: f.name, b64: f.b64 })) });
     let note = DEPLOY + ' แล้วบทเรียนจะขึ้น';
-    if ($('fNotify').checked) { try { note = pushRes(await sendPush('มีบทเรียนใหม่: ' + s.name, titles.slice(0, 3).join(', ') + (titles.length > 3 ? ` และอีก ${titles.length - 3} บท` : ''), '/')) + '<br>' + note; } catch(e){ note = 'ส่งแจ้งเตือนไม่สำเร็จ: ' + esc(e.message) + '<br>' + note; } }
+    if ($('fNotify').checked) { try { note = pushRes(await sendPush('มีบทเรียนใหม่: ' + s.name, titles.slice(0, 3).join(', ') + (titles.length > 3 ? ` และอีก ${titles.length - 3} บท` : ''), lessonUrl)) + '<br>' + note; } catch(e){ note = 'ส่งแจ้งเตือนไม่สำเร็จ: ' + esc(e.message) + '<br>' + note; } }
     $('fOut').innerHTML = okMsg(`อัปโหลด ${j.count} ไฟล์สำเร็จ (commit ${esc(j.commit)})`, note);
     FILES = []; renderFiles(); $('upBtn').textContent = 'เสร็จแล้ว'; $('upBtn').disabled = true; setTimeout(() => loadSubjects().catch(() => {}), 70000);
   } catch(e){ $('fOut').innerHTML = badMsg(e.message); renderFiles(); }
