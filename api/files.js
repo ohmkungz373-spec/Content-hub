@@ -138,7 +138,7 @@ module.exports = async (req, res) => {
     }
 
     // ---------- สำรอง / กู้คืนทั้งระบบ (เก็บเป็น git tag ชี้ไปที่ commit ปัจจุบัน = ทุกโฟลเดอร์ ทุกไฟล์) ----------
-    if (/^backup(List|Save|Restore|Delete)$/.test(b.action || '')) {
+    if (/^backup(List|Save|Restore|Delete|Download)$/.test(b.action || '')) {
             const headSha = async () => (await gh(`/repos/${repo}/git/ref/heads/${encodeURIComponent(branch)}`)).object.sha;
       const makeBackup = async (name, at) => {
         const sha = at || await headSha();
@@ -178,6 +178,20 @@ module.exports = async (req, res) => {
         if (!okId(b.id)) return res.status(400).json({ error: 'รหัสสำรองไม่ถูกต้อง' });
         await gh(`/repos/${repo}/git/refs/tags/${b.id}`, { method: 'DELETE' });
         return res.json({ ok: true });
+      }
+
+      if (b.action === 'backupDownload') {
+        if (!okId(b.id)) return res.status(400).json({ error: 'รหัสสำรองไม่ถูกต้อง' });
+        // ตรวจว่า tag มีจริง แล้วขอ zipball จาก GitHub (ลิงก์ชั่วคราว ไม่ผ่านเซิร์ฟเวอร์เรา)
+        try { await gh(`/repos/${repo}/git/ref/tags/${b.id}`); }
+        catch (e) { if (e.status === 404) return res.status(404).json({ error: 'ไม่พบข้อมูลสำรองนี้ (อาจถูกลบไปแล้ว)' }); throw e; }
+        const r = await fetch(`https://api.github.com/repos/${repo}/zipball/${encodeURIComponent(b.id)}`, {
+          redirect: 'manual',
+          headers: { Authorization: 'Bearer ' + process.env.GITHUB_TOKEN, Accept: 'application/vnd.github+json', 'User-Agent': 'content-hub-admin' }
+        });
+        const url = r.headers.get('location');
+        if (!url) throw bad('สร้างลิงก์ดาวน์โหลดไม่สำเร็จ (' + r.status + ')', 502);
+        return res.json({ ok: true, url, filename: (String(b.name || b.id).replace(/[^\w\u0E00-\u0E7F\- ]+/g, '').trim().slice(0, 60) || b.id) + '.zip' });
       }
 
       if (b.action === 'backupRestore') {
