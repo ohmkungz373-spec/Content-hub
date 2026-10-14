@@ -56,6 +56,13 @@ module.exports = async (req, res) => {
     if (!process.env.GITHUB_TOKEN || !process.env.GITHUB_REPO) throw bad('ยังไม่ได้ตั้งค่า GITHUB_TOKEN / GITHUB_REPO ใน Vercel', 500);
     const repo = process.env.GITHUB_REPO, branch = process.env.GITHUB_BRANCH || 'main';
 
+    if (b.action === 'zip') {   // ลิงก์ดาวน์โหลด zip ทั้ง repo (GitHub ออกลิงก์ชั่วคราวให้ ไม่ผ่านเซิร์ฟเวอร์เรา จึงไม่ติดขีดจำกัดขนาด)
+      const r = await fetch(`https://api.github.com/repos/${repo}/zipball/${encodeURIComponent(branch)}`, { redirect: 'manual', headers: { Authorization: 'Bearer ' + process.env.GITHUB_TOKEN, Accept: 'application/vnd.github+json', 'User-Agent': 'content-hub-admin' } });
+      const url = r.headers.get('location');
+      if (!url) throw bad('สร้างลิงก์ดาวน์โหลดไม่สำเร็จ (' + r.status + ')', 502);
+      return res.json({ ok: true, url });
+    }
+
     if (b.action === 'list') { const s = await snapshot(repo, branch); return res.json({ ok: true, files: s.entries.slice(0, 8000), truncated: s.truncated }); }
 
     if (b.action === 'read') {
@@ -187,8 +194,9 @@ module.exports = async (req, res) => {
         let target = ref.object.sha, label = b.id;
         if (ref.object.type === 'tag') { const t = await gh(`/repos/${repo}/git/tags/${ref.object.sha}`); target = t.object.sha; label = String(t.message || b.id).trim(); }
         const bc = await gh(`/repos/${repo}/git/commits/${target}`);
-        const cur = await headSha();
+        const cur = await headSha();                       // ล็อกจุดปัจจุบันไว้ — ชุด "ก่อนกู้คืน" และตัวที่จะถูกทับคือ commit เดียวกันเป๊ะ
         const curC = await gh(`/repos/${repo}/git/commits/${cur}`);
+        const safety = await makeBackup('ก่อนกู้คืน: ' + label.slice(0, 60), cur);   // ถ้าขั้นนี้พัง จะไม่แตะไฟล์ใดๆ
         // สร้าง commit ที่ tree = tree ของชุดสำรองทุกประการ → ไฟล์ที่อยู่ในชุดถูกคืนมา ไฟล์ที่ไม่อยู่ในชุดถูกลบ
         const cm = await gh(`/repos/${repo}/git/commits`, { method: 'POST', body: { message: ('admin: กู้คืนข้อมูลสำรอง ' + label).slice(0, 250), tree: bc.tree.sha, parents: [cur] } });
         try { await gh(`/repos/${repo}/git/refs/heads/${encodeURIComponent(branch)}`, { method: 'PATCH', body: { sha: cm.sha } }); }   // ไม่ force: ถ้ามีคน commit แทรกมา จะล้มเหลวโดยไม่เขียนทับงานของเขา
@@ -205,7 +213,7 @@ module.exports = async (req, res) => {
           for (const [k, v] of B) { if (!A.has(k) || A.get(k) !== v) restored++; else same++; }
           stat = { removed, restored, same, total: B.size };
         } catch (e) {}
-        return res.json({ ok: true, verified, commit: cm.sha.slice(0, 7), stat });
+        return res.json({ ok: true, verified, commit: cm.sha.slice(0, 7), safety, stat });
       }
     }
 

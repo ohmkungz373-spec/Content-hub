@@ -712,14 +712,14 @@ function filesSheet(){
 }
 function fmHome(){
   FM.dirty = false;
-  FM.box.innerHTML = `<div class="fm-bar"><button class="pri" id="fmUp" type="button">${ICO.up}อัปโหลด</button><button class="ghost" id="fmNF" type="button">+ ไฟล์ใหม่</button><button class="ghost" id="fmND" type="button">+ โฟลเดอร์</button><button class="ghost" id="fmRf" type="button">รีเฟรช</button><button class="ghost" id="fmBk" type="button">${ICO.db}สำรอง / กู้คืน</button></div>
-    <input type="file" id="fmFile" multiple hidden accept=".zip,application/zip,application/x-zip-compressed,*/*">
+  FM.box.innerHTML = `<div class="fm-bar"><button class="pri" id="fmUp" type="button">${ICO.up}อัปโหลด</button><button class="ghost" id="fmNF" type="button">+ ไฟล์ใหม่</button><button class="ghost" id="fmND" type="button">+ โฟลเดอร์</button><button class="ghost" id="fmRf" type="button">รีเฟรช</button><button class="ghost" id="fmBk" type="button">${ICO.db}สำรอง / กู้คืน</button><button class="ghost" id="fmZip" type="button" style="margin-left:auto">${ICO.dn}โหลดทั้งระบบ (.zip)</button></div>
+    <input type="file" id="fmFile" multiple hidden>
     <div class="fm-srch"><input id="fmQ" placeholder="ค้นหาไฟล์ทั้งหมด…" autocomplete="off" value="${esc(FM.q)}"><button class="ghost" id="fmSort" type="button"></button></div>
     <div class="fm-bc" id="fmBc"></div><div class="fm-sum" id="fmSum"></div><div class="fm-list" id="fmList"></div><div id="fmSelBar"></div><div id="fmOut"></div>
-    <div class="hint">แตะชื่อเพื่อเปิด · ติ๊กช่องซ้ายเพื่อเลือกหลายรายการแล้วลบ · ปุ่มสามจุด = เปลี่ยนชื่อ/ย้าย/ดาวน์โหลด/ลบ · อัปโหลดรองรับไฟล์เดี่ยวและ .zip (แตกไฟล์อัตโนมัติตาม path ใน zip) · บันทึกแล้ว commit ขึ้น GitHub แล้วเว็บ deploy ใหม่ ~1 นาที</div>`;
+    <div class="hint">แตะชื่อเพื่อเปิด · ติ๊กช่องซ้ายเพื่อเลือกหลายรายการแล้วลบ · ปุ่มสามจุด = เปลี่ยนชื่อ/ย้าย/ดาวน์โหลด/ลบ · ไฟล์ที่บันทึกจะ commit ขึ้น GitHub แล้วเว็บ deploy ใหม่ ~1 นาที</div>`;
   $('fmUp').onclick = () => $('fmFile').click();
   $('fmFile').onchange = async e => { const l = [...e.target.files]; e.target.value = ''; if (l.length) fmUpload(l); };
-  $('fmBk').onclick = () => { BK.from = 'files'; fmBackup(); }; $('fmNF').onclick = fmNewFile; $('fmND').onclick = fmNewDir; $('fmRf').onclick = fmLoad;
+  $('fmZip').onclick = fmZip; $('fmBk').onclick = () => { BK.from = 'files'; fmBackup(); }; $('fmNF').onclick = fmNewFile; $('fmND').onclick = fmNewDir; $('fmRf').onclick = fmLoad;
   $('fmQ').oninput = e => { FM.q = e.target.value; fmList(); };
   const sortLbl = () => { $('fmSort').innerHTML = (FM.sort === 'new' ? ICO.clock : ICO.az) + (FM.sort === 'new' ? 'ใหม่สุดก่อน' : 'ตามชื่อ'); };
   sortLbl(); $('fmSort').onclick = () => { FM.sort = FM.sort === 'new' ? 'name' : 'new'; ss.set('fmSort', FM.sort); sortLbl(); fmList(); };
@@ -778,129 +778,34 @@ async function fmDownload(path){
   const f = fmByPath(path); if (!f) return;
   try { const j = await fapi('read', { sha: f.sha }); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([fmBytes(j.b64)])); a.download = path.split('/').pop(); a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); } catch(e){ fmToast(e.message, true); }
 }
-/* ---------- อัปโหลด + แตก .zip อัตโนมัติ ---------- */
-let _jszipP = null;
-function loadJSZip(){
-  if (window.JSZip) return Promise.resolve(window.JSZip);
-  if (_jszipP) return _jszipP;
-  _jszipP = new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js';
-    s.onload = () => window.JSZip ? resolve(window.JSZip) : reject(new Error('โหลด JSZip ไม่สำเร็จ'));
-    s.onerror = () => reject(new Error('โหลดไลบรารีแตก zip ไม่ได้ (เช็คเน็ต)'));
-    document.head.appendChild(s);
-  });
-  return _jszipP;
-}
-const isZipFile = f => /\.zip$/i.test(f.name) || f.type === 'application/zip' || f.type === 'application/x-zip-compressed';
-const zipJunk = p => {
-  const parts = p.split('/');
-  return parts.some(s => s === '__MACOSX' || s === '.DS_Store' || s === 'Thumbs.db' || s.startsWith('._'));
-};
-const zipNorm = p => {
-  p = String(p || '').replace(/\\/g, '/').replace(/^\/+/, '').replace(/\/+/g, '/');
-  if (!p || p.endsWith('/')) return '';
-  const parts = p.split('/').filter(s => s && s !== '.' && s !== '..');
-  if (!parts.length || parts.some(s => s.toLowerCase() === '.git')) return '';
-  const out = parts.join('/');
-  if (out.length > 200 || /[\\:*?"<>|\u0000-\u001f]/.test(out) || zipJunk(out)) return '';
-  return out;
-};
-function zipCommonRoot(paths){
-  if (!paths.length) return '';
-  const top = paths[0].split('/')[0];
-  if (!top) return '';
-  if (!paths.every(p => p === top || p.startsWith(top + '/'))) return '';
-  if (!paths.some(p => p.includes('/'))) return '';
-  return top;
-}
-async function fmExpandZip(file, pre){
-  const JSZip = await loadJSZip();
-  const zip = await JSZip.loadAsync(await file.arrayBuffer());
-  const raw = [];
-  for (const name of Object.keys(zip.files)) {
-    const ent = zip.files[name];
-    if (ent.dir) continue;
-    const rel = zipNorm(name);
-    if (!rel) continue;
-    raw.push({ rel, ent });
-  }
-  if (!raw.length) throw new Error('ใน “' + file.name + '” ไม่พบไฟล์ที่ใช้ได้');
-  const root = zipCommonRoot(raw.map(x => x.rel));
-  const out = [];
-  for (const x of raw) {
-    let rel = x.rel;
-    if (root) {
-      if (rel === root) continue;
-      if (rel.startsWith(root + '/')) rel = rel.slice(root.length + 1);
-    }
-    if (!rel) continue;
-    const path = pre + rel;
-    if (path.length > 200) continue;
-    const u8 = new Uint8Array(await x.ent.async('uint8array'));
-    if (u8.length > 3 * 1024 * 1024) throw new Error('ใน zip: “' + rel + '” ใหญ่เกิน 3 MB');
-    out.push({ path, size: u8.length, b64: fmB64(u8), from: file.name });
-  }
-  if (!out.length) throw new Error('ใน “' + file.name + '” ไม่เหลือไฟล์ที่ใช้ได้หลังกรอง');
-  return out;
-}
 async function fmUpload(list){
-  const pre = FM.dir ? FM.dir + '/' : '';
-  const zips = list.filter(isZipFile);
-  const plain = list.filter(f => !isZipFile(f));
-  for (const f of plain) if (f.size > 3 * 1024 * 1024) return fmToast(`“${f.name}” ใหญ่เกิน 3 MB (ข้อจำกัดของ Vercel)`, true);
-  for (const z of zips) if (z.size > 40 * 1024 * 1024) return fmToast(`“${z.name}” ใหญ่เกิน 40 MB`, true);
-
-  const prog = t => { const o = $('fmOut'); if (o) o.innerHTML = '<div class="msg ok">' + t + '</div>'; };
-  let items = [];
-  try {
-    if (zips.length) {
-      prog('กำลังแตกไฟล์ .zip…');
-      await loadJSZip();
-      for (const z of zips) {
-        prog('กำลังแตก “' + z.name + '”…');
-        items = items.concat(await fmExpandZip(z, pre));
-      }
-    }
-    if (plain.length) {
-      prog('กำลังเตรียมไฟล์…');
-      const more = await Promise.all(plain.map(async f => ({ path: pre + f.name, size: f.size, b64: fmB64(new Uint8Array(await f.arrayBuffer())), from: f.name })));
-      items = items.concat(more);
-    }
-  } catch(e){ return fmToast(e.message, true); }
-
-  if (!items.length) return fmToast('ไม่มีไฟล์ให้อัปโหลด', true);
-  // รวม path ซ้ำในชุดเดียวกัน — ใช้ไฟล์ท้ายสุด
-  { const m = new Map(); items.forEach(it => m.set(it.path, it)); items = [...m.values()]; }
-  if (items.length > 300) return fmToast('ไฟล์รวมเกิน 300 ไฟล์ (ตอนนี้ ' + items.length + ') — แบ่งอัปโหลดทีละชุด', true);
-
-  const dup = items.filter(it => fmByPath(it.path)).map(it => it.path);
-  const fromZip = items.filter(it => zips.some(z => z.name === it.from)).length;
-  const bodyLines = items.slice(0, 12).map(it => '• ' + it.path + ' (' + fmSize(it.size) + ')').join('\n')
-    + (items.length > 12 ? '\n… และอีก ' + (items.length - 12) + ' ไฟล์' : '')
-    + (fromZip ? '\n\nจาก .zip: ' + fromZip + ' ไฟล์ (path ตามโครงสร้างใน zip' + (pre ? ' ภายใต้ /' + FM.dir : ' ที่ราก') + ')' : '')
-    + (dup.length ? '\n\nจะเขียนทับไฟล์เดิม ' + dup.length + ' ไฟล์: ' + dup.slice(0, 6).join(', ') + (dup.length > 6 ? ' …' : '') : '');
-  const ok = await ask({ title: `อัปโหลด ${items.length} ไฟล์`, body: bodyLines, ok: 'อัปโหลด' });
+  const pre = FM.dir ? FM.dir + '/' : '', dup = list.filter(f => fmByPath(pre + f.name)).map(f => f.name);
+  const big = list.find(f => f.size > 3 * 1024 * 1024); if (big) return fmToast(`“${big.name}” ใหญ่เกิน 3 MB (ข้อจำกัดของ Vercel)`, true);
+  const ok = await ask({ title: `อัปโหลด ${list.length} ไฟล์`, body: `ไปที่ /${FM.dir}\n` + list.slice(0, 8).map(f => '• ' + f.name + ' (' + fmSize(f.size) + ')').join('\n') + (dup.length ? `\n\nจะเขียนทับไฟล์เดิม: ${dup.join(', ')}` : ''), ok: 'อัปโหลด' });
   if (!ok) return;
-
-  prog('กำลังเตรียมอัปโหลด…');
+  const prog = t => { const o = $('fmOut'); if (o) o.innerHTML = '<div class="msg ok">' + t + '</div>'; };
+  prog('กำลังเตรียมไฟล์…');
   try {
+    // 1) แปลงไฟล์พร้อมกัน  2) ส่งเนื้อไฟล์ขึ้นขนานกันทีละ 3 คำขอ  3) commit ครั้งเดียวจบ
+    const items = await Promise.all(list.map(async f => ({ path: pre + f.name, size: f.size, b64: fmB64(new Uint8Array(await f.arrayBuffer())) })));
     const batches = []; let cur = [], sz = 0;
     for (const it of items) { if (cur.length && (sz + it.b64.length > 3.2e6 || cur.length >= 50)) { batches.push(cur); cur = []; sz = 0; } cur.push(it); sz += it.b64.length; }
     if (cur.length) batches.push(cur);
     let done = 0; const meta = [];
     for (let i = 0; i < batches.length; i += 3) {
-      await Promise.all(batches.slice(i, i + 3).map(async bt => {
-        const r = await fapi('putblobs', { items: bt.map(x => ({ b64: x.b64 })) });
-        bt.forEach((x, k) => meta.push({ path: x.path, size: x.size, sha: r.shas[k] }));
-        done += bt.length; prog('กำลังอัปโหลด ' + done + '/' + items.length + ' ไฟล์…');
-      }));
+      await Promise.all(batches.slice(i, i + 3).map(async bt => { const r = await fapi('putblobs', { items: bt.map(x => ({ b64: x.b64 })) }); bt.forEach((x, k) => meta.push({ path: x.path, size: x.size, sha: r.shas[k] })); done += bt.length; prog('กำลังอัปโหลด ' + done + '/' + items.length + ' ไฟล์…'); }));
     }
     prog('กำลังบันทึกขึ้นระบบ…');
     const r = await fapi('commitfiles', { items: meta });
     items.forEach(it => touchP(it.path)); fmMerge(r.entries); FM.sel.clear(); fmList();
-    fmToast(`อัปโหลด ${items.length} ไฟล์สำเร็จ` + (fromZip ? ` (จาก zip ${fromZip})` : '') + ` · ${DEPLOY}`);
+    fmToast(`อัปโหลด ${items.length} ไฟล์สำเร็จ · ${DEPLOY}`);
   } catch(e){ fmToast(e.message, true); }
+}
+async function fmZip(){
+  const b = $('fmZip'); b.disabled = true; b.textContent = 'กำลังเตรียมไฟล์…';
+  try { const j = await fapi('zip'); const l = document.createElement('a'); l.href = j.url; l.download = 'content-hub.zip'; document.body.appendChild(l); l.click(); l.remove(); fmToast('เริ่มดาวน์โหลด .zip แล้ว (ไฟล์ทั้งระบบจาก GitHub ล่าสุด)'); }
+  catch(e){ fmToast(e.message, true); }
+  b.disabled = false; b.innerHTML = ICO.dn + 'โหลดทั้งระบบ (.zip)';
 }
 async function fmNewFile(){
   const n = await ask({ title: 'ไฟล์ใหม่', body: `สร้างใน /${FM.dir} · ใส่ / ในชื่อเพื่อสร้างโฟลเดอร์ย่อยพร้อมกัน`, input: '', ok: 'สร้าง' });
@@ -1048,7 +953,7 @@ async function bkClick(e){
   const l = e.target.closest('[data-bl]'), d = e.target.closest('[data-bd]'), id = (l || d || {}).dataset ? (l ? l.dataset.bl : d.dataset.bd) : ''; if (!id) return;
   const it = BK.items.find(x => x.id === id); if (!it) return;
   if (l) {
-    const ok = await ask({ title: 'โหลด “' + it.name + '”?', body: 'ไฟล์ทั้งระบบจะเหมือนตอนที่บันทึกชุดนี้ทุกไฟล์: ไฟล์ที่อยู่ในชุดจะถูกคืนมา ไฟล์ที่ไม่มีในชุดจะถูกลบทิ้ง\n\n(ไม่สร้างชุดสำรอง “ก่อนกู้คืน” อัตโนมัติ — ถ้าต้องการย้อนกลับ ให้บันทึกสำรองเองก่อน)', ok: 'โหลดเลย', danger: true });
+    const ok = await ask({ title: 'โหลด “' + it.name + '”?', body: 'ไฟล์ทั้งระบบจะเหมือนตอนที่บันทึกชุดนี้ทุกไฟล์: ไฟล์ที่อยู่ในชุดจะถูกคืนมา ไฟล์ที่ไม่มีในชุดจะถูกลบทิ้ง\n\nระบบจะเก็บสภาพปัจจุบันไว้เป็นชุดสำรอง “ก่อนกู้คืน…” ให้อัตโนมัติ จึงย้อนกลับได้', ok: 'โหลดเลย', danger: true });
     if (!ok) return;
     l.disabled = true; l.textContent = 'กำลังโหลด…';
     try {
