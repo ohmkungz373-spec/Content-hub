@@ -199,6 +199,21 @@ button:active:not(:disabled){transform:scale(.98)}
 .fl .tag{margin-top:8px;display:inline-block}
 .cur.nudge{animation:nud .45s}@keyframes nud{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 .sticky .pri{box-shadow:0 10px 24px -10px #6d7dff99}
+
+/* --- ปุ่มเลือกวิชา (เด่นเมื่อยังไม่ได้เลือก) --- */
+.cur{transition:transform .15s,box-shadow .2s,border-color .2s}.cur:active{transform:scale(.98)}
+.cur.empty{position:relative;min-height:72px;border:1.5px solid transparent;color:var(--ink);
+ background:linear-gradient(var(--panel),var(--panel)) padding-box,linear-gradient(135deg,#6d7dff,#38c8c0,#a78bfa) border-box;
+ box-shadow:0 0 0 0 #6d7dff66,0 12px 28px -12px #6d7dffcc;animation:curPulse 1.8s ease-in-out infinite}
+.cur.empty .ei{width:44px;height:44px;border-radius:14px;flex:none;display:grid;place-items:center;color:#071022;background:linear-gradient(135deg,#6d7dff,#38c8c0)}
+.cur.empty .ei .i{width:24px;height:24px}
+.cur.empty b{font-size:17px}
+.cur.empty small{color:var(--acc2);font-weight:700}
+.cur.empty .chg{padding:9px 14px;border-radius:999px;color:#071022;font-weight:700;font-size:14px;background:linear-gradient(135deg,#6d7dff,#38c8c0);animation:curNudge 1.8s ease-in-out infinite}
+.cur.empty .chg .i{stroke-width:3}
+@keyframes curPulse{0%,100%{box-shadow:0 0 0 0 #6d7dff66,0 12px 28px -12px #6d7dffcc}50%{box-shadow:0 0 0 7px #6d7dff00,0 12px 28px -12px #38c8c0cc}}
+@keyframes curNudge{0%,100%{transform:translateX(0)}50%{transform:translateX(3px)}}
+@media (prefers-reduced-motion:reduce){.cur.empty,.cur.empty .chg{animation:none}}
 </style>
 </head>
 <body>
@@ -342,9 +357,9 @@ function pickPopup(onSel){
 function subjectBar(root, onPick){
   const btn = document.createElement('button'); btn.className = 'cur'; btn.type = 'button'; root.prepend(btn);
   const paint = () => {
-    const c = curSubject();
+    const c = curSubject(); btn.classList.toggle('empty', !c);
     btn.style.setProperty('--c', c ? catOf(c).color : 'var(--muted)');
-    btn.innerHTML = c ? `<span class="si">${subjIcon(c.icon, c.name)}</span><div class="tx"><small>วิชาที่เลือก</small><b>${esc(c.name)}</b></div>${cntHtml(c.chapters.length)}<span class="chg">เปลี่ยน<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span>` : '<div class="tx"><b>แตะเพื่อเลือกวิชา</b></div><span class="chg">เลือก<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span>';
+    btn.innerHTML = c ? `<span class="si">${subjIcon(c.icon, c.name)}</span><div class="tx"><small>วิชาที่เลือก</small><b>${esc(c.name)}</b></div>${cntHtml(c.chapters.length)}<span class="chg">เปลี่ยน<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span>` : '<span class="si ei"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M8 17h10M9 8h5"/></svg></span><div class="tx"><small>ขั้นแรก</small><b>แตะเพื่อเลือกวิชา</b></div><span class="chg">เลือกวิชา<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span>';
   };
   const pick = () => pickPopup(() => { paint(); onPick(); });
   btn.onclick = pick; paint();
