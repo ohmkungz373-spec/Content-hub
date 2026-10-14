@@ -19,14 +19,24 @@ async function gh(path, opt = {}) {
 }
 
 async function snapshot(repo, branch) {
-  const ref = await gh(`/repos/${repo}/git/ref/heads/${encodeURIComponent(branch)}`);
-  const head = ref.object.sha;
-  const c = await gh(`/repos/${repo}/git/commits/${head}`);
-  const t = await gh(`/repos/${repo}/git/trees/${c.tree.sha}?recursive=1`);
+  // เร็วขึ้น: ดึง "head → commit" กับ "รายการไฟล์ทั้งต้นไม้" พร้อมกัน (เดิมทำทีละขั้น 3 รอบ)
+  const headP = (async () => { const ref = await gh(`/repos/${repo}/git/ref/heads/${encodeURIComponent(branch)}`); const c = await gh(`/repos/${repo}/git/commits/${ref.object.sha}`); return { head: ref.object.sha, tree: c.tree.sha }; })();
+  headP.catch(() => {});
+  let t;
+  try { t = await gh(`/repos/${repo}/git/trees/${encodeURIComponent(branch)}?recursive=1`); }
+  catch (e) { const h = await headP; t = await gh(`/repos/${repo}/git/trees/${h.tree}?recursive=1`); }
+  const h = await headP;
   const pre = BASE ? BASE + '/' : '';
   const entries = (t.tree || []).filter(x => x.type === 'blob' && x.path.startsWith(pre)).map(x => ({ path: x.path.slice(pre.length), size: x.size || 0, sha: x.sha, mode: x.mode }));
-  return { head, tree: c.tree.sha, entries, truncated: !!t.truncated };
+  return { head: h.head, tree: h.tree, entries, truncated: !!t.truncated };
 }
+async function headInfo(repo, branch) { const ref = await gh(`/repos/${repo}/git/ref/heads/${encodeURIComponent(branch)}`); const c = await gh(`/repos/${repo}/git/commits/${ref.object.sha}`); return { head: ref.object.sha, tree: c.tree.sha }; }
+async function blobsOf(repo, list) {   // สร้าง blob ขนานกันครั้งละ 10
+  const out = [];
+  for (let i = 0; i < list.length; i += 10) out.push(...await Promise.all(list.slice(i, i + 10).map(c => gh(`/repos/${repo}/git/blobs`, { method: 'POST', body: { content: c, encoding: 'base64' } }).then(r => r.sha))));
+  return out;
+}
+const b64len = s => Math.max(0, Math.floor(s.length * 3 / 4) - (s.endsWith('==') ? 2 : s.endsWith('=') ? 1 : 0));
 async function commit(repo, branch, snap, tree, msg) {
   const nt = await gh(`/repos/${repo}/git/trees`, { method: 'POST', body: { base_tree: snap.tree, tree } });
   const cm = await gh(`/repos/${repo}/git/commits`, { method: 'POST', body: { message: msg.slice(0, 250), tree: nt.sha, parents: [snap.head] } });
@@ -66,13 +76,27 @@ module.exports = async (req, res) => {
       const files = Array.isArray(b.files) ? b.files : [];
       if (!files.length || files.length > 60) throw bad('เลือกไฟล์ 1–60 ไฟล์');
       for (const f of files) if (!f || !okPath(f.path) || typeof f.b64 !== 'string') throw bad('ชื่อ/ที่อยู่ไฟล์ไม่ถูกต้อง: ' + (f && f.path));
-      const snap = await snapshot(repo, branch), tree = [];
-      for (let i = 0; i < files.length; i += 6) {
-        const part = await Promise.all(files.slice(i, i + 6).map(f => gh(`/repos/${repo}/git/blobs`, { method: 'POST', body: { content: f.b64, encoding: 'base64' } })));
-        part.forEach((bl, k) => { const old = snap.entries.find(e => e.path === files[i + k].path); tree.push({ path: P(files[i + k].path), mode: old ? old.mode : '100644', type: 'blob', sha: bl.sha }); });
-      }
-      const c = await commit(repo, branch, snap, tree, `admin: บันทึกไฟล์ ${files.map(f => f.path).slice(0, 5).join(', ')}${files.length > 5 ? ` +${files.length - 5}` : ''}`);
-      return res.json({ ok: true, count: files.length, commit: c });
+      const headP = headInfo(repo, branch); headP.catch(() => {});
+      const bl = await blobsOf(repo, files.map(f => f.b64));
+      const h = await headP;
+      const tree = files.map((f, k) => ({ path: P(f.path), mode: '100644', type: 'blob', sha: bl[k] }));
+      const c = await commit(repo, branch, h, tree, `admin: บันทึกไฟล์ ${files.map(f => f.path).slice(0, 5).join(', ')}${files.length > 5 ? ` +${files.length - 5}` : ''}`);
+      return res.json({ ok: true, count: files.length, commit: c, entries: files.map((f, k) => ({ path: f.path, size: b64len(f.b64), sha: bl[k], mode: '100644' })) });
+    }
+
+    // อัปโหลดไฟล์ใหญ่/หลายไฟล์แบบเร็ว: 1) ส่งเนื้อไฟล์ขึ้นเป็น blob (เรียกขนานกันได้หลายคำขอ) 2) commit ครั้งเดียวรวมทุกไฟล์
+    if (b.action === 'putblobs') {
+      const arr = Array.isArray(b.items) ? b.items : [];
+      if (!arr.length || arr.length > 60 || arr.some(x => !x || typeof x.b64 !== 'string')) throw bad('ข้อมูลไม่ถูกต้อง');
+      return res.json({ ok: true, shas: await blobsOf(repo, arr.map(x => x.b64)) });
+    }
+    if (b.action === 'commitfiles') {
+      const arr = Array.isArray(b.items) ? b.items : [];
+      if (!arr.length || arr.length > 300) throw bad('เลือกไฟล์ 1–300 ไฟล์');
+      for (const x of arr) if (!x || !okPath(x.path) || !/^[0-9a-f]{40}$/.test(String(x.sha))) throw bad('ข้อมูลไฟล์ไม่ถูกต้อง: ' + (x && x.path));
+      const h = await headInfo(repo, branch);
+      const c = await commit(repo, branch, h, arr.map(x => ({ path: P(x.path), mode: '100644', type: 'blob', sha: x.sha })), `admin: อัปโหลด ${arr.map(x => x.path).slice(0, 5).join(', ')}${arr.length > 5 ? ` +${arr.length - 5}` : ''}`);
+      return res.json({ ok: true, count: arr.length, commit: c, entries: arr.map(x => ({ path: x.path, size: +x.size || 0, sha: x.sha, mode: '100644' })) });
     }
 
     if (b.action === 'delete') {
@@ -105,8 +129,8 @@ module.exports = async (req, res) => {
             const items = (Array.isArray(b.items) ? b.items : []).slice(0, 40)
         .filter(x => x && typeof x.path === 'string' && x.path.length < 200 && !x.path.includes('..'));
       const out = {};
-      for (let i = 0; i < items.length; i += 8) {
-        await Promise.all(items.slice(i, i + 8).map(async it => {
+      for (let i = 0; i < items.length; i += 14) {
+        await Promise.all(items.slice(i, i + 14).map(async it => {
           const key = branch + '|' + it.path + '|' + (it.dir ? 'dir' : it.sha);   // โฟลเดอร์ = commit ล่าสุดที่แตะไฟล์ใดก็ตามข้างใน (แคช 60 วินาที)
           const hit = TIME_CACHE.get(key);
           if (hit && (!it.dir || hit.exp > Date.now())) { out[it.path] = hit.v; return; }
@@ -123,8 +147,8 @@ module.exports = async (req, res) => {
     // ---------- สำรอง / กู้คืนทั้งระบบ (เก็บเป็น git tag ชี้ไปที่ commit ปัจจุบัน = ทุกโฟลเดอร์ ทุกไฟล์) ----------
     if (/^backup(List|Save|Restore|Delete)$/.test(b.action || '')) {
             const headSha = async () => (await gh(`/repos/${repo}/git/ref/heads/${encodeURIComponent(branch)}`)).object.sha;
-      const makeBackup = async name => {
-        const sha = await headSha();
+      const makeBackup = async (name, at) => {
+        const sha = at || await headSha();
         const id = BK_PREFIX + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
         const tg = await gh(`/repos/${repo}/git/tags`, { method: 'POST', body: { tag: id, message: name, object: sha, type: 'commit', tagger: { name: 'hub-admin', email: 'admin@hub.local', date: new Date().toISOString() } } });
         await gh(`/repos/${repo}/git/refs`, { method: 'POST', body: { ref: 'refs/tags/' + id, sha: tg.sha } });
@@ -170,12 +194,26 @@ module.exports = async (req, res) => {
         let target = ref.object.sha, label = b.id;
         if (ref.object.type === 'tag') { const t = await gh(`/repos/${repo}/git/tags/${ref.object.sha}`); target = t.object.sha; label = String(t.message || b.id).trim(); }
         const bc = await gh(`/repos/${repo}/git/commits/${target}`);
-        let safety = null;
-        if (b.safety !== false) safety = await makeBackup('ก่อนกู้คืน: ' + label.slice(0, 60));   // กันพลาด: เก็บสภาพปัจจุบันไว้ก่อนเสมอ
-        const cur = await headSha();
+        const cur = await headSha();                       // ล็อกจุดปัจจุบันไว้ — ชุด "ก่อนกู้คืน" และตัวที่จะถูกทับคือ commit เดียวกันเป๊ะ
+        const curC = await gh(`/repos/${repo}/git/commits/${cur}`);
+        const safety = await makeBackup('ก่อนกู้คืน: ' + label.slice(0, 60), cur);   // ถ้าขั้นนี้พัง จะไม่แตะไฟล์ใดๆ
+        // สร้าง commit ที่ tree = tree ของชุดสำรองทุกประการ → ไฟล์ที่อยู่ในชุดถูกคืนมา ไฟล์ที่ไม่อยู่ในชุดถูกลบ
         const cm = await gh(`/repos/${repo}/git/commits`, { method: 'POST', body: { message: ('admin: กู้คืนข้อมูลสำรอง ' + label).slice(0, 250), tree: bc.tree.sha, parents: [cur] } });
-        await gh(`/repos/${repo}/git/refs/heads/${encodeURIComponent(branch)}`, { method: 'PATCH', body: { sha: cm.sha } });
-        return res.json({ ok: true, commit: cm.sha.slice(0, 7), safety });
+        try { await gh(`/repos/${repo}/git/refs/heads/${encodeURIComponent(branch)}`, { method: 'PATCH', body: { sha: cm.sha } }); }   // ไม่ force: ถ้ามีคน commit แทรกมา จะล้มเหลวโดยไม่เขียนทับงานของเขา
+        catch (e) { throw bad('กู้คืนไม่สำเร็จ เพราะมีการแก้ไขไฟล์แทรกเข้ามาระหว่างทำงาน — ยังไม่มีอะไรถูกเปลี่ยน กรุณากดโหลดอีกครั้ง', 409); }
+        // ตรวจผลลัพธ์จริงจาก GitHub: tree ของ branch ต้องเท่ากับ tree ของชุดสำรอง
+        const after = await gh(`/repos/${repo}/git/commits/${await headSha()}`);
+        const verified = after.tree.sha === bc.tree.sha;
+        let stat = null;
+        try {
+          const [x, y] = await Promise.all([gh(`/repos/${repo}/git/trees/${curC.tree.sha}?recursive=1`), gh(`/repos/${repo}/git/trees/${bc.tree.sha}?recursive=1`)]);
+          const A = new Map((x.tree || []).filter(e => e.type === 'blob').map(e => [e.path, e.sha])), B = new Map((y.tree || []).filter(e => e.type === 'blob').map(e => [e.path, e.sha]));
+          let removed = 0, restored = 0, same = 0;
+          for (const [k, v] of A) if (!B.has(k)) removed++;
+          for (const [k, v] of B) { if (!A.has(k) || A.get(k) !== v) restored++; else same++; }
+          stat = { removed, restored, same, total: B.size };
+        } catch (e) {}
+        return res.json({ ok: true, verified, commit: cm.sha.slice(0, 7), safety, stat });
       }
     }
 
