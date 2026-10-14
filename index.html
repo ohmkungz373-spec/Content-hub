@@ -941,7 +941,8 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store = {
   get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
-  set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+  set(k,v){ try { localStorage.setItem(k,v); } catch(e){} },
+  remove(k){ try { localStorage.removeItem(k); } catch(e){} }
 };
 
 /* ---------- วิชารายการโปรด ---------- */
@@ -1461,7 +1462,7 @@ function hwTimeOpen(){
 }
 let hwTab = 'todo', hwDraft = {subj:'', due:'', time:''}, hwNew = '', hwToastT = 0, hwLast = null;
 function hwLoad(){ try { const a = JSON.parse(store.get(HW_KEY) || '[]'); return Array.isArray(a) ? a : []; } catch(e) { return []; } }
-function hwSave(a){ store.set(HW_KEY, JSON.stringify(a)); hwBadge(); }
+function hwSave(a){ store.set(HW_KEY, JSON.stringify(a)); hwBadge(); try { hwSync(); } catch(e) {} }
 const hwCol = s => { try { return catOf(s).color || '#3b82f6'; } catch(e) { return '#3b82f6'; } };
 const hwToday = () => { const d = new Date(); d.setHours(0,0,0,0); return d; };
 const hwIso = d => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
@@ -1737,36 +1738,111 @@ document.addEventListener('touchend', e => {
 
 if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
 
-/* ---------- Push Notifications ---------- */
+/* ---------- Push Notifications (เร็วขึ้น: โหลดคีย์ล่วงหน้า + บันทึกเบื้องหลัง) ---------- */
 const BELL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>';
 const pushOK = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
 const b64u = s => { const p = '='.repeat((4 - s.length % 4) % 4), r = atob((s + p).replace(/-/g, '+').replace(/_/g, '/')); return Uint8Array.from(r, c => c.charCodeAt(0)); };
-async function pushState(){
-  const b = $('pushBtn'); b.innerHTML = BELL;
-  if (!pushOK) { b.classList.add('hidden'); return; }
-  let on = false;
-  try { const reg = await navigator.serviceWorker.ready; on = !!(await reg.pushManager.getSubscription()) && Notification.permission === 'granted'; } catch(e) {}
-  b.style.color = on ? '#22c55e' : '';
-  b.title = on ? 'เปิดการแจ้งเตือนอยู่ (กดเพื่อปิด)' : 'เปิดการแจ้งเตือน';
-}
-async function pushToggle(){
-  try {
-    const reg = await navigator.serviceWorker.ready;
-    const cur = await reg.pushManager.getSubscription();
-    if (cur) { await cur.unsubscribe(); alert('ปิดการแจ้งเตือนในเครื่องนี้แล้ว'); return pushState(); }
-    const perm = await Notification.requestPermission();
-    if (perm !== 'granted') return alert('ไม่ได้รับอนุญาตให้แจ้งเตือน เปิดได้ที่การตั้งค่าเบราว์เซอร์');
+let pushKeyP = null, pushBusy = false;
+function getPushKey(){
+  if (pushKeyP) return pushKeyP;
+  pushKeyP = (async () => {
+    const c = store.get('pushKey'); if (c) return c;
     const k = await (await fetch('/api/push-key')).json();
     if (!k.publicKey) throw new Error('no key');
-    const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64u(k.publicKey) });
-    const r = await fetch('/api/push-subscribe', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ subscription: sub.toJSON() }) });
-    if (!r.ok) { await sub.unsubscribe(); throw new Error('save failed'); }
-    alert('เปิดการแจ้งเตือนแล้ว');
-  } catch(e) { alert('เปิดการแจ้งเตือนไม่สำเร็จ ลองใหม่อีกครั้ง'); }
-  pushState();
+    store.set('pushKey', k.publicKey); return k.publicKey;
+  })().catch(e => { pushKeyP = null; throw e; });
+  return pushKeyP;
+}
+function pushToast(msg){
+  const o = document.getElementById('pToast'); if (o) o.remove();
+  const t = document.createElement('div'); t.id = 'pToast'; t.setAttribute('role', 'status'); t.textContent = msg;
+  t.style.cssText = 'position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);max-width:88vw;background:#0f1b3a;color:#eaf1ff;border:1px solid #2b4a8f;border-radius:14px;padding:11px 16px;font-size:14px;font-weight:600;z-index:99999;box-shadow:0 8px 24px #0006;text-align:center';
+  document.body.appendChild(t); setTimeout(() => t.remove(), 2400);
+}
+function pushPaint(on, busy){
+  const b = $('pushBtn'); b.innerHTML = BELL; b.style.color = on ? '#22c55e' : ''; b.style.opacity = busy ? '.55' : '';
+  b.title = on ? 'เปิดการแจ้งเตือนอยู่ (กดเพื่อปิด)' : 'เปิดการแจ้งเตือน';
+}
+async function pushState(){
+  if (!pushOK) { $('pushBtn').innerHTML = BELL; $('pushBtn').classList.add('hidden'); return; }
+  pushPaint(false);
+  let on = false;
+  try { const reg = await navigator.serviceWorker.ready; on = !!(await reg.pushManager.getSubscription()) && Notification.permission === 'granted'; } catch(e) {}
+  pushPaint(on);
+}
+async function pushSave(sub){
+  // บันทึกขึ้นเซิร์ฟเวอร์เบื้องหลัง (ลองซ้ำ 3 ครั้ง) — ผู้ใช้ไม่ต้องรอ
+  const body = JSON.stringify({ subscription: sub.toJSON ? sub.toJSON() : sub });
+  for (let i = 0; i < 3; i++) {
+    try { const r = await fetch('/api/push-subscribe', { method:'POST', headers:{'Content-Type':'application/json'}, body }); if (r.ok) { store.remove('pushPend'); hwSync(true); return true; } } catch(e) {}
+    await new Promise(r => setTimeout(r, 1200 * (i + 1)));
+  }
+  store.set('pushPend', '1'); return false;
+}
+async function pushToggle(){
+  if (pushBusy) return; pushBusy = true;
+  const keyP = getPushKey(); keyP.catch(() => {});                 // เริ่มโหลดคีย์ขนานกับการขอสิทธิ์
+  const regP = navigator.serviceWorker.ready;
+  try {
+    const reg = await regP, cur = await reg.pushManager.getSubscription();
+    if (cur && Notification.permission === 'granted') {
+      pushPaint(false, true); await cur.unsubscribe(); hwSync(true);
+      pushToast('ปิดการแจ้งเตือนในเครื่องนี้แล้ว'); return pushPaint(false);
+    }
+    const perm = Notification.permission === 'granted' ? 'granted' : await Notification.requestPermission();
+    if (perm !== 'granted') { pushToast('ไม่ได้รับอนุญาต เปิดได้ที่การตั้งค่าเบราว์เซอร์'); return pushPaint(false); }
+    pushPaint(true, true); pushToast('กำลังเปิดการแจ้งเตือน…');
+    let sub;
+    try { sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64u(await keyP) }); }
+    catch(e) { store.remove('pushKey'); pushKeyP = null; if (cur) { try { await cur.unsubscribe(); } catch(_) {} } sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64u(await getPushKey()) }); }
+    pushPaint(true); pushToast('เปิดการแจ้งเตือนแล้ว 🔔');
+    pushSave(sub);                                                // ไม่ await — บันทึกเบื้องหลัง
+    setTimeout(hwAlerts, 500);
+  } catch(e) { pushToast('เปิดการแจ้งเตือนไม่สำเร็จ ลองใหม่อีกครั้ง'); pushState(); }
+  finally { pushBusy = false; }
 }
 $('pushBtn').onclick = pushToggle;
 pushState();
+if (pushOK) setTimeout(() => {
+  getPushKey().catch(() => {});                                   // โหลดคีย์ไว้ล่วงหน้า กดแล้วไม่ต้องรอ
+  if (store.get('pushPend')) navigator.serviceWorker.ready.then(r => r.pushManager.getSubscription()).then(s => s && pushSave(s)).catch(() => {});
+}, 700);
+
+/* ---------- การบ้าน: ซิงก์กำหนดส่งไปเซิร์ฟเวอร์ (ส่งแจ้งเตือนตอนเช้า) + เตือนในเครื่อง ---------- */
+let hwSyncT = 0;
+function hwSync(now){
+  clearTimeout(hwSyncT);
+  hwSyncT = setTimeout(async () => {
+    if (!pushOK || Notification.permission !== 'granted') return;
+    try {
+      const reg = await navigator.serviceWorker.ready, sub = await reg.pushManager.getSubscription(); if (!sub) return;
+      const items = hwLoad().filter(x => x.due && !x.done).slice(0, 60).map(x => ({ id: x.id, title: x.title, subj: ((SUBJECTS || []).find(s => s.id === x.subj) || {}).name || '', due: x.due, time: x.time || '' }));
+      await fetch('/api/hw-sync', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ subscription: sub.toJSON(), items }) });
+    } catch(e) {}
+  }, now ? 0 : 1500);
+}
+async function hwAlerts(){
+  if (!pushOK || Notification.permission !== 'granted') return;
+  let seen = {}; try { seen = JSON.parse(store.get('hwAl') || '{}'); } catch(e) {}
+  const now = Date.now(), fire = [];
+  for (const k in seen) if (now - seen[k] > 14 * 864e5) delete seen[k];
+  for (const x of hwLoad()) {
+    if (x.done || !x.due) continue;
+    const left = new Date(x.due + 'T' + (x.time || '23:59') + ':00').getTime() - now;
+    if (isNaN(left) || left < -864e5) continue;
+    const st = left < 0 ? 'over' : (x.time && left <= 36e5) ? 'h1' : left <= 864e5 ? 'd1' : '';
+    if (!st || seen[x.id + ':' + st]) continue;
+    seen[x.id + ':' + st] = now; fire.push({ x, st });
+  }
+  if (!fire.length) return;
+  store.set('hwAl', JSON.stringify(seen));
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    fire.slice(0, 3).forEach(({ x, st }) => reg.showNotification(st === 'over' ? 'เลยกำหนดส่งการบ้านแล้ว' : st === 'h1' ? 'การบ้านเหลือไม่ถึง 1 ชั่วโมง' : 'ใกล้ถึงกำหนดส่งการบ้าน', { body: x.title + (x.time ? ' · ' + x.time + ' น.' : ''), icon: '/icon-192.png', badge: '/icon-192.png', tag: 'hw-' + x.id, data: { url: '/' } }));
+  } catch(e) {}
+}
+setTimeout(hwAlerts, 2500); setInterval(hwAlerts, 60000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) hwAlerts(); });
 
 /* กันการดึงหน้าจอลงจนสุด (pull-to-refresh / ยางยืด) ทุกกรณี */
 (function(){

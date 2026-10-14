@@ -140,88 +140,68 @@ button:active:not(:disabled){transform:scale(.98)}
 .bar .in{max-width:620px;margin:0 auto}
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.home{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 16px}
+.act{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;padding:16px 14px;min-height:140px;border-radius:18px;background:var(--panel);border:1px solid var(--line);position:relative;overflow:hidden;color:var(--ink)}
+.act::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--c)}
+.act .ai{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:24px;background:color-mix(in srgb,var(--c) 20%,transparent)}
+.act b{font-size:16px;margin-top:4px}.act small{color:var(--muted);font-size:12.5px;font-weight:500;line-height:1.4}
+.act:hover{background:var(--panel2)}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.st{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 14px}.st b{display:block;font-size:22px}.st small{color:var(--muted);font-size:12.5px}
+.sheet{max-width:520px;max-height:90dvh;overflow:auto;padding:0;border-radius:22px 22px 0 0;margin-bottom:0}
+.ov{padding:0}
+.sh{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:10px;padding:16px 18px 12px;background:var(--panel);border-bottom:1px solid var(--line)}
+.sh h3{margin:0;flex:1;font-size:18px}
+.x{min-height:40px;width:40px;padding:0;background:var(--panel2);border:1px solid var(--line);border-radius:12px}
+.sbody{padding:16px 18px calc(18px + env(safe-area-inset-bottom,0px))}
+.field{margin-bottom:12px}
+.chk{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg2);cursor:pointer;margin:12px 0;font-size:14.5px;color:var(--ink)}
+.chk input{width:20px;height:20px;min-height:0;accent-color:#6d7dff;flex:none}
+.tpl{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.row2{display:grid;grid-template-columns:1fr 96px;gap:10px}
+.sheet .chs{max-height:42dvh}
+.sticky{position:sticky;bottom:0;padding-top:10px;background:linear-gradient(to top,var(--panel) 70%,transparent)}
+.sheet .cur{margin-bottom:12px}.sheet .grp .subs{grid-template-columns:1fr 1fr}
+.sheet #picker{border:0;padding:0;background:none;margin-bottom:12px}
+@media (min-width:600px){.sheet{border-radius:22px}.ov{align-items:center;padding:16px}}
 </style>
 </head>
 <body>
 <div class="wrap">
-
-  <!-- ล็อกอิน -->
   <div id="loginView" class="login">
-    <div class="brand">
-      <div class="logo" aria-hidden="true">🔒</div>
-      <div><h1>Admin Dashboard</h1><p class="sub">เข้าสู่ระบบเพื่อจัดการบทเรียน</p></div>
-    </div>
+    <div class="brand"><div class="logo" aria-hidden="true">🔒</div><div><h1>Admin Dashboard</h1><p class="sub">เข้าสู่ระบบเพื่อจัดการเว็บ</p></div></div>
     <div class="card">
       <label for="pw">รหัสผ่าน</label>
-      <div class="pwbox">
-        <input id="pw" type="password" autocomplete="current-password" placeholder="กรอกรหัสผ่าน">
-        <button class="eye" id="eye" type="button">แสดง</button>
-      </div>
+      <div class="pwbox"><input id="pw" type="password" autocomplete="current-password" placeholder="กรอกรหัสผ่าน"><button class="eye" id="eye" type="button">แสดง</button></div>
       <button class="pri" id="loginBtn" type="button">เข้าสู่ระบบ</button>
       <div class="err" id="loginErr" role="alert"></div>
     </div>
   </div>
 
-  <!-- แดชบอร์ด -->
   <div id="panelView" class="hidden">
     <div class="top">
-      <div class="brand">
-        <div class="logo" aria-hidden="true">🛠</div>
-        <div><h1>Admin Dashboard</h1><p class="sub">เพิ่มบทเรียนด้วยไฟล์ .html</p></div>
-      </div>
-      <div class="acts"><button class="ghost ic" id="refBtn" type="button" aria-label="รีเฟรชรายการ" title="รีเฟรช">↻</button><button class="ghost" id="logoutBtn" type="button">ออกจากระบบ</button></div>
+      <div class="brand"><div class="logo" aria-hidden="true">🛠</div><div><h1>Admin Dashboard</h1><p class="sub">เลือกสิ่งที่อยากทำ</p></div></div>
+      <div class="acts"><button class="ghost" id="logoutBtn" type="button">ออกจากระบบ</button></div>
     </div>
-
-    <button class="cur" id="curBtn" type="button" aria-expanded="false"></button>
-    <div class="card hidden" id="picker"></div>
-    <input type="hidden" id="subj">
-    <div class="tabs" role="tablist">
-      <button class="tab" id="tabUp" role="tab" aria-selected="true" type="button">อัปโหลดบทใหม่</button>
-      <button class="tab" id="tabMg" role="tab" aria-selected="false" type="button">จัดการบท<span class="pill"><span id="cnt">0</span></span></button>
-    </div>
-
-    <section id="viewUp">
-      <div class="card">
-        <label class="pick" id="drop">
-          <span class="ic" aria-hidden="true">＋</span>
-          <b>แตะเพื่อเลือกไฟล์ .html</b>
-          <span>เลือกได้หลายไฟล์ หรือลากมาวางที่นี่</span>
-          <input id="file" type="file" accept=".html,text/html" multiple>
-        </label>
-        <div id="fileList"></div>
-        <div class="hint">ไฟล์ที่ชื่อซ้ำจะถูกเขียนทับ · ชื่อบทดึงจากแท็ก &lt;title&gt; · หลังอัปโหลด เว็บจะ deploy ใหม่ประมาณ 1 นาที</div>
-      </div>
-    </section>
-
-    <section id="viewMg" class="hidden">
-      <div class="card">
-        <div class="tools"><button class="ghost" id="selAll" type="button">เลือกทั้งหมด</button><span class="sel" id="selInfo"></span></div>
-        <div class="chs" id="chs"></div>
-        <div class="hint">แตะที่บทเพื่อเลือกหลายบท แล้วกดลบที่แถบด้านล่าง · ปุ่ม “แก้ชื่อ” ใช้เปลี่ยนชื่อไฟล์ (ลำดับบทเรียงตามชื่อไฟล์)</div>
-      </div>
-    </section>
-    <div class="card" id="pushCard">
-      <label for="pTitle">ส่งแจ้งเตือนถึงผู้ที่สมัครไว้</label>
-      <input id="pTitle" maxlength="100" placeholder="หัวข้อ">
-      <input id="pMsg" maxlength="500" placeholder="ข้อความ" style="margin-top:8px">
-      <input id="pUrl" value="/" placeholder="ลิงก์ในเว็บ เช่น /" style="margin-top:8px">
-      <button class="pri" id="pSend" type="button" style="margin-top:12px">ส่งแจ้งเตือน</button>
-      <div id="pStatus" role="status"></div>
+    <div class="stats"><div class="st"><b id="nSub">0</b><small>วิชาทั้งหมด</small></div><div class="st"><b id="nCh">0</b><small>บทเรียนทั้งหมด</small></div></div>
+    <div class="home">
+      <button class="act" data-go="subject" style="--c:#a78bfa" type="button"><span class="ai">📚</span><b>เพิ่มวิชา</b><small>สร้างวิชาใหม่ พร้อมแจ้งเตือนผู้ใช้</small></button>
+      <button class="act" data-go="lesson" style="--c:#4ade80" type="button"><span class="ai">📄</span><b>เพิ่มบทเรียน</b><small>อัปโหลดไฟล์ .html เข้าวิชา</small></button>
+      <button class="act" data-go="manage" style="--c:#fbbf24" type="button"><span class="ai">🗂</span><b>จัดการบทเรียน</b><small>แก้ชื่อ · ลบ · รีเฟรชรายการ</small></button>
+      <button class="act" data-go="push" style="--c:#38bdf8" type="button"><span class="ai">🔔</span><b>ส่งแจ้งเตือน</b><small>วิชาใหม่ · การบ้าน · ข้อความอิสระ</small></button>
     </div>
     <div id="status" role="status"></div>
   </div>
 </div>
 
-<div class="bar hidden" id="bar"><div class="in">
-  <button class="pri" id="upBtn" type="button">เลือกไฟล์ .html</button>
-  <button class="pri dangerbtn hidden" id="delBtn" type="button">ลบที่เลือก</button>
-</div></div>
-
 <script>
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ss = { get(k){ try { return sessionStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { sessionStorage.setItem(k,v); } catch(e){} }, del(k){ try { sessionStorage.removeItem(k); } catch(e){} } };
-let TOKEN = ss.get('hub-admin') || '', SUBJECTS = [], FILES = [];   // FILES: {name,b64,size,title}
+let TOKEN = ss.get('hub-admin') || '', SUBJECTS = [], FILES = [], CUR = '', SEL = new Set();
+const FILE_RE = /^[^\\/:*?"<>|\u0000-\u001f]{1,100}\.html$/i;
+const okMsg = (t, extra) => `<div class="msg ok">${t}${extra ? '<br>' + extra : ''}</div>`, badMsg = t => `<div class="msg bad">${esc(t)}</div>`;
+const DEPLOY = 'เว็บกำลัง deploy ใหม่ ประมาณ 1 นาที';
 
 async function api(action, data){
   let r, j;
@@ -232,26 +212,43 @@ async function api(action, data){
   if (!r.ok) throw new Error(j.error || ('เกิดข้อผิดพลาด ' + r.status));
   return j;
 }
+async function sendPush(title, message, url){
+  const r = await fetch('/api/push-send', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ token: TOKEN, title, message, url: url || '/' }) });
+  const j = await r.json().catch(() => ({}));
+  if (r.status === 401) { logout(); throw new Error(j.error || 'หมดเวลา'); }
+  if (!r.ok) throw new Error(j.error || ('เกิดข้อผิดพลาด ' + r.status));
+  return j;
+}
+const pushRes = j => `ส่งแจ้งเตือนแล้ว ${j.sent}/${j.total} เครื่อง` + (j.failed ? ` · ล้มเหลว ${j.failed}` : '');
 
-function showPanel(on){ $('loginView').classList.toggle('hidden', on); $('panelView').classList.toggle('hidden', !on); updBar(); }
-function logout(){ TOKEN = ''; SEL.clear(); ss.del('hub-admin'); showPanel(false); $('pw').value = ''; }
-
+function showPanel(on){ $('loginView').classList.toggle('hidden', on); $('panelView').classList.toggle('hidden', !on); }
+function logout(){ TOKEN = ''; SEL.clear(); closeSheet(); ss.del('hub-admin'); showPanel(false); $('pw').value = ''; }
 async function login(){
   const b = $('loginBtn'); $('loginErr').textContent = ''; b.disabled = true; b.textContent = 'กำลังตรวจสอบ...';
   try { const j = await api('login', { password: $('pw').value }); TOKEN = j.token; ss.set('hub-admin', TOKEN); await enter(); }
   catch(e){ $('loginErr').textContent = e.message; }
   b.disabled = false; b.textContent = 'เข้าสู่ระบบ';
 }
-$('loginBtn').onclick = login;
+$('loginBtn').onclick = login; $('logoutBtn').onclick = logout;
 $('pw').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
-$('logoutBtn').onclick = logout;
 $('eye').onclick = () => { const p = $('pw'), show = p.type === 'password'; p.type = show ? 'text' : 'password'; $('eye').textContent = show ? 'ซ่อน' : 'แสดง'; };
 
-let SEL = new Set(), TAB = 'up';
+/* ---------- ป็อปอัพ ---------- */
+function openSheet(title, html){
+  closeSheet();
+  const ov = document.createElement('div'); ov.className = 'ov'; ov.id = 'sheet';
+  ov.innerHTML = `<div class="dlg sheet" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="sh"><h3>${esc(title)}</h3><button class="x" data-close type="button" aria-label="ปิด">✕</button></div><div class="sbody" id="sheetBody">${html}</div></div>`;
+  ov.addEventListener('mousedown', e => { if (e.target === ov) closeSheet(); });
+  ov.addEventListener('click', e => { if (e.target.closest('[data-close]')) closeSheet(); });
+  document.body.appendChild(ov); document.body.style.overflow = 'hidden';
+  return $('sheetBody');
+}
+function closeSheet(){ const o = $('sheet'); if (o) o.remove(); document.body.style.overflow = ''; }
+window.addEventListener('keydown', e => { if (e.key === 'Escape' && !document.querySelector('.ov:not(#sheet)')) closeSheet(); });
 function ask(o){
   return new Promise(res => {
-    const ov = document.createElement('div'); ov.className = 'ov';
-    ov.innerHTML = `<div class="dlg" role="dialog" aria-modal="true"><h3>${esc(o.title)}</h3><p>${esc(o.body || '')}</p>${o.input !== undefined ? `<input id="dlgIn" value="${esc(o.input)}">` : ''}<div class="btns"><button class="ghost" data-x="0" type="button">ยกเลิก</button><button class="${o.danger ? 'dangerbtn' : 'pri'}" data-x="1" type="button" style="min-height:48px">${esc(o.ok || 'ตกลง')}</button></div></div>`;
+    const ov = document.createElement('div'); ov.className = 'ov'; ov.style.zIndex = 30;
+    ov.innerHTML = `<div class="dlg" role="dialog" aria-modal="true" style="margin:16px"><h3>${esc(o.title)}</h3><p>${esc(o.body || '')}</p>${o.input !== undefined ? `<input id="dlgIn" value="${esc(o.input)}">` : ''}<div class="btns"><button class="ghost" data-x="0" type="button">ยกเลิก</button><button class="${o.danger ? 'dangerbtn' : 'pri'}" data-x="1" type="button" style="min-height:48px">${esc(o.ok || 'ตกลง')}</button></div></div>`;
     document.body.appendChild(ov);
     const inp = ov.querySelector('#dlgIn'); (inp || ov.querySelector('[data-x="1"]')).focus();
     const done = v => { ov.remove(); res(v); };
@@ -259,13 +256,8 @@ function ask(o){
     ov.addEventListener('keydown', e => { if (e.key === 'Escape') done(null); if (e.key === 'Enter' && inp) done(inp.value.trim()); });
   });
 }
-async function loadSubjects(){
-  const d = await (await fetch('/subjects.json?t=' + Date.now(), { cache:'no-store' })).json();
-  SUBJECTS = d.subjects || [];
-  const cur = $('subj').value;
-  $('subj').value = SUBJECTS.some(s => s.id === cur) ? cur : (SUBJECTS[0] ? SUBJECTS[0].id : '');
-  renderChips(); renderChs(); renderFiles();
-}
+
+/* ---------- วิชา ---------- */
 const CATS = [
   {name:'ภาษา', color:'#f59e0b', test:c => 'ทอ'.includes(c)},
   {name:'คณิตศาสตร์', color:'#a78bfa', test:c => c === 'ค'},
@@ -274,157 +266,201 @@ const CATS = [
   {name:'สุขภาพ/ศิลปะ/การงาน', color:'#ec4899', test:c => 'พศง'.includes(c)}
 ];
 const catOf = s => CATS.find(c => c.test((s.code || '')[0] || '')) || CATS[CATS.length - 1];
-let PICK = true;
-function renderChips(){
-  const cur = curSubject();
-  const cb = $('curBtn');
-  cb.setAttribute('aria-expanded', PICK);
-  cb.style.setProperty('--c', cur ? catOf(cur).color : 'var(--muted)');
-  cb.innerHTML = cur ? `<i></i><div class="tx"><small>วิชาที่กำลังจัดการ</small><b>${esc((cur.code ? cur.code + ' · ' : '') + cur.name)}</b></div><span class="chg">${PICK ? 'ปิด ▴' : 'เปลี่ยนวิชา ▾'}</span>` : '<div class="tx"><b>เลือกวิชา</b></div>';
-  $('picker').classList.toggle('hidden', !PICK);
-  $('picker').innerHTML = CATS.map(c => {
+const curSubject = () => SUBJECTS.find(s => s.id === CUR);
+async function loadSubjects(){
+  const d = await (await fetch('/subjects.json?t=' + Date.now(), { cache:'no-store' })).json();
+  SUBJECTS = d.subjects || [];
+  if (!SUBJECTS.some(s => s.id === CUR)) CUR = '';
+  $('nSub').textContent = SUBJECTS.length; $('nCh').textContent = SUBJECTS.reduce((n, s) => n + s.chapters.length, 0);
+}
+function pickerHtml(){
+  return CATS.map(c => {
     const l = SUBJECTS.filter(s => catOf(s) === c); if (!l.length) return '';
-    return `<div class="grp" style="--c:${c.color}"><div class="gh"><i></i>${esc(c.name)}<span>${l.length} วิชา</span></div><div class="subs">${l.map(s => `<button class="sb" data-sid="${esc(s.id)}" aria-pressed="${s.id === $('subj').value}" type="button">${s.code ? `<small>${esc(s.code)}</small>` : ''}${esc(s.name)}</button>`).join('')}</div></div>`;
-  }).join('') || '<div class="empty" style="color:var(--muted);text-align:center">ไม่พบรายวิชา</div>';
+    return `<div class="grp" style="--c:${c.color}"><div class="gh"><i></i>${esc(c.name)}<span>${l.length} วิชา</span></div><div class="subs">${l.map(s => `<button class="sb" data-sid="${esc(s.id)}" aria-pressed="${s.id === CUR}" type="button">${s.code ? `<small>${esc(s.code)}</small>` : ''}${esc(s.name)}</button>`).join('')}</div></div>`;
+  }).join('') || '<div class="hint" style="text-align:center">ยังไม่มีวิชา — กด “เพิ่มวิชา” ก่อน</div>';
 }
-$('curBtn').onclick = () => { PICK = !PICK; renderChips(); };
-$('picker').addEventListener('click', e => { const b = e.target.closest('[data-sid]'); if (!b) return; $('subj').value = b.dataset.sid; SEL.clear(); PICK = false; renderChips(); renderChs(); renderFiles(); window.scrollTo({ top:0, behavior:'smooth' }); });
-$('refBtn').onclick = async () => {
-  const b = $('refBtn'); b.classList.add('spin'); b.disabled = true;
+/* แถบเลือกวิชาในป็อปอัพ: กดแล้วขยายรายการ เลือกแล้วพับ แล้วเรียก onPick */
+function subjectBar(root, onPick){
+  const bar = document.createElement('div');
+  bar.innerHTML = '<button class="cur" type="button" aria-expanded="false"></button><div class="card hidden" id="picker"></div>';
+  root.prepend(bar);
+  const btn = bar.querySelector('.cur'), pk = bar.querySelector('#picker'); let open = !CUR;
+  const paint = () => {
+    const c = curSubject();
+    btn.setAttribute('aria-expanded', open); btn.style.setProperty('--c', c ? catOf(c).color : 'var(--muted)');
+    btn.innerHTML = c ? `<i></i><div class="tx"><small>วิชา</small><b>${esc((c.code ? c.code + ' · ' : '') + c.name)}</b></div><span class="chg">${open ? 'ปิด ▴' : 'เปลี่ยน ▾'}</span>` : '<div class="tx"><b>เลือกวิชา ▾</b></div>';
+    pk.classList.toggle('hidden', !open); if (open) pk.innerHTML = pickerHtml();
+  };
+  btn.onclick = () => { open = !open; paint(); };
+  pk.addEventListener('click', e => { const b = e.target.closest('[data-sid]'); if (!b) return; CUR = b.dataset.sid; open = false; paint(); onPick(); });
+  paint(); return paint;
+}
+
+/* ---------- 1) เพิ่มวิชา ---------- */
+const slug = s => (String(s).toLowerCase().match(/[a-z0-9]+/g) || []).join('-').slice(0, 40);
+function subjectSheet(){
+  const b = openSheet('เพิ่มวิชา', `
+    <div class="field"><label for="fName">ชื่อวิชา *</label><input id="fName" maxlength="80" placeholder="เช่น ฟิสิกส์ 2"></div>
+    <div class="row2 field"><div><label for="fCode">รหัสวิชา</label><input id="fCode" maxlength="20" placeholder="เช่น ว31201"></div><div><label for="fIcon">ไอคอน</label><input id="fIcon" maxlength="4" value="📖" style="text-align:center;font-size:22px"></div></div>
+    <div class="field"><label for="fId">ชื่อโฟลเดอร์ (อังกฤษ — เว้นว่างให้ตั้งอัตโนมัติ)</label><input id="fId" maxlength="60" placeholder="เช่น physics-2" autocapitalize="none"></div>
+    <label class="chk"><input type="checkbox" id="fNotify" checked><span>แจ้งเตือนผู้ใช้ว่ามีวิชาใหม่</span></label>
+    <button class="pri" id="fGo" type="button">สร้างวิชา</button><div id="fOut"></div>`);
+  $('fGo').onclick = async () => {
+    const name = $('fName').value.trim(); if (!name) { $('fName').focus(); return; }
+    const code = $('fCode').value.trim(), id = ($('fId').value.trim() || slug(code + ' ' + name) || 'subject-' + Date.now().toString(36)).toLowerCase();
+    const order = SUBJECTS.reduce((m, s) => s.order < 999 ? Math.max(m, s.order) : m, 0) + 1;
+    const g = $('fGo'); g.disabled = true; g.textContent = 'กำลังสร้าง...'; $('fOut').innerHTML = '';
+    try {
+      const j = await api('addSubject', { id, name, code, icon: $('fIcon').value.trim() || '📖', order });
+      let note = DEPLOY + ' แล้ววิชาจะขึ้น';
+      if ($('fNotify').checked) { try { note = pushRes(await sendPush('มีวิชาใหม่: ' + name, 'เข้าไปดูเนื้อหาวิชาใหม่ได้เลย', '/')) + '<br>' + note; } catch(e){ note = 'ส่งแจ้งเตือนไม่สำเร็จ: ' + esc(e.message) + '<br>' + note; } }
+      $('fOut').innerHTML = okMsg(`สร้างวิชา “${esc(name)}” แล้ว (commit ${esc(j.commit)})`, note);
+      g.textContent = 'เสร็จแล้ว'; setTimeout(() => loadSubjects().catch(() => {}), 70000);
+    } catch(e){ $('fOut').innerHTML = badMsg(e.message); g.disabled = false; g.textContent = 'สร้างวิชา'; }
+  };
+}
+
+/* ---------- 2) เพิ่มบทเรียน ---------- */
+function lessonSheet(){
+  FILES = [];
+  const b = openSheet('เพิ่มบทเรียน', `
+    <label class="pick" id="drop"><span class="ic" aria-hidden="true">＋</span><b>แตะเพื่อเลือกไฟล์ .html</b><span>เลือกได้หลายไฟล์ หรือลากมาวางที่นี่</span><input id="file" type="file" accept=".html,text/html" multiple></label>
+    <div id="fileList"></div>
+    <div class="hint">ชื่อไฟล์ซ้ำจะถูกเขียนทับ · ชื่อบทดึงจากแท็ก &lt;title&gt; · ขึ้นต้นชื่อไฟล์ด้วยเลขเพื่อกำหนดลำดับ</div>
+    <label class="chk"><input type="checkbox" id="fNotify"><span>แจ้งเตือนผู้ใช้ว่ามีบทเรียนใหม่</span></label>
+    <div class="sticky"><button class="pri" id="upBtn" type="button">เลือกไฟล์ .html</button></div><div id="fOut"></div>`);
+  subjectBar(b, renderFiles);
+  $('file').addEventListener('change', async e => { await addFiles(e.target.files); e.target.value = ''; });
+  const d = $('drop');
+  ['dragenter','dragover'].forEach(t => d.addEventListener(t, e => { e.preventDefault(); d.classList.add('drag'); }));
+  ['dragleave','drop'].forEach(t => d.addEventListener(t, e => { e.preventDefault(); d.classList.remove('drag'); }));
+  d.addEventListener('drop', e => { if (e.dataTransfer && e.dataTransfer.files) addFiles(e.dataTransfer.files); });
+  $('fileList').addEventListener('click', e => { const x = e.target.closest('[data-rm]'); if (x) { FILES.splice(+x.dataset.rm, 1); renderFiles(); } });
+  $('fileList').addEventListener('input', e => { const i = e.target.dataset && e.target.dataset.name; if (i === undefined) return; FILES[+i].name = e.target.value.trim(); const pos = e.target.selectionStart; renderFiles(); const n = document.querySelector(`[data-name="${i}"]`); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch(_){} } });
+  $('upBtn').onclick = doUpload; renderFiles();
+}
+function renderFiles(){
+  if (!$('fileList')) return;
+  const s = curSubject(), have = new Set((s ? s.chapters : []).map(c => c.file.toLowerCase())), names = FILES.map(f => f.name.toLowerCase());
+  $('fileList').innerHTML = FILES.map((f, i) => {
+    const bad = !FILE_RE.test(f.name) || /^[._]/.test(f.name) || names.indexOf(f.name.toLowerCase()) !== i;
+    const tag = bad ? '<span class="tag warn">ชื่อไฟล์ไม่ถูกต้องหรือซ้ำ</span>' : have.has(f.name.toLowerCase()) ? '<span class="tag over">จะเขียนทับไฟล์เดิม</span>' : '<span class="tag new">บทใหม่</span>';
+    return `<div class="fl"><button class="rm" data-rm="${i}" type="button" aria-label="เอาออก">×</button><input data-name="${i}" value="${esc(f.name)}" aria-label="ชื่อไฟล์"><div class="t">ชื่อบท: <b>${f.title ? esc(f.title) : '(ไม่พบ &lt;title&gt; จะใช้ชื่อไฟล์แทน)'}</b> · ${(f.size / 1024).toFixed(0)} KB</div>${tag}</div>`;
+  }).join('');
+  const ok = FILES.length && FILES.every((f, i) => FILE_RE.test(f.name) && !/^[._]/.test(f.name) && names.indexOf(f.name.toLowerCase()) === i);
+  $('upBtn').disabled = FILES.length ? (!ok || !s) : false;
+  $('upBtn').textContent = FILES.length ? (s ? `อัปโหลด ${FILES.length} ไฟล์เข้า “${s.name}”` : 'เลือกวิชาก่อน') : 'เลือกไฟล์ .html';
+}
+const toB64 = buf => { const u = new Uint8Array(buf); let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); };
+function titleOf(buf){ try { const t = new TextDecoder('utf-8').decode(buf).replace(/<!--[\s\S]*?-->/g, '').match(/<title>([\s\S]*?)<\/title>/i); return t ? t[1].replace(/\s+/g, ' ').trim().split('|')[0].trim() : ''; } catch(e){ return ''; } }
+async function addFiles(list){
+  for (const f of list) {
+    if (!/\.html?$/i.test(f.name)) continue;
+    const buf = await f.arrayBuffer(), name = f.name.replace(/\.htm$/i, '.html');
+    FILES = FILES.filter(x => x.name.toLowerCase() !== name.toLowerCase());
+    FILES.push({ name, b64: toB64(buf), size: buf.byteLength, title: titleOf(buf) });
+  }
+  renderFiles();
+}
+async function doUpload(){
+  const s = curSubject(); if (!FILES.length) return $('file').click(); if (!s) return;
+  if (FILES.reduce((a, f) => a + f.size, 0) > 3 * 1024 * 1024) { $('fOut').innerHTML = badMsg('ไฟล์รวมใหญ่เกิน 3 MB ให้แบ่งอัปโหลดทีละชุด'); return; }
+  const b = $('upBtn'); b.disabled = true; b.textContent = 'กำลังอัปโหลด...'; $('fOut').innerHTML = '';
+  const titles = FILES.map(f => f.title || f.name.replace(/\.html$/i, ''));
   try {
-    await loadSubjects();
-    const m = '<div class="msg ok">อัปเดตรายการบทแล้ว</div>'; $('status').innerHTML = m;
-    setTimeout(() => { if ($('status').innerHTML === m) $('status').innerHTML = ''; }, 2500);
-  } catch(e){ $('status').innerHTML = '<div class="msg bad">รีเฟรชไม่สำเร็จ ลองใหม่อีกครั้ง</div>'; }
-  b.classList.remove('spin'); b.disabled = false;
-};
-function curSubject(){ return SUBJECTS.find(s => s.id === $('subj').value); }
-function setTab(t){
-  TAB = t; $('viewUp').classList.toggle('hidden', t !== 'up'); $('viewMg').classList.toggle('hidden', t !== 'mg');
-  $('tabUp').setAttribute('aria-selected', t === 'up'); $('tabMg').setAttribute('aria-selected', t === 'mg'); $('status').innerHTML = ''; updBar();
+    const j = await api('upload', { subject: s.id, files: FILES.map(f => ({ name: f.name, b64: f.b64 })) });
+    let note = DEPLOY + ' แล้วบทเรียนจะขึ้น';
+    if ($('fNotify').checked) { try { note = pushRes(await sendPush('มีบทเรียนใหม่: ' + s.name, titles.slice(0, 3).join(', ') + (titles.length > 3 ? ` และอีก ${titles.length - 3} บท` : ''), '/')) + '<br>' + note; } catch(e){ note = 'ส่งแจ้งเตือนไม่สำเร็จ: ' + esc(e.message) + '<br>' + note; } }
+    $('fOut').innerHTML = okMsg(`อัปโหลด ${j.count} ไฟล์สำเร็จ (commit ${esc(j.commit)})`, note);
+    FILES = []; renderFiles(); $('upBtn').textContent = 'เสร็จแล้ว'; $('upBtn').disabled = true; setTimeout(() => loadSubjects().catch(() => {}), 70000);
+  } catch(e){ $('fOut').innerHTML = badMsg(e.message); renderFiles(); }
 }
-$('tabUp').onclick = () => setTab('up'); $('tabMg').onclick = () => setTab('mg');
-function updBar(){
-  const up = TAB === 'up', n = SEL.size;
-  $('upBtn').classList.toggle('hidden', !up); $('delBtn').classList.toggle('hidden', up || !n);
-  $('bar').classList.toggle('hidden', !TOKEN || (!up && !n));
-  $('delBtn').textContent = `ลบที่เลือก (${n} บท)`;
+
+/* ---------- 3) จัดการบทเรียน (มีปุ่มรีเฟรชอยู่ที่นี่) ---------- */
+function manageSheet(){
+  SEL.clear();
+  const b = openSheet('จัดการบทเรียน', `
+    <div class="tools"><button class="ghost" id="selAll" type="button">เลือกทั้งหมด</button><button class="ghost" id="refBtn" type="button">↻ รีเฟรชรายการ</button><span class="sel" id="selInfo"></span></div>
+    <div class="chs" id="chs"></div>
+    <div class="hint">แตะที่บทเพื่อเลือกหลายบท แล้วกดลบ · ปุ่ม “แก้ชื่อ” ใช้เปลี่ยนชื่อไฟล์ (ลำดับบทเรียงตามชื่อไฟล์)</div>
+    <div class="sticky"><button class="pri dangerbtn hidden" id="delBtn" type="button">ลบที่เลือก</button></div><div id="fOut"></div>`);
+  subjectBar(b, () => { SEL.clear(); renderChs(); });
+  $('selAll').onclick = () => { const s = curSubject(), l = s ? s.chapters : []; if (SEL.size === l.length) SEL.clear(); else l.forEach(c => SEL.add(c.file)); renderChs(); };
+  $('refBtn').onclick = async () => {
+    const r = $('refBtn'); r.disabled = true; r.textContent = '↻ กำลังโหลด...';
+    try { await loadSubjects(); renderChs(); $('fOut').innerHTML = okMsg('อัปเดตรายการบทแล้ว'); setTimeout(() => { if ($('fOut')) $('fOut').innerHTML = ''; }, 2200); }
+    catch(e){ $('fOut').innerHTML = badMsg('รีเฟรชไม่สำเร็จ ลองใหม่อีกครั้ง'); }
+    r.disabled = false; r.textContent = '↻ รีเฟรชรายการ';
+  };
+  $('chs').addEventListener('click', onChsClick); $('delBtn').onclick = doDelete; renderChs();
 }
 function renderChs(){
+  if (!$('chs')) return;
   const s = curSubject(), list = s ? s.chapters : [];
   SEL = new Set([...SEL].filter(f => list.some(c => c.file === f)));
-  $('cnt').textContent = list.length;
-  $('chs').innerHTML = list.length ? list.map((c, i) => `<div class="row${SEL.has(c.file) ? ' on' : ''}" data-i="${i}"><span class="ck" aria-hidden="true">✓</span><span class="n">${i + 1}</span><div class="tx" title="${esc(c.file)}"><div class="tt">${esc(c.title)}</div><div class="ff">${esc(c.file)}</div></div><button class="edit" data-edit="${i}" type="button">แก้ชื่อ</button></div>`).join('') : '<div class="empty">ยังไม่มีบทเรียนในวิชานี้<br>ไปที่แท็บ “อัปโหลดบทใหม่” เพื่อเพิ่ม</div>';
-  $('selInfo').textContent = SEL.size ? `เลือก ${SEL.size} จาก ${list.length}` : '';
-  $('selAll').textContent = list.length && SEL.size === list.length ? 'ยกเลิกทั้งหมด' : 'เลือกทั้งหมด';
-  $('selAll').classList.toggle('hidden', !list.length); updBar();
+  $('chs').innerHTML = !s ? '<div class="empty">เลือกวิชาด้านบนก่อน</div>' : list.length ? list.map((c, i) => `<div class="row${SEL.has(c.file) ? ' on' : ''}" data-i="${i}"><span class="ck" aria-hidden="true">✓</span><span class="n">${i + 1}</span><div class="tx" title="${esc(c.file)}"><div class="tt">${esc(c.title)}</div><div class="ff">${esc(c.file)}</div></div><button class="edit" data-edit="${i}" type="button">แก้ชื่อ</button></div>`).join('') : '<div class="empty">ยังไม่มีบทเรียนในวิชานี้<br>กลับไปกด “เพิ่มบทเรียน” เพื่อเพิ่ม</div>';
+  $('selInfo').textContent = SEL.size ? `เลือก ${SEL.size}/${list.length}` : '';
+  $('selAll').textContent = list.length && SEL.size === list.length ? 'ยกเลิกทั้งหมด' : 'เลือกทั้งหมด'; $('selAll').classList.toggle('hidden', !list.length);
+  $('delBtn').classList.toggle('hidden', !SEL.size); $('delBtn').textContent = `ลบที่เลือก (${SEL.size} บท)`;
 }
-$('selAll').onclick = () => { const s = curSubject(), l = s ? s.chapters : []; if (SEL.size === l.length) SEL.clear(); else l.forEach(c => SEL.add(c.file)); renderChs(); };
-$('chs').addEventListener('click', async e => {
+async function onChsClick(e){
   const s = curSubject(); if (!s) return;
   const ed = e.target.closest('[data-edit]');
   if (ed) {
     const c = s.chapters[+ed.dataset.edit]; if (!c) return;
     const nn = await ask({ title: 'แก้ชื่อไฟล์', body: `ชื่อเดิม: ${c.file}\nขึ้นต้นด้วยตัวเลขเพื่อกำหนดลำดับ เช่น 05-เรื่องใหม่.html`, input: c.file, ok: 'บันทึกชื่อ' });
     if (nn === null || nn === c.file) return;
-    if (!FILE_RE.test(nn) || /^[._]/.test(nn) || s.chapters.some(x => x !== c && x.file.toLowerCase() === nn.toLowerCase())) { $('status').innerHTML = '<div class="msg bad">ชื่อไฟล์ไม่ถูกต้องหรือซ้ำกับบทอื่น (ต้องลงท้าย .html)</div>'; return; }
-    $('status').innerHTML = '';
+    if (!FILE_RE.test(nn) || /^[._]/.test(nn) || s.chapters.some(x => x !== c && x.file.toLowerCase() === nn.toLowerCase())) { $('fOut').innerHTML = badMsg('ชื่อไฟล์ไม่ถูกต้องหรือซ้ำกับบทอื่น (ต้องลงท้าย .html)'); return; }
     try {
       const j = await api('rename', { subject: s.id, from: c.file, to: nn });
       c.file = nn; s.chapters.sort((a, b) => a.file.localeCompare(b.file, 'th', { numeric:true })); SEL.clear(); renderChs();
-      $('status').innerHTML = `<div class="msg ok">เปลี่ยนชื่อเป็น ${esc(nn)} แล้ว${j && j.commit ? ' (commit ' + esc(j.commit) + ')' : ''}<br>เว็บกำลัง deploy ใหม่ ประมาณ 1 นาที</div>`;
-    } catch(err){ $('status').innerHTML = `<div class="msg bad">${esc(err.message)}</div>`; }
+      $('fOut').innerHTML = okMsg(`เปลี่ยนชื่อเป็น ${esc(nn)} แล้ว${j && j.commit ? ' (commit ' + esc(j.commit) + ')' : ''}`, DEPLOY);
+    } catch(err){ if ($('fOut')) $('fOut').innerHTML = badMsg(err.message); }
     return;
   }
   const row = e.target.closest('[data-i]'); if (!row) return;
   const c = s.chapters[+row.dataset.i]; if (!c) return;
   SEL.has(c.file) ? SEL.delete(c.file) : SEL.add(c.file); renderChs();
-});
-$('delBtn').onclick = async () => {
+}
+async function doDelete(){
   const s = curSubject(), files = [...SEL]; if (!s || !files.length) return;
   const ok = await ask({ title: `ลบ ${files.length} บท?`, body: files.map(f => '• ' + f).join('\n') + `\n\nจากวิชา ${s.name} · ลบแล้วกู้คืนผ่านหน้านี้ไม่ได้`, ok: 'ลบเลย', danger: true });
   if (!ok) return;
-  const b = $('delBtn'); b.disabled = true; b.textContent = 'กำลังลบ...'; $('status').innerHTML = '';
+  const b = $('delBtn'); b.disabled = true; b.textContent = 'กำลังลบ...';
   try {
     const j = await api('delete', { subject: s.id, files });
-    s.chapters = s.chapters.filter(c => !files.includes(c.file)); SEL.clear(); renderChs(); renderFiles();
-    $('status').innerHTML = `<div class="msg ok">ลบ ${files.length} บทแล้ว (commit ${esc(j.commit)})<br>เว็บกำลัง deploy ใหม่ ประมาณ 1 นาทีบทจะหายจากหน้าเว็บ</div>`;
-  } catch(err){ $('status').innerHTML = `<div class="msg bad">${esc(err.message)}</div>`; }
-  b.disabled = false; updBar();
-};
-
-const FILE_RE = /^[^\\/:*?"<>|\u0000-\u001f]{1,100}\.html$/i;
-function renderFiles(){
-  const s = curSubject(), have = new Set((s ? s.chapters : []).map(c => c.file.toLowerCase()));
-  const names = FILES.map(f => f.name.toLowerCase());
-  $('fileList').innerHTML = FILES.map((f, i) => {
-    const bad = !FILE_RE.test(f.name) || /^[._]/.test(f.name) || names.indexOf(f.name.toLowerCase()) !== i;
-    const tag = bad ? '<span class="tag warn">ชื่อไฟล์ไม่ถูกต้องหรือซ้ำ</span>' : have.has(f.name.toLowerCase()) ? '<span class="tag over">จะเขียนทับไฟล์เดิม</span>' : '<span class="tag new">บทใหม่</span>';
-    return `<div class="fl"><button class="rm" data-rm="${i}" type="button" aria-label="เอาออก">×</button>
-      <input data-name="${i}" value="${esc(f.name)}" aria-label="ชื่อไฟล์">
-      <div class="t">ชื่อบท: <b>${f.title ? esc(f.title) : '(ไม่พบ &lt;title&gt; จะใช้ชื่อไฟล์แทน)'}</b> · ${(f.size / 1024).toFixed(0)} KB</div>${tag}</div>`;
-  }).join('');
-  const ok = FILES.length && FILES.every((f, i) => FILE_RE.test(f.name) && !/^[._]/.test(f.name) && names.indexOf(f.name.toLowerCase()) === i);
-  $('upBtn').disabled = FILES.length ? (!ok || !s) : false;
-  $('upBtn').textContent = FILES.length ? `อัปโหลด ${FILES.length} ไฟล์เข้า “${s ? s.name : ''}”` : 'เลือกไฟล์ .html';
+    s.chapters = s.chapters.filter(c => !files.includes(c.file)); SEL.clear(); renderChs();
+    $('fOut').innerHTML = okMsg(`ลบ ${files.length} บทแล้ว (commit ${esc(j.commit)})`, DEPLOY + ' บทจะหายจากหน้าเว็บ');
+  } catch(err){ if ($('fOut')) $('fOut').innerHTML = badMsg(err.message); }
+  if ($('delBtn')) b.disabled = false;
 }
-$('fileList').addEventListener('click', e => { const b = e.target.closest('[data-rm]'); if (b) { FILES.splice(+b.dataset.rm, 1); renderFiles(); } });
-$('fileList').addEventListener('input', e => { const i = e.target.dataset && e.target.dataset.name; if (i !== undefined) { FILES[+i].name = e.target.value.trim(); updTags(); } });
-function updTags(){ const keep = document.activeElement, pos = keep && keep.selectionStart, id = keep && keep.dataset && keep.dataset.name; renderFiles(); if (id !== undefined && id !== null) { const n = document.querySelector(`[data-name="${id}"]`); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch(e){} } } }
 
-function toB64(buf){ const u = new Uint8Array(buf); let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); }
-function titleOf(buf){
-  try { const t = new TextDecoder('utf-8').decode(buf).replace(/<!--[\s\S]*?-->/g, '').match(/<title>([\s\S]*?)<\/title>/i); return t ? t[1].replace(/\s+/g, ' ').trim().split('|')[0].trim() : ''; } catch(e){ return ''; }
+/* ---------- 4) ส่งแจ้งเตือน ---------- */
+function pushSheet(){
+  openSheet('ส่งแจ้งเตือน', `
+    <div class="tpl"><button class="ghost" data-t="0" type="button">📚 วิชาใหม่</button><button class="ghost" data-t="1" type="button">📝 การบ้าน</button><button class="ghost" data-t="2" type="button">📢 ทั่วไป</button></div>
+    <div class="field"><label for="pTitle">หัวข้อ</label><input id="pTitle" maxlength="100" placeholder="หัวข้อ"></div>
+    <div class="field"><label for="pMsg">ข้อความ</label><input id="pMsg" maxlength="500" placeholder="ข้อความ"></div>
+    <div class="field"><label for="pUrl">ลิงก์ในเว็บ</label><input id="pUrl" value="/" placeholder="เช่น /"></div>
+    <button class="pri" id="pSend" type="button">ส่งแจ้งเตือน</button><div id="fOut"></div>`);
+  const T = [['มีวิชาใหม่', 'เข้าไปดูเนื้อหาวิชาใหม่ได้เลย'], ['มีการบ้านใหม่', 'อย่าลืมเข้าไปดูกำหนดส่งการบ้าน'], ['ประกาศ', '']];
+  $('sheetBody').addEventListener('click', e => { const t = e.target.closest('[data-t]'); if (!t) return; const v = T[+t.dataset.t]; $('pTitle').value = v[0]; $('pMsg').value = v[1]; $('pMsg').focus(); });
+  $('pSend').onclick = async () => {
+    const b = $('pSend'); b.disabled = true; b.textContent = 'กำลังส่ง...'; $('fOut').innerHTML = '';
+    try {
+      const j = await sendPush($('pTitle').value, $('pMsg').value, $('pUrl').value || '/');
+      $('fOut').innerHTML = okMsg(pushRes(j) + ` · ลบที่หมดอายุ ${j.removed}`) + (j.failed ? `<div class="msg bad">สาเหตุที่ส่งไม่ผ่าน:<br>${Object.entries(j.reasons || {}).map(([k, v]) => esc(k) + ' × ' + v).join('<br>')}</div>` : '');
+    } catch(e){ $('fOut').innerHTML = badMsg(e.message); }
+    b.disabled = false; b.textContent = 'ส่งแจ้งเตือน';
+  };
 }
-async function addFiles(list){
-  $('status').innerHTML = '';
-  for (const f of list) {
-    if (!/\.html?$/i.test(f.name)) continue;
-    const buf = await f.arrayBuffer();
-    const name = f.name.replace(/\.htm$/i, '.html');
-    FILES = FILES.filter(x => x.name.toLowerCase() !== name.toLowerCase());
-    FILES.push({ name, b64: toB64(buf), size: buf.byteLength, title: titleOf(buf) });
-  }
-  renderFiles();
-}
-$('file').addEventListener('change', async e => { await addFiles(e.target.files); e.target.value = ''; });
-const drop = $('drop');
-['dragenter','dragover'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add('drag'); }));
-['dragleave','drop'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove('drag'); }));
-drop.addEventListener('drop', e => { if (e.dataTransfer && e.dataTransfer.files) addFiles(e.dataTransfer.files); });
 
-$('upBtn').onclick = async () => {
-  const s = curSubject(); if (!FILES.length) { $('file').click(); return; } if (!s) return;
-  const total = FILES.reduce((a, f) => a + f.size, 0);
-  if (total > 3 * 1024 * 1024) { $('status').innerHTML = '<div class="msg bad">ไฟล์รวมใหญ่เกิน 3 MB ให้แบ่งอัปโหลดทีละชุด</div>'; return; }
-  const b = $('upBtn'); b.disabled = true; b.textContent = 'กำลังอัปโหลด...'; $('status').innerHTML = '';
-  try {
-    const j = await api('upload', { subject: s.id, files: FILES.map(f => ({ name: f.name, b64: f.b64 })) });
-    $('status').innerHTML = `<div class="msg ok">อัปโหลด ${j.count} ไฟล์สำเร็จ (commit ${esc(j.commit)})<br>เว็บกำลัง deploy ใหม่ ประมาณ 1 นาทีบทเรียนจะขึ้น</div>`;
-    FILES = []; renderFiles();
-    $('status').scrollIntoView({ behavior:'smooth', block:'center' });
-    setTimeout(() => loadSubjects().catch(() => {}), 70000);
-  } catch(e){ $('status').innerHTML = `<div class="msg bad">${esc(e.message)}</div>`; renderFiles(); }
-};
-
-$('pSend').onclick = async () => {
-  const b = $('pSend'); b.disabled = true; b.textContent = 'กำลังส่ง...'; $('pStatus').innerHTML = '';
-  try {
-    const r = await fetch('/api/push-send', { method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ token: TOKEN, title: $('pTitle').value, message: $('pMsg').value, url: $('pUrl').value || '/' }) });
-    const j = await r.json().catch(() => ({}));
-    if (r.status === 401) { logout(); throw new Error(j.error || 'หมดเวลา'); }
-    if (!r.ok) throw new Error(j.error || ('เกิดข้อผิดพลาด ' + r.status));
-    $('pStatus').innerHTML = `<div class="msg ok">ส่งแล้ว ${j.sent}/${j.total} · ล้มเหลว ${j.failed} · ลบที่หมดอายุ ${j.removed}</div>` + (j.failed ? `<div class="msg bad">สาเหตุที่ส่งไม่ผ่าน:<br>${Object.entries(j.reasons || {}).map(([k, v]) => esc(k) + ' × ' + v).join('<br>')}</div>` : '');
-  } catch(e) { $('pStatus').innerHTML = `<div class="msg bad">❌ ${esc(e.message)}</div>`; }
-  b.disabled = false; b.textContent = 'ส่งแจ้งเตือน';
-};
-
-async function enter(){ PICK = true; await loadSubjects(); showPanel(true); }
-(async () => {
-  if (!TOKEN) return;
-  try { await api('check'); await enter(); } catch(e){ /* ยังไม่ล็อกอิน */ }
-})();
+document.querySelector('.home').addEventListener('click', e => {
+  const g = e.target.closest('[data-go]'); if (!g) return;
+  ({ subject: subjectSheet, lesson: lessonSheet, manage: manageSheet, push: pushSheet })[g.dataset.go]();
+});
+async function enter(){ await loadSubjects(); showPanel(true); }
+(async () => { if (!TOKEN) return; try { await api('check'); await enter(); } catch(e){} })();
 </script>
 </body>
 </html>

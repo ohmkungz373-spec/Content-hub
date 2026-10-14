@@ -13,6 +13,7 @@ self.addEventListener('push', (event) => {
     body: data.body,
     icon: '/icon-192.png',
     badge: '/icon-192.png',
+    tag: data.tag || undefined,
     data: { url: data.url || '/' }
   }));
 });

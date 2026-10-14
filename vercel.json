@@ -3,6 +3,7 @@
   "framework": null,
   "buildCommand": "node build.js",
   "outputDirectory": "public",
+  "crons": [{ "path": "/api/cron-homework", "schedule": "0 0 * * *" }],
   "headers": [
     {
       "source": "/sw.js",
