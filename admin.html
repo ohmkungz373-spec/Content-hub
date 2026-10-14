@@ -254,6 +254,30 @@ button:active:not(:disabled){transform:scale(.98)}
 .ed-wrap .fm-ed{border:0;border-radius:0;margin:0;min-height:58dvh;height:58dvh;padding:12px;font-size:var(--efs,13px);line-height:1.6;resize:none;flex:1;min-width:0;background:transparent}
 .ed-wrap.wrap .fm-ed{white-space:pre-wrap;overflow-wrap:anywhere}.ed-wrap.wrap .ed-ln{display:none}
 .ed-wrap:focus-within{border-color:var(--acc);box-shadow:0 0 0 3px #8b9bff30}.ed-wrap .fm-ed:focus{box-shadow:none}
+/* --- เวลาล่าสุด --- */
+.ed-ts{font-size:11.5px;color:var(--muted);padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;flex:none}
+/* --- แท็บโค้ด/ตัวอย่าง/แก้ไขหน้าเว็บ --- */
+.ed-tabs{display:flex;gap:4px;padding:4px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;margin:8px 0}
+.ed-tab{flex:1;min-height:38px;background:none;border:0;border-radius:8px;color:var(--muted);font:600 13px/1 inherit;cursor:pointer;padding:0 6px}
+.ed-tab[aria-selected=true]{background:var(--panel);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.prev-frame{width:100%;height:60dvh;border:0;border-radius:12px;display:block;background:#fff;margin-top:4px}
+/* --- Visual Editor --- */
+.ve-tools{display:flex;gap:6px;flex-wrap:wrap;padding:6px 0 8px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.ve-tools .ghost{min-height:34px;padding:0 10px;font-size:13px}
+.ve-tools .ghost:disabled{opacity:.35;cursor:default;pointer-events:none}
+.ve-info{font-size:12px;color:var(--muted);line-height:34px;padding:0 4px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ve-wrap{position:relative;height:60dvh;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#f5f5f5;margin-top:4px;user-select:none}
+.ve-frame{width:100%;height:100%;border:0;display:block}
+.ve-ov{position:absolute;inset:0;pointer-events:none;z-index:10}
+.ve-sel{position:absolute;border:2px solid #6d7dff;border-radius:2px;pointer-events:none;box-sizing:border-box}
+.ve-tag{position:absolute;top:-18px;left:-2px;font-size:10px;background:#6d7dff;color:#fff;padding:1px 5px;border-radius:3px 3px 0 0;white-space:nowrap;pointer-events:none}
+.ve-hnd{position:absolute;width:12px;height:12px;background:#fff;border:2px solid #6d7dff;border-radius:2px;pointer-events:all;cursor:se-resize;touch-action:none;z-index:1}
+/* --- backup list --- */
+.bk-list{max-height:220px;overflow:auto;border:1px solid var(--line);border-radius:12px;background:var(--bg2);margin-top:10px}
+.bk-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.bk-row:last-child{border-bottom:0}
+.bk-name{flex:1;font-size:14px;font-weight:500;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bk-meta{font-size:12px;color:var(--muted);white-space:nowrap;flex:none}
 </style>
 </head>
 <body>
@@ -703,16 +727,234 @@ async function fmOpen(path){
     fmEdit(path, txt, false);
   } catch(e){ fmToast(e.message, true); }
 }
+// ─── TIME AGO ───────────────────────────────────────────────────────────
+function timeAgo(d){
+  if(!d) return '';
+  const s=Math.floor((Date.now()-new Date(d))/1000);
+  if(s<60) return 'เมื่อกี้';
+  if(s<3600) return Math.floor(s/60)+' นาทีที่แล้ว';
+  if(s<86400) return Math.floor(s/3600)+' ชม.ที่แล้ว';
+  const day=Math.floor(s/86400); if(day<30) return day+' วันที่แล้ว';
+  return new Date(d).toLocaleDateString('th-TH',{day:'numeric',month:'short'});
+}
+async function edFetchTs(path){
+  const key='hub_ts3_'+path, c=localStorage.getItem(key);
+  if(c){try{const p=JSON.parse(c); if(Date.now()-p.t<300000) return p;}catch(e){}}
+  try{
+    const j=await fapi('commit-time',{path});
+    if(j.date){const p={t:Date.now(),d:j.date,m:(j.message||'').slice(0,80)}; localStorage.setItem(key,JSON.stringify(p)); return p;}
+  }catch(e){}
+  return null;
+}
+
+// ─── BACKUPS (localStorage) ─────────────────────────────────────────────
+const BK_KEY='hub_bk_v2';
+function bkAll(){try{return JSON.parse(localStorage.getItem(BK_KEY)||'[]');}catch(e){return[];}}
+function bkWrite(list){localStorage.setItem(BK_KEY,JSON.stringify(list));}
+async function bkSave(path,text){
+  const name=await ask({title:'บันทึกสำเนา',body:'ชื่อสำเนาสำหรับ: '+path.split('/').pop(),input:'v'+new Date().toISOString().slice(0,16).replace('T','-'),ok:'บันทึก'});
+  if(!name) return;
+  const list=bkAll();
+  list.unshift({id:Date.now(),name,date:new Date().toISOString(),path,b64:fmB64(new TextEncoder().encode(text))});
+  if(list.length>60) list.splice(60);
+  bkWrite(list);
+  fmToast('บันทึกสำเนา "'+name+'" แล้ว ✓');
+}
+function bkPanel(path,onRestore){
+  const mine=bkAll().filter(b=>b.path===path);
+  const html=`<div class="sh"><h2>💾 สำเนาที่บันทึกไว้</h2><button class="x" id="bkClose" type="button">✕</button></div>
+    <div style="padding:14px">
+    ${!mine.length?`<div style="padding:20px;text-align:center;color:var(--muted);font-size:14px">ยังไม่มีสำเนา<br><small>กดปุ่ม "💾 สำเนา" ในตัวแก้ไขเพื่อบันทึก</small></div>`:
+    `<div class="bk-list">${mine.map(b=>`<div class="bk-row"><div class="bk-name">${esc(b.name)}</div><div class="bk-meta">${timeAgo(b.date)}</div><button class="ghost" style="min-height:32px;padding:0 10px;font-size:12px;flex:none" data-restore="${b.id}" type="button">โหลด</button><button class="del" style="min-height:32px;padding:0 9px;flex:none" data-delbk="${b.id}" type="button">✕</button></div>`).join('')}</div>`}
+    </div>`;
+  const box=openSheet('สำเนาที่บันทึกไว้',html);
+  $('bkClose').onclick=closeSheet;
+  box.addEventListener('click',async e=>{
+    const rb=e.target.closest('[data-restore]');
+    if(rb){
+      const b=bkAll().find(x=>String(x.id)===rb.dataset.restore); if(!b) return;
+      if(!(await ask({title:'โหลดสำเนา "'+b.name+'"?',body:'เนื้อหาปัจจุบันจะถูกแทนที่',ok:'โหลดเลย',danger:true}))) return;
+      const text=new TextDecoder('utf-8').decode(fmBytes(b.b64));
+      closeSheet(); onRestore(text); return;
+    }
+    const db=e.target.closest('[data-delbk]');
+    if(db){const list=bkAll().filter(x=>String(x.id)!==db.dataset.delbk); bkWrite(list); db.closest('.bk-row').remove();}
+  });
+}
+
+// ─── VISUAL EDITOR ──────────────────────────────────────────────────────
+const VE={el:null,hist:[],dirty:false,editing:false,rs:null};
+function _veDoc(){const f=$('veFrame'); return f&&f.contentDocument;}
+function veSnapshot(){
+  const doc=_veDoc(); if(!doc) return;
+  VE.hist.push(doc.documentElement.innerHTML);
+  if(VE.hist.length>40) VE.hist.shift();
+  veSyncBtns();
+}
+function veUndo(){
+  if(VE.hist.length<2){fmToast('ไม่มีขั้นตอนก่อนหน้า',true); return;}
+  VE.hist.pop();
+  const doc=_veDoc(); if(!doc) return;
+  doc.documentElement.innerHTML=VE.hist[VE.hist.length-1];
+  VE.el=null; VE.editing=false;
+  veUpdateOv(); veSyncBtns();
+  veBind();
+}
+function veSyncBtns(){
+  ['veBtnEdit','veBtnDel','veBtnDup'].forEach(id=>{const b=$(id); if(b) b.disabled=!(VE.el&&VE.el.isConnected);});
+  const bu=$(  'veBtnUndo'); if(bu) bu.disabled=VE.hist.length<2;
+}
+function veUpdateOv(){
+  const ov=$('veOv'); if(!ov) return;
+  if(!VE.el||!VE.el.isConnected){ov.innerHTML='';veSyncBtns();veInfoSet('แตะเพื่อเลือก · ดับเบิลคลิกเพื่อแก้ข้อความ · ลากจุดมุมเพื่อปรับขนาด');return;}
+  const frame=$('veFrame'), wrap=$('veWrap');
+  if(!frame||!wrap) return;
+  const wr=wrap.getBoundingClientRect(), fr=frame.getBoundingClientRect();
+  const r=VE.el.getBoundingClientRect();
+  const top=fr.top-wr.top+r.top, left=fr.left-wr.left+r.left;
+  const tag=VE.el.tagName.toLowerCase();
+  ov.innerHTML=`<div class="ve-sel" style="top:${top}px;left:${left}px;width:${r.width}px;height:${r.height}px;"><span class="ve-tag">${esc(tag)}</span><div class="ve-hnd" data-h="se" style="right:-6px;bottom:-6px;"></div></div>`;
+  veSyncBtns();
+  veInfoSet('<'+tag+(VE.el.id?' id="'+esc(VE.el.id)+'"':'')+'> '+Math.round(r.width)+'×'+Math.round(r.height)+'px');
+}
+function veInfoSet(t){const el=$('veInfo2'); if(el) el.textContent=t;}
+function veEnterEdit(){
+  if(!VE.el) return;
+  veSnapshot();
+  VE.editing=true;
+  VE.el.contentEditable='true';
+  VE.el.focus();
+  VE.el.addEventListener('input',()=>{VE.dirty=true; FM.dirty=true;},{once:false});
+  const b=$('veBtnEdit'); if(b){b.textContent='✓ เสร็จ';b.style.color='var(--ok)';}
+  veInfoSet('กำลังแก้ข้อความ — คลิกที่อื่นเพื่อเสร็จสิ้น');
+}
+function veExitEdit(){
+  if(!VE.editing) return;
+  VE.editing=false;
+  if(VE.el&&VE.el.isConnected) VE.el.contentEditable='false';
+  const b=$('veBtnEdit'); if(b){b.textContent='✏ แก้ข้อความ';b.style.color='';}
+}
+function veBind(){
+  const doc=_veDoc(); if(!doc) return;
+  doc.querySelectorAll('a').forEach(a=>{a.onclick=e=>{e.preventDefault();e.stopPropagation();};});
+  doc.querySelectorAll('form').forEach(f=>{f.onsubmit=e=>e.preventDefault();});
+  let lt=0;
+  doc.addEventListener('mousedown',e=>{
+    const el=e.target;
+    if(!el||el===doc.documentElement) return;
+    const now=Date.now();
+    if(now-lt<300&&VE.el===el){ // double click
+      lt=0; veEnterEdit(); return;
+    }
+    lt=now;
+    if(VE.editing&&VE.el===el) return;
+    veExitEdit();
+    VE.el=el;
+    setTimeout(veUpdateOv,30);
+  },true);
+  doc.addEventListener('scroll',()=>setTimeout(veUpdateOv,30));
+}
+function veResizeStart(e){
+  if(!VE.el) return;
+  e.preventDefault(); e.stopPropagation();
+  const sX=e.clientX,sY=e.clientY,sW=VE.el.offsetWidth,sH=VE.el.offsetHeight;
+  veSnapshot();
+  const move=ev=>{
+    const dw=ev.clientX-sX,dh=ev.clientY-sY;
+    VE.el.style.width=Math.max(20,sW+dw)+'px';
+    VE.el.style.height=Math.max(10,sH+dh)+'px';
+    VE.dirty=true; FM.dirty=true;
+    veUpdateOv();
+  };
+  const up=()=>{document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up);};
+  document.addEventListener('mousemove',move);
+  document.addEventListener('mouseup',up);
+}
+function veGetHtml(){
+  const doc=_veDoc(); if(!doc) return null;
+  return '<!DOCTYPE html>\n'+doc.documentElement.outerHTML;
+}
+function veLoad(html){
+  VE.el=null; VE.hist=[]; VE.dirty=false; VE.editing=false;
+  const frame=$('veFrame'); if(!frame) return;
+  frame.onload=null;
+  frame.srcdoc=html;
+  frame.onload=()=>{
+    veSnapshot();
+    veBind();
+    veSyncBtns();
+    veInfoSet('แตะเพื่อเลือก · ดับเบิลคลิกเพื่อแก้ข้อความ · ลากจุดมุมเพื่อปรับขนาด');
+  };
+  const ov=$('veOv'); if(ov){
+    ov.addEventListener('mousedown',e=>{
+      const h=e.target.closest('[data-h]'); if(h) veResizeStart(e);
+    });
+  }
+}
+
 function fmEdit(path, text, isNew){
   FM.dirty = !!isNew;
-  const sys = /^(api\/|vercel\.json|package\.json|build\.js|server\.js|scan\.js)/.test(path), isHtml = /\.html?$/i.test(path);
+  const sys = /^(api\/|vercel\.json|package\.json|build\.js|server\.js|scan\.js)/.test(path);
+  const isHtml = /\.html?$/i.test(path);
   let fs = +(localStorage.getItem('edFs') || 13), wrapOn = localStorage.getItem('edWrap') === '1';
-  FM.box.innerHTML = `<div class="ed-head"><button class="ghost" id="edBack" type="button" style="min-height:42px">←</button><span class="nm" title="${esc(path)}">&lrm;${esc(path)}</span><span class="ed-st${isNew ? ' d' : ''}" id="edSt">${isNew ? 'ไฟล์ใหม่' : 'ไม่มีการแก้ไข'}</span><button class="pri" id="edSave" type="button">บันทึก</button></div>
+
+  FM.box.innerHTML = `
+    <div class="ed-head">
+      <button class="ghost" id="edBack" type="button" style="min-height:42px">←</button>
+      <span class="nm" title="${esc(path)}">&lrm;${esc(path)}</span>
+      <span class="ed-ts" id="edTs"></span>
+      <span class="ed-st${isNew ? ' d' : ''}" id="edSt">${isNew ? 'ไฟล์ใหม่' : 'ไม่มีการแก้ไข'}</span>
+      <button class="pri" id="edSave" type="button">บันทึก</button>
+    </div>
     ${sys ? '<div class="msg bad" style="margin:0 0 8px;padding:8px 12px">⚠ ไฟล์ระบบ — แก้ผิดอาจทำให้เว็บหรือแอดมินพัง</div>' : ''}
-    <div class="ed-tools"><button class="ghost" id="edMin" type="button" aria-label="ลดขนาดตัวอักษร">A−</button><button class="ghost" id="edPlus" type="button" aria-label="เพิ่มขนาดตัวอักษร">A+</button><button class="ghost" id="edWrap" type="button">ตัดบรรทัด</button><button class="ghost" id="edFind" type="button">ค้นหา/แทนที่</button>${isHtml ? '<button class="ghost" id="edPrev" type="button">ดูตัวอย่าง</button>' : ''}</div>
-    <div class="ed-fr" id="edFr"><input id="edF" placeholder="ค้นหา" autocomplete="off"><input id="edR" placeholder="แทนที่ด้วย" autocomplete="off"><button class="ghost" id="edNext" type="button">ถัดไป</button><button class="ghost" id="edRep" type="button">แทนที่</button><button class="ghost" id="edAll" type="button">แทนที่ทั้งหมด</button><small id="edCnt"></small></div>
-    <div class="ed-wrap${wrapOn ? ' wrap' : ''}" id="edBox"><pre class="ed-ln" id="edLn"></pre><textarea class="fm-ed" id="edTx" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off">${esc(text)}</textarea></div>
-    <div class="hint" id="edInfo"></div><div id="fmOut"></div>`;
+    ${isHtml ? `<div class="ed-tabs" id="edTabs">
+      <button class="ed-tab" id="tabCode" aria-selected="true" type="button">📝 โค้ด</button>
+      <button class="ed-tab" id="tabPrev" aria-selected="false" type="button">👁 ตัวอย่าง</button>
+      <button class="ed-tab" id="tabVE" aria-selected="false" type="button">✏ แก้ไขหน้าเว็บ</button>
+    </div>` : ''}
+    <div id="edCodePane">
+      <div class="ed-tools">
+        <button class="ghost" id="edMin" type="button" aria-label="ลดขนาดตัวอักษร">A−</button>
+        <button class="ghost" id="edPlus" type="button" aria-label="เพิ่มขนาดตัวอักษร">A+</button>
+        <button class="ghost" id="edWrap" type="button">ตัดบรรทัด</button>
+        <button class="ghost" id="edFind" type="button">ค้นหา/แทนที่</button>
+        <button class="ghost" id="edBkSave" type="button" title="บันทึกสำเนาชั่วคราว">💾 สำเนา</button>
+        <button class="ghost" id="edBkLoad" type="button" title="โหลดสำเนาที่บันทึกไว้">📂 สำเนา</button>
+      </div>
+      <div class="ed-fr" id="edFr">
+        <input id="edF" placeholder="ค้นหา" autocomplete="off">
+        <input id="edR" placeholder="แทนที่ด้วย" autocomplete="off">
+        <button class="ghost" id="edNext" type="button">ถัดไป</button>
+        <button class="ghost" id="edRep" type="button">แทนที่</button>
+        <button class="ghost" id="edAll" type="button">แทนที่ทั้งหมด</button>
+        <small id="edCnt"></small>
+      </div>
+      <div class="ed-wrap${wrapOn ? ' wrap' : ''}" id="edBox">
+        <pre class="ed-ln" id="edLn"></pre>
+        <textarea class="fm-ed" id="edTx" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off">${esc(text)}</textarea>
+      </div>
+      <div class="hint" id="edInfo"></div>
+    </div>
+    ${isHtml ? `
+    <div class="hidden" id="edPrevPane">
+      <iframe class="prev-frame" id="prevFrame" sandbox="allow-scripts allow-same-origin"></iframe>
+    </div>
+    <div class="hidden" id="edVEPane">
+      <div class="ve-tools">
+        <button class="ghost" id="veBtnEdit" type="button" disabled>✏ แก้ข้อความ</button>
+        <button class="ghost" id="veBtnDel" type="button" disabled>🗑 ลบ</button>
+        <button class="ghost" id="veBtnDup" type="button" disabled>⎘ คัดลอก</button>
+        <button class="ghost" id="veBtnUndo" type="button" disabled>↩ เลิกทำ</button>
+        <button class="ghost" id="veBtnSync" type="button">⟳ รีโหลด</button>
+        <span class="ve-info" id="veInfo2">-</span>
+      </div>
+      <div class="ve-wrap" id="veWrap">
+        <iframe class="ve-frame" id="veFrame"></iframe>
+        <div class="ve-ov" id="veOv"></div>
+      </div>
+    </div>` : ''}
+    <div id="fmOut"></div>`;
+
   const tx = $('edTx'), box = $('edBox'), ln = $('edLn'), st = $('edSt');
   const mark = d => { FM.dirty = d; st.textContent = d ? 'ยังไม่ได้บันทึก' : 'บันทึกแล้ว ✓'; st.classList.toggle('d', d); };
   const size = () => { box.style.setProperty('--efs', fs + 'px'); localStorage.setItem('edFs', fs); };
@@ -723,13 +965,14 @@ function fmEdit(path, text, isNew){
   tx.onkeydown = e => {
     const s = tx.selectionStart, v = tx.value;
     if (e.key === 'Tab') { e.preventDefault(); tx.setRangeText('  ', s, tx.selectionEnd, 'end'); mark(true); nums(); }
-    else if (e.key === 'Enter' && !e.ctrlKey && !e.metaKey) {   // เว้นย่อหน้าต่อจากบรรทัดบนให้อัตโนมัติ
+    else if (e.key === 'Enter' && !e.ctrlKey && !e.metaKey) {
       e.preventDefault(); const ls = v.lastIndexOf('\n', s - 1) + 1, ind = (v.slice(ls, s).match(/^[ \t]*/) || [''])[0];
       tx.setRangeText('\n' + ind, s, tx.selectionEnd, 'end'); mark(true); nums();
     }
     else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); }
   };
-  $('edMin').onclick = () => { fs = Math.max(10, fs - 1); size(); }; $('edPlus').onclick = () => { fs = Math.min(24, fs + 1); size(); };
+  $('edMin').onclick = () => { fs = Math.max(10, fs - 1); size(); };
+  $('edPlus').onclick = () => { fs = Math.min(24, fs + 1); size(); };
   const wr = () => { box.classList.toggle('wrap', wrapOn); $('edWrap').classList.toggle('on', wrapOn); localStorage.setItem('edWrap', wrapOn ? '1' : '0'); };
   $('edWrap').onclick = () => { wrapOn = !wrapOn; wr(); }; wr();
   $('edFind').onclick = () => { const f = $('edFr'); f.classList.toggle('show'); $('edFind').classList.toggle('on', f.classList.contains('show')); if (f.classList.contains('show')) $('edF').focus(); };
@@ -743,16 +986,100 @@ function fmEdit(path, text, isNew){
   $('edNext').onclick = next;
   $('edRep').onclick = () => { const q = $('edF').value; if (!q) return; if (tx.value.slice(tx.selectionStart, tx.selectionEnd) === q) { tx.setRangeText($('edR').value, tx.selectionStart, tx.selectionEnd, 'end'); mark(true); nums(); } next(); };
   $('edAll').onclick = () => { const q = $('edF').value; if (!q) return; const n = tx.value.split(q).length - 1; if (!n) return $('edCnt').textContent = 'ไม่พบ'; tx.value = tx.value.split(q).join($('edR').value); mark(true); nums(); $('edCnt').textContent = 'แทนที่แล้ว ' + n + ' ที่'; };
-  if (isHtml) $('edPrev').onclick = () => { const u = URL.createObjectURL(new Blob([tx.value], { type: 'text/html;charset=utf-8' })); window.open(u, '_blank'); setTimeout(() => URL.revokeObjectURL(u), 60000); };
+
+  // Backup buttons
+  $('edBkSave').onclick = () => bkSave(path, tx.value);
+  $('edBkLoad').onclick = () => bkPanel(path, restored => { tx.value = restored; mark(true); nums(); });
+
+  const getCurrentContent = () => {
+    if (isHtml && $('tabVE') && $('tabVE').getAttribute('aria-selected') === 'true') {
+      const vh = veGetHtml(); if (vh) return vh;
+    }
+    return tx.value;
+  };
+
   const save = async () => {
+    const content = getCurrentContent();
     if (sys && !(await ask({ title: 'บันทึกไฟล์ระบบ?', body: path + '\n\nแก้ผิดอาจทำให้เว็บหรือหน้าแอดมินใช้ไม่ได้', ok: 'บันทึก' }))) return;
-    const b = $('edSave'); b.disabled = true; b.textContent = 'กำลังบันทึก…';
-    try { await fapi('write', { files: [{ path, b64: fmB64(new TextEncoder().encode(tx.value)) }] }); mark(false); fmToast('บันทึกแล้ว · ' + DEPLOY); fapi('list').then(r => { FM.files = r.files; }).catch(() => {}); }
-    catch(e){ fmToast(e.message, true); }
-    b.disabled = false; b.textContent = 'บันทึก';
+    const btn = $('edSave'); btn.disabled = true; btn.textContent = 'กำลังบันทึก…';
+    try {
+      await fapi('write', { files: [{ path, b64: fmB64(new TextEncoder().encode(content)) }] });
+      if (content !== tx.value) { tx.value = content; nums(); } // sync code view from VE
+      VE.dirty = false; mark(false);
+      fmToast('บันทึกแล้ว · ' + DEPLOY);
+      // clear cached timestamp so next open fetches fresh
+      localStorage.removeItem('hub_ts3_' + path);
+      fapi('list').then(r => { FM.files = r.files; }).catch(() => {});
+    } catch(e) { fmToast(e.message, true); }
+    btn.disabled = false; btn.textContent = 'บันทึก';
   };
   $('edSave').onclick = save;
-  $('edBack').onclick = async () => { if (FM.dirty && !(await ask({ title: 'ยังไม่ได้บันทึก', body: 'ออกโดยไม่บันทึกการแก้ไข?', ok: 'ออกเลย', danger: true }))) return; FM.dirty = false; fmHome(); fmList(); };
+  $('edBack').onclick = async () => {
+    if (FM.dirty && !(await ask({ title: 'ยังไม่ได้บันทึก', body: 'ออกโดยไม่บันทึกการแก้ไข?', ok: 'ออกเลย', danger: true }))) return;
+    FM.dirty = false; fmHome(); fmList();
+  };
+
+  // HTML tabs
+  if (isHtml) {
+    const TABS = ['Code','Prev','VE'];
+    const PANES = {Code:'edCodePane', Prev:'edPrevPane', VE:'edVEPane'};
+    let veInited = false;
+
+    const syncFromVE = () => {
+      if (!veInited) return;
+      const vh = veGetHtml(); if (!vh) return;
+      if (VE.dirty) { tx.value = vh; nums(); VE.dirty = false; }
+    };
+
+    const switchTab = tab => {
+      // sync VE → code when leaving VE
+      if ($('tabVE').getAttribute('aria-selected') === 'true' && tab !== 'VE') syncFromVE();
+      TABS.forEach(t => {
+        $('tab'+t).setAttribute('aria-selected', t === tab ? 'true' : 'false');
+        $(PANES[t]).classList.toggle('hidden', t !== tab);
+      });
+      if (tab === 'Prev') {
+        $('prevFrame').srcdoc = tx.value;
+      }
+      if (tab === 'VE') {
+        if (!veInited) { veInited = true; veLoad(tx.value); }
+        // else: keep existing VE state (user navigated away and back)
+      }
+    };
+
+    $('tabCode').onclick = () => switchTab('Code');
+    $('tabPrev').onclick = () => switchTab('Prev');
+    $('tabVE').onclick = () => switchTab('VE');
+
+    // VE toolbar
+    $('veBtnEdit').onclick = () => { if (VE.editing) veExitEdit(); else veEnterEdit(); };
+    $('veBtnDel').onclick = () => {
+      if (!VE.el || !VE.el.isConnected) return;
+      veSnapshot(); VE.el.remove(); VE.el = null; VE.dirty = true; FM.dirty = true;
+      veUpdateOv();
+    };
+    $('veBtnDup').onclick = () => {
+      if (!VE.el || !VE.el.isConnected) return;
+      veSnapshot();
+      const cl = VE.el.cloneNode(true);
+      VE.el.after(cl); VE.el = cl; VE.dirty = true; FM.dirty = true;
+      veUpdateOv();
+    };
+    $('veBtnUndo').onclick = veUndo;
+    $('veBtnSync').onclick = () => {
+      syncFromVE();
+      veInited = false; veLoad(tx.value);
+      veInited = true;
+    };
+  }
+
+  // Async: fetch & show last-modified time
+  if (!isNew) {
+    edFetchTs(path).then(p => {
+      const ts = $('edTs');
+      if (ts && p && p.d) ts.textContent = timeAgo(p.d);
+    });
+  }
 }
 window.addEventListener('beforeunload', e => { if (FM.dirty) { e.preventDefault(); e.returnValue = ''; } });
 
