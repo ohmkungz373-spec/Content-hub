@@ -648,7 +648,10 @@ function pushSheet(){
 const TEXT_EXT = /\.(html?|css|js|mjs|json|md|txt|svg|xml|webmanifest|csv|ya?ml|toml|env|gitignore|gitkeep)$/i;
 const IC_DIR = '<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>';
 const IC_FILE = '<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/></svg>';
-let FM = { files: [], dir: '', q: '', sel: new Set(), box: null, dirty: false, tm: {}, touch: {}, tbusy: false, sort: ss.get('fmSort') || 'name' };
+let FM = { files: [], dir: '', q: '', sel: new Set(), box: null, dirty: false, tm: {}, touch: {}, tbusy: false, sort: ss.get('fmSort') || 'name', blobs: new Map() };
+try { const c = JSON.parse(ss.get('fmCache') || 'null'); if (c && Array.isArray(c.files)) FM.files = c.files; const t = JSON.parse(ss.get('fmTm') || 'null'); if (t && typeof t === 'object') FM.tm = t; } catch(e){}
+const fmCacheSave = () => { try { const j = JSON.stringify({ files: FM.files }); if (j.length < 1.6e6) ss.set('fmCache', j); const o = {}; let n = 0; for (const k in FM.tm) { if (!k.endsWith('@') && FM.tm[k] > 0 && n++ < 1500) o[k] = FM.tm[k]; } ss.set('fmTm', JSON.stringify(o)); } catch(e){} };
+const fmMerge = en => { (en || []).forEach(e => { const i = FM.files.findIndex(f => f.path === e.path); if (i >= 0) FM.files[i] = e; else FM.files.push(e); }); fmCacheSave(); };
 const SV = d => `<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
 const ICO = {
   up: SV('<path d="M12 16V4M7 9l5-5 5 5M5 20h14"/>'), dn: SV('<path d="M12 4v12M7 11l5 5 5-5M5 20h14"/>'),
@@ -679,7 +682,7 @@ async function fmTimes(){
   FM.tbusy = true;
   try { const j = await fapi('times', { items: need }); need.forEach(x => { FM.tm[x.path + '@' + x.sha] = j.times[x.path] ? Date.parse(j.times[x.path]) : -1; }); }
   catch(e){ need.forEach(x => { FM.tm[x.path + '@' + x.sha] = -1; }); }
-  FM.tbusy = false; tmPaint(); if (FM.sort === 'new') fmList(true); fmTimes();
+  FM.tbusy = false; fmCacheSave(); tmPaint(); if (FM.sort === 'new') fmList(true); fmTimes();
 }
 setInterval(tmPaint, 20000);
 async function fapi(action, data){
@@ -699,7 +702,7 @@ const fmToast = (h, bad) => { const o = $('fmOut'); if (!o) return; o.innerHTML 
 async function fmLoad(){
   const o = $('fmList'); if (o && !FM.files.length) o.innerHTML = '<div class="empty">กำลังโหลดรายการไฟล์…</div>';
   Object.keys(FM.tm).forEach(k => { if (k.endsWith('@')) delete FM.tm[k]; });
-  try { FM.files = (await fapi('list')).files; } catch(e){ fmToast(e.message, true); }
+  try { FM.files = (await fapi('list')).files; fmCacheSave(); } catch(e){ fmToast(e.message, true); }
   FM.sel.clear(); fmList();
 }
 function filesSheet(){
@@ -769,7 +772,7 @@ async function fmDelete(paths){
   const cnt = paths.reduce((n, p) => n + FM.files.filter(f => f.path === p || f.path.startsWith(p + '/')).length, 0);
   const ok = await ask({ title: `ลบ ${paths.length} รายการ?`, body: paths.slice(0, 12).map(p => '• ' + p).join('\n') + (paths.length > 12 ? `\n… และอีก ${paths.length - 12}` : '') + `\n\nรวม ${cnt} ไฟล์ · ลบแล้วกู้คืนผ่านหน้านี้ไม่ได้ (ย้อนได้ผ่านประวัติ GitHub)`, ok: 'ลบเลย', danger: true });
   if (!ok) return;
-  try { const j = await fapi('delete', { paths }); fmToast(`ลบแล้ว ${j.count} ไฟล์ · ${DEPLOY}`); FM.sel.clear(); await fmLoad(); } catch(e){ fmToast(e.message, true); }
+  try { const j = await fapi('delete', { paths }); FM.files = FM.files.filter(f => !paths.some(p => f.path === p || f.path.startsWith(p + '/'))); fmCacheSave(); fmToast(`ลบแล้ว ${j.count} ไฟล์ · ${DEPLOY}`); FM.sel.clear(); fmList(); } catch(e){ fmToast(e.message, true); }
 }
 async function fmDownload(path){
   const f = fmByPath(path); if (!f) return;
@@ -780,12 +783,22 @@ async function fmUpload(list){
   const big = list.find(f => f.size > 3 * 1024 * 1024); if (big) return fmToast(`“${big.name}” ใหญ่เกิน 3 MB (ข้อจำกัดของ Vercel)`, true);
   const ok = await ask({ title: `อัปโหลด ${list.length} ไฟล์`, body: `ไปที่ /${FM.dir}\n` + list.slice(0, 8).map(f => '• ' + f.name + ' (' + fmSize(f.size) + ')').join('\n') + (dup.length ? `\n\nจะเขียนทับไฟล์เดิม: ${dup.join(', ')}` : ''), ok: 'อัปโหลด' });
   if (!ok) return;
-  $('fmOut').innerHTML = '<div class="msg ok">กำลังอัปโหลด…</div>';
+  const prog = t => { const o = $('fmOut'); if (o) o.innerHTML = '<div class="msg ok">' + t + '</div>'; };
+  prog('กำลังเตรียมไฟล์…');
   try {
-    const items = []; for (const f of list) items.push({ path: pre + f.name, b64: fmB64(new Uint8Array(await f.arrayBuffer())) });
-    let batch = [], sz = 0, n = 0; const flush = async () => { if (batch.length) { await fapi('write', { files: batch }); n += batch.length; batch = []; sz = 0; } };
-    for (const it of items) { if (sz + it.b64.length > 3.2e6) await flush(); batch.push(it); sz += it.b64.length; } await flush();
-    items.forEach(it => touchP(it.path)); fmToast(`อัปโหลด ${n} ไฟล์สำเร็จ · ${DEPLOY}`); await fmLoad();
+    // 1) แปลงไฟล์พร้อมกัน  2) ส่งเนื้อไฟล์ขึ้นขนานกันทีละ 3 คำขอ  3) commit ครั้งเดียวจบ
+    const items = await Promise.all(list.map(async f => ({ path: pre + f.name, size: f.size, b64: fmB64(new Uint8Array(await f.arrayBuffer())) })));
+    const batches = []; let cur = [], sz = 0;
+    for (const it of items) { if (cur.length && (sz + it.b64.length > 3.2e6 || cur.length >= 50)) { batches.push(cur); cur = []; sz = 0; } cur.push(it); sz += it.b64.length; }
+    if (cur.length) batches.push(cur);
+    let done = 0; const meta = [];
+    for (let i = 0; i < batches.length; i += 3) {
+      await Promise.all(batches.slice(i, i + 3).map(async bt => { const r = await fapi('putblobs', { items: bt.map(x => ({ b64: x.b64 })) }); bt.forEach((x, k) => meta.push({ path: x.path, size: x.size, sha: r.shas[k] })); done += bt.length; prog('กำลังอัปโหลด ' + done + '/' + items.length + ' ไฟล์…'); }));
+    }
+    prog('กำลังบันทึกขึ้นระบบ…');
+    const r = await fapi('commitfiles', { items: meta });
+    items.forEach(it => touchP(it.path)); fmMerge(r.entries); FM.sel.clear(); fmList();
+    fmToast(`อัปโหลด ${items.length} ไฟล์สำเร็จ · ${DEPLOY}`);
   } catch(e){ fmToast(e.message, true); }
 }
 async function fmZip(){
@@ -808,7 +821,7 @@ async function fmOpen(path){
   $('fmOut').innerHTML = '<div class="msg ok">กำลังเปิดไฟล์…</div>';
   try {
     if (f.size > 2.5 * 1024 * 1024) throw new Error('ไฟล์ใหญ่เกินไปที่จะเปิดแก้ — ใช้ปุ่มสามจุด → ดาวน์โหลดแทน');
-    const j = await fapi('read', { sha: f.sha }), u8 = fmBytes(j.b64);
+    let b64 = FM.blobs.get(f.sha); if (!b64) { b64 = (await fapi('read', { sha: f.sha })).b64; if (FM.blobs.size > 40) FM.blobs.clear(); FM.blobs.set(f.sha, b64); } const u8 = fmBytes(b64);
     let txt = null; try { txt = new TextDecoder('utf-8', { fatal: true }).decode(u8); if (!TEXT_EXT.test(path) && txt.includes('\u0000')) txt = null; } catch(e){}
     if (txt === null) { $('fmOut').innerHTML = badMsg('นี่ไม่ใช่ไฟล์ข้อความ (รูป/PDF ฯลฯ) แก้ในนี้ไม่ได้ — ใช้ปุ่มสามจุดเพื่อดาวน์โหลด เปลี่ยนชื่อ หรือลบ'); return; }
     fmEdit(path, txt, false);
@@ -899,7 +912,7 @@ function fmEdit(path, text, isNew){
   const save = async () => {
     if (sys && !(await ask({ title: 'บันทึกไฟล์ระบบ?', body: path + '\n\nแก้ผิดอาจทำให้เว็บหรือหน้าแอดมินใช้ไม่ได้', ok: 'บันทึก' }))) return;
     const b = $('edSave'); b.disabled = true; b.textContent = 'กำลังบันทึก…';
-    try { await fapi('write', { files: [{ path, b64: fmB64(new TextEncoder().encode(tx.value)) }] }); mark(false); touchP(path); fmToast('บันทึกแล้ว · ' + DEPLOY); fapi('list').then(r => { FM.files = r.files; }).catch(() => {}); }
+    try { const j = await fapi('write', { files: [{ path, b64: fmB64(new TextEncoder().encode(tx.value)) }] }); mark(false); touchP(path); fmToast('บันทึกแล้ว · ' + DEPLOY); fmMerge(j.entries); }
     catch(e){ fmToast(e.message, true); }
     b.disabled = false; b.textContent = 'บันทึก';
   };
@@ -940,10 +953,14 @@ async function bkClick(e){
   const l = e.target.closest('[data-bl]'), d = e.target.closest('[data-bd]'), id = (l || d || {}).dataset ? (l ? l.dataset.bl : d.dataset.bd) : ''; if (!id) return;
   const it = BK.items.find(x => x.id === id); if (!it) return;
   if (l) {
-    const ok = await ask({ title: 'โหลด “' + it.name + '”?', body: 'ไฟล์ทั้งระบบจะย้อนกลับไปเป็นตอนที่บันทึกชุดนี้ (ไฟล์ที่เพิ่มมาใหม่หลังจากนั้นจะหายไป)\n\nระบบจะเก็บสภาพปัจจุบันไว้เป็นชุดสำรอง “ก่อนกู้คืน…” ให้อัตโนมัติ จึงย้อนกลับได้', ok: 'โหลดเลย', danger: true });
+    const ok = await ask({ title: 'โหลด “' + it.name + '”?', body: 'ไฟล์ทั้งระบบจะเหมือนตอนที่บันทึกชุดนี้ทุกไฟล์: ไฟล์ที่อยู่ในชุดจะถูกคืนมา ไฟล์ที่ไม่มีในชุดจะถูกลบทิ้ง\n\nระบบจะเก็บสภาพปัจจุบันไว้เป็นชุดสำรอง “ก่อนกู้คืน…” ให้อัตโนมัติ จึงย้อนกลับได้', ok: 'โหลดเลย', danger: true });
     if (!ok) return;
     l.disabled = true; l.textContent = 'กำลังโหลด…';
-    try { await fapi('backupRestore', { id }); FM.files = []; FM.tm = {}; fmToast('โหลด “' + esc(it.name) + '” แล้ว · ' + DEPLOY); await bkLoad(); }
+    try {
+      const j = await fapi('backupRestore', { id }); FM.files = []; FM.tm = {};
+      const st = j.stat ? `<br>คืนไฟล์ ${j.stat.restored} · ลบไฟล์ที่ไม่มีในชุดนี้ ${j.stat.removed} · ตรงกันอยู่แล้ว ${j.stat.same} (รวม ${j.stat.total} ไฟล์)` : '';
+      fmToast(j.verified ? '<b>โหลด “' + esc(it.name) + '” สำเร็จ</b> · ตรวจแล้วระบบตรงกับชุดสำรองทุกไฟล์' + st + '<br>' + DEPLOY : 'โหลดแล้ว แต่ตรวจผลไม่ตรงกับชุดสำรอง — กรุณากดโหลดซ้ำอีกครั้ง', !j.verified); await bkLoad();
+    }
     catch(er){ fmToast(er.message, true); l.disabled = false; l.textContent = 'โหลด'; }
   } else {
     const ok = await ask({ title: 'ลบชุดสำรอง?', body: it.name + '\n\nลบแล้วชุดนี้จะใช้โหลดกลับไม่ได้ (ไฟล์จริงในระบบไม่ถูกแตะ)', ok: 'ลบ', danger: true });
@@ -968,7 +985,7 @@ $('installBtn').onclick = async () => {
   const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
   ask({ title: 'ติดตั้งเป็นแอป “Hub Admin”', body: ios ? 'iPhone/iPad: แตะปุ่มแชร์ (สี่เหลี่ยมมีลูกศรขึ้น) ใน Safari แล้วเลือก “เพิ่มไปยังหน้าจอโฮม”' : 'เปิดเมนูของเบราว์เซอร์ (⋮) แล้วเลือก “ติดตั้งแอป” หรือ “เพิ่มไปยังหน้าจอหลัก”', ok: 'เข้าใจแล้ว' });
 };
-async function enter(){ await loadSubjects(); showPanel(true); }
+async function enter(){ await loadSubjects(); showPanel(true); fapi('list').then(r => { FM.files = r.files; fmCacheSave(); }).catch(() => {}); }
 (async () => { if (!TOKEN) return; try { await api('check'); await enter(); } catch(e){} })();
 </script>
 </body>
