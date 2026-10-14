@@ -138,7 +138,7 @@ module.exports = async (req, res) => {
     }
 
     // ---------- สำรอง / กู้คืนทั้งระบบ (เก็บเป็น git tag ชี้ไปที่ commit ปัจจุบัน = ทุกโฟลเดอร์ ทุกไฟล์) ----------
-    if (/^backup(List|Save|Restore|Delete|Download)$/.test(b.action || '')) {
+    if (/^backup(List|Save|Update|Restore|Delete|Download)$/.test(b.action || '')) {
             const headSha = async () => (await gh(`/repos/${repo}/git/ref/heads/${encodeURIComponent(branch)}`)).object.sha;
       const makeBackup = async (name, at) => {
         const sha = at || await headSha();
@@ -172,6 +172,18 @@ module.exports = async (req, res) => {
         const name = String(b.name || '').replace(/\s+/g, ' ').trim().slice(0, 80);
         if (!name) return res.status(400).json({ error: 'กรุณาใส่ชื่อที่จะบันทึก' });
         return res.json({ ok: true, item: await makeBackup(name) });
+      }
+
+      if (b.action === 'backupUpdate') {   // บันทึกทับชุดสำรองเดิม: คงชื่อ/รหัสเดิม แต่ให้ชี้ไปที่ข้อมูลปัจจุบันของระบบ
+        if (!okId(b.id)) return res.status(400).json({ error: 'รหัสสำรองไม่ถูกต้อง' });
+        let ref;
+        try { ref = await gh(`/repos/${repo}/git/ref/tags/${b.id}`); } catch (e) { if (e.status === 404) return res.status(404).json({ error: 'ไม่พบข้อมูลสำรองนี้ (อาจถูกลบไปแล้ว)' }); throw e; }
+        let name = b.id;
+        if (ref.object.type === 'tag') { const t = await gh(`/repos/${repo}/git/tags/${ref.object.sha}`); name = String(t.message || '').trim() || b.id; }
+        const sha = await headSha(), date = new Date().toISOString();
+        const tg = await gh(`/repos/${repo}/git/tags`, { method: 'POST', body: { tag: b.id, message: name, object: sha, type: 'commit', tagger: { name: 'hub-admin', email: 'admin@hub.local', date } } });
+        await gh(`/repos/${repo}/git/refs/tags/${b.id}`, { method: 'PATCH', body: { sha: tg.sha, force: true } });
+        return res.json({ ok: true, item: { id: b.id, name, date, commit: sha.slice(0, 7) } });
       }
 
       if (b.action === 'backupDelete') {

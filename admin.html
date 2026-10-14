@@ -1161,6 +1161,7 @@ function bkMenu(it){
     const ov = document.createElement('div'); ov.className = 'ov'; ov.style.zIndex = 30;
     ov.innerHTML = `<div class="dlg" style="margin:16px"><h3>${esc(it.name)}</h3><p>เลือกสิ่งที่ต้องการทำกับชุดสำรองนี้</p><div class="btns" style="flex-direction:column;gap:8px">
       <button class="ghost" data-a="dl" type="button" style="min-height:52px;justify-content:flex-start;display:flex;align-items:center;gap:10px">${ICO.dn}<span style="text-align:left"><b style="display:block;font-size:15px">ดาวน์โหลด</b><small style="color:var(--muted);font-weight:500">โหลดไฟล์ .zip เข้าเครื่อง</small></span></button>
+      <button class="ghost" data-a="up" type="button" style="min-height:52px;justify-content:flex-start;display:flex;align-items:center;gap:10px">${ICO.save}<span style="text-align:left"><b style="display:block;font-size:15px">บันทึกทับชุดนี้</b><small style="color:var(--muted);font-weight:500">อัปเดตให้เป็นข้อมูลปัจจุบัน (ชื่อเดิม)</small></span></button>
       <button class="ghost" data-a="rs" type="button" style="min-height:52px;justify-content:flex-start;display:flex;align-items:center;gap:10px">${ICO.db}<span style="text-align:left"><b style="display:block;font-size:15px">กู้คืน</b><small style="color:var(--muted);font-weight:500">โหลดไฟล์ชุดนี้เข้าเว็บ</small></span></button>
       <button class="dangerbtn" data-a="rm" type="button" style="min-height:48px">ลบชุดสำรอง</button>
       <button class="ghost" data-a="" type="button" style="min-height:44px">ปิด</button>
@@ -1187,6 +1188,15 @@ async function bkClick(e){
       fmToast('เริ่มดาวน์โหลด “' + esc(it.name) + '” แล้ว (.zip ทั้งระบบ ณ ตอนสำรอง)');
     } catch(er){ fmToast(er.message, true); }
     btn.disabled = false;
+    return;
+  }
+
+  if (act === 'up') {
+    const ok = await ask({ title: 'บันทึกทับ “' + it.name + '”?', body: 'ข้อมูลทั้งระบบตอนนี้จะถูกบันทึกลงชุดนี้แทนข้อมูลเดิม (ชื่อเดิม) · ข้อมูลเก่าในชุดนี้จะหายและกู้กลับไม่ได้', ok: 'บันทึกทับ', danger: true });
+    if (!ok) return;
+    btn.disabled = true; fmToast('กำลังบันทึกทับ…');
+    try { await fapi('backupUpdate', { id }); fmToast('บันทึกทับ “' + esc(it.name) + '” แล้ว · ชุดนี้ตรงกับข้อมูลปัจจุบัน'); await bkLoad(); }
+    catch(er){ fmToast(er.message, true); btn.disabled = false; }
     return;
   }
 
