@@ -116,6 +116,23 @@ module.exports = async (req, res) => {
       return res.json({ ok: true, count: files.length, commit });
     }
 
+    if (b.action === 'addSubject') {
+      if (!process.env.GITHUB_TOKEN || !process.env.GITHUB_REPO)
+        return res.status(500).json({ error: 'ยังไม่ได้ตั้งค่า GITHUB_TOKEN / GITHUB_REPO ใน Vercel' });
+      const repo = process.env.GITHUB_REPO, branch = process.env.GITHUB_BRANCH || 'main';
+      const id = String(b.id || '');
+      if (!SUBJECT_RE.test(id)) return res.status(400).json({ error: 'ชื่อโฟลเดอร์ใช้ได้เฉพาะ a-z 0-9 - _' });
+      const name = String(b.name || '').trim().slice(0, 80);
+      if (!name) return res.status(400).json({ error: 'กรุณาใส่ชื่อวิชา' });
+      const code = String(b.code || '').trim().slice(0, 20), icon = String(b.icon || '').trim().slice(0, 8) || '📖';
+      const order = Number.isFinite(+b.order) ? Math.round(+b.order) : 999;
+      try { await gh(`/repos/${repo}/contents/${P('content/' + id).split('/').map(encodeURIComponent).join('/')}?ref=${encodeURIComponent(branch)}`); return res.status(409).json({ error: `มีโฟลเดอร์ ${id} อยู่แล้ว` }); }
+      catch (e) { if (e.status !== 404) throw e; }
+      const blob = await gh(`/repos/${repo}/git/blobs`, { method: 'POST', body: { content: JSON.stringify({ code, name, icon, order }, null, 2) + '\n', encoding: 'utf-8' } });
+      const commit = await commitTree(repo, branch, [{ path: P(`content/${id}/_subject.json`), mode: '100644', type: 'blob', sha: blob.sha }], `admin: เพิ่มวิชา ${name}`);
+      return res.json({ ok: true, id, commit });
+    }
+
     if (b.action === 'delete') {
       if (!process.env.GITHUB_TOKEN || !process.env.GITHUB_REPO)
         return res.status(500).json({ error: 'ยังไม่ได้ตั้งค่า GITHUB_TOKEN / GITHUB_REPO ใน Vercel' });
