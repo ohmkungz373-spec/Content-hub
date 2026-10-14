@@ -865,6 +865,8 @@ header.top .refbtn svg{width:20px;height:20px;transition:transform .5s cubic-bez
 header.top .refbtn.rot svg{transform:rotate(360deg)}
 html[data-theme="light"] header.top .refbtn{color:#2563eb;background:linear-gradient(145deg,#fff,#e9effc);border-color:var(--line2);box-shadow:inset 0 1px 0 #fff,0 8px 18px -10px #1b2a5066}
 header.top .refbtn:active{transform:scale(.93)}
+header.top #pushBtn{color:var(--cyan)}
+#pushBtn + #themeBtn{margin-left:0}
 </style>
 </head>
 <body>
@@ -875,6 +877,7 @@ header.top .refbtn:active{transform:scale(.93)}
     <div class="logo" id="logo">◆ CONTENT <span>HUB</span></div>
     <div class="crumb" id="crumb"></div>
     <button class="btn hwbtn" id="hwBtn" type="button" aria-label="บันทึกการบ้าน" title="บันทึกการบ้าน"></button>
+    <button class="btn themebtn" id="pushBtn" type="button" aria-label="เปิดการแจ้งเตือน" title="เปิดการแจ้งเตือน"></button>
     <button class="btn themebtn" id="themeBtn" type="button"></button>
   </div>
 </header>
@@ -1733,6 +1736,37 @@ document.addEventListener('touchend', e => {
 }, {passive:false});
 
 if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+
+/* ---------- Push Notifications ---------- */
+const BELL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>';
+const pushOK = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+const b64u = s => { const p = '='.repeat((4 - s.length % 4) % 4), r = atob((s + p).replace(/-/g, '+').replace(/_/g, '/')); return Uint8Array.from(r, c => c.charCodeAt(0)); };
+async function pushState(){
+  const b = $('pushBtn'); b.innerHTML = BELL;
+  if (!pushOK) { b.classList.add('hidden'); return; }
+  let on = false;
+  try { const reg = await navigator.serviceWorker.ready; on = !!(await reg.pushManager.getSubscription()) && Notification.permission === 'granted'; } catch(e) {}
+  b.style.color = on ? '#22c55e' : '';
+  b.title = on ? 'เปิดการแจ้งเตือนอยู่ (กดเพื่อปิด)' : 'เปิดการแจ้งเตือน';
+}
+async function pushToggle(){
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    const cur = await reg.pushManager.getSubscription();
+    if (cur) { await cur.unsubscribe(); alert('ปิดการแจ้งเตือนในเครื่องนี้แล้ว'); return pushState(); }
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') return alert('ไม่ได้รับอนุญาตให้แจ้งเตือน เปิดได้ที่การตั้งค่าเบราว์เซอร์');
+    const k = await (await fetch('/api/push-key')).json();
+    if (!k.publicKey) throw new Error('no key');
+    const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64u(k.publicKey) });
+    const r = await fetch('/api/push-subscribe', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ subscription: sub.toJSON() }) });
+    if (!r.ok) { await sub.unsubscribe(); throw new Error('save failed'); }
+    alert('เปิดการแจ้งเตือนแล้ว');
+  } catch(e) { alert('เปิดการแจ้งเตือนไม่สำเร็จ ลองใหม่อีกครั้ง'); }
+  pushState();
+}
+$('pushBtn').onclick = pushToggle;
+pushState();
 
 /* กันการดึงหน้าจอลงจนสุด (pull-to-refresh / ยางยืด) ทุกกรณี */
 (function(){
