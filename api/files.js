@@ -33,6 +33,8 @@ async function commit(repo, branch, snap, tree, msg) {
   await gh(`/repos/${repo}/git/refs/heads/${encodeURIComponent(branch)}`, { method: 'PATCH', body: { sha: cm.sha } });
   return cm.sha.slice(0, 7);
 }
+const TIME_CACHE = new Map();
+const BK_PREFIX = 'hub-backup-';
 const under = (entries, p) => entries.filter(e => e.path === p || e.path.startsWith(p + '/'));
 
 module.exports = async (req, res) => {
@@ -98,13 +100,82 @@ module.exports = async (req, res) => {
       const c = await commit(repo, branch, snap, tree, `admin: ย้าย ${from} -> ${to}`);
       return res.json({ ok: true, commit: c });
     }
-    if (b.action === 'commit-time') {
-      const p = String(b.path || '');
-      if (!okPath(p)) throw bad('path ไม่ถูกต้อง');
-      const fp = P(p);
-      const commits = await gh(`/repos/${repo}/commits?path=${encodeURIComponent(fp)}&per_page=1&sha=${encodeURIComponent(branch)}`);
-      if (!commits.length) return res.json({ ok: true, date: null });
-      return res.json({ ok: true, date: commits[0].commit.committer.date, message: commits[0].commit.message.split('\n')[0] });
+    // ---------- เวลาที่ไฟล์ถูกอัปโหลด/แก้ไขล่าสุด (วันที่ commit ล่าสุดของแต่ละไฟล์) ----------
+    if (b.action === 'times') {
+            const items = (Array.isArray(b.items) ? b.items : []).slice(0, 40)
+        .filter(x => x && typeof x.path === 'string' && x.path.length < 200 && !x.path.includes('..'));
+      const out = {};
+      for (let i = 0; i < items.length; i += 8) {
+        await Promise.all(items.slice(i, i + 8).map(async it => {
+          const key = branch + '|' + it.path + '|' + it.sha;
+          if (TIME_CACHE.has(key)) { out[it.path] = TIME_CACHE.get(key); return; }
+          try {
+            const r = await gh(`/repos/${repo}/commits?sha=${encodeURIComponent(branch)}&path=${encodeURIComponent(P(it.path))}&per_page=1`);
+            const d = r && r[0] && r[0].commit && (r[0].commit.committer || r[0].commit.author);
+            if (d && d.date) { out[it.path] = d.date; if (TIME_CACHE.size > 3000) TIME_CACHE.clear(); TIME_CACHE.set(key, d.date); }
+          } catch (e) {}
+        }));
+      }
+      return res.json({ ok: true, times: out });
+    }
+
+    // ---------- สำรอง / กู้คืนทั้งระบบ (เก็บเป็น git tag ชี้ไปที่ commit ปัจจุบัน = ทุกโฟลเดอร์ ทุกไฟล์) ----------
+    if (/^backup(List|Save|Restore|Delete)$/.test(b.action || '')) {
+            const headSha = async () => (await gh(`/repos/${repo}/git/ref/heads/${encodeURIComponent(branch)}`)).object.sha;
+      const makeBackup = async name => {
+        const sha = await headSha();
+        const id = BK_PREFIX + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+        const tg = await gh(`/repos/${repo}/git/tags`, { method: 'POST', body: { tag: id, message: name, object: sha, type: 'commit', tagger: { name: 'hub-admin', email: 'admin@hub.local', date: new Date().toISOString() } } });
+        await gh(`/repos/${repo}/git/refs`, { method: 'POST', body: { ref: 'refs/tags/' + id, sha: tg.sha } });
+        return { id, name, date: new Date().toISOString(), commit: sha.slice(0, 7) };
+      };
+      const okId = id => /^hub-backup-[0-9a-z]{6,20}$/.test(String(id || ''));
+
+      if (b.action === 'backupList') {
+        let refs = [];
+        try { refs = await gh(`/repos/${repo}/git/matching-refs/tags/${BK_PREFIX}`); } catch (e) { if (e.status !== 404) throw e; }
+        refs = (Array.isArray(refs) ? refs : []).slice(-60);
+        const items = [];
+        for (let i = 0; i < refs.length; i += 8) {
+          const part = await Promise.all(refs.slice(i, i + 8).map(async r => {
+            try {
+              const id = r.ref.replace('refs/tags/', '');
+              if (r.object.type === 'tag') { const t = await gh(`/repos/${repo}/git/tags/${r.object.sha}`); return { id, name: String(t.message || '').trim() || id, date: (t.tagger && t.tagger.date) || '', commit: t.object.sha.slice(0, 7) }; }
+              return { id, name: id, date: '', commit: r.object.sha.slice(0, 7) };
+            } catch (e) { return null; }
+          }));
+          part.forEach(x => x && items.push(x));
+        }
+        items.sort((x, y) => String(y.date).localeCompare(String(x.date)));
+        return res.json({ ok: true, items });
+      }
+
+      if (b.action === 'backupSave') {
+        const name = String(b.name || '').replace(/\s+/g, ' ').trim().slice(0, 80);
+        if (!name) return res.status(400).json({ error: 'กรุณาใส่ชื่อที่จะบันทึก' });
+        return res.json({ ok: true, item: await makeBackup(name) });
+      }
+
+      if (b.action === 'backupDelete') {
+        if (!okId(b.id)) return res.status(400).json({ error: 'รหัสสำรองไม่ถูกต้อง' });
+        await gh(`/repos/${repo}/git/refs/tags/${b.id}`, { method: 'DELETE' });
+        return res.json({ ok: true });
+      }
+
+      if (b.action === 'backupRestore') {
+        if (!okId(b.id)) return res.status(400).json({ error: 'รหัสสำรองไม่ถูกต้อง' });
+        let ref;
+        try { ref = await gh(`/repos/${repo}/git/ref/tags/${b.id}`); } catch (e) { if (e.status === 404) return res.status(404).json({ error: 'ไม่พบข้อมูลสำรองนี้ (อาจถูกลบไปแล้ว)' }); throw e; }
+        let target = ref.object.sha, label = b.id;
+        if (ref.object.type === 'tag') { const t = await gh(`/repos/${repo}/git/tags/${ref.object.sha}`); target = t.object.sha; label = String(t.message || b.id).trim(); }
+        const bc = await gh(`/repos/${repo}/git/commits/${target}`);
+        let safety = null;
+        if (b.safety !== false) safety = await makeBackup('ก่อนกู้คืน: ' + label.slice(0, 60));   // กันพลาด: เก็บสภาพปัจจุบันไว้ก่อนเสมอ
+        const cur = await headSha();
+        const cm = await gh(`/repos/${repo}/git/commits`, { method: 'POST', body: { message: ('admin: กู้คืนข้อมูลสำรอง ' + label).slice(0, 250), tree: bc.tree.sha, parents: [cur] } });
+        await gh(`/repos/${repo}/git/refs/heads/${encodeURIComponent(branch)}`, { method: 'PATCH', body: { sha: cm.sha } });
+        return res.json({ ok: true, commit: cm.sha.slice(0, 7), safety });
+      }
     }
 
     throw bad('unknown action');
