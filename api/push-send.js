@@ -35,7 +35,7 @@ module.exports = async (req, res) => {
     }
 
     const payload = JSON.stringify({ title, body: message, url: targetUrl });
-    let sent = 0, failed = 0; const dead = [];
+    let sent = 0, failed = 0; const dead = [], reasons = {};
     for (let i = 0; i < rows.length; i += 20) {
       const batch = rows.slice(i, i + 20);
       const out = await Promise.allSettled(batch.map(row => webpush.sendNotification(row.subscription, payload, { TTL: 86400, urgency: 'normal' })));
@@ -44,6 +44,8 @@ module.exports = async (req, res) => {
         else {
           failed++;
           const code = o.reason && o.reason.statusCode;
+          const why = String(code || (o.reason && o.reason.message) || 'unknown').slice(0, 80) + (o.reason && o.reason.body ? ' | ' + String(o.reason.body).slice(0, 120) : '');
+          reasons[why] = (reasons[why] || 0) + 1;
           if (code === 404 || code === 410) dead.push(batch[k].endpoint);
           else console.error('Push delivery failed:', code || (o.reason && o.reason.message));
         }
@@ -53,7 +55,7 @@ module.exports = async (req, res) => {
     // ลบ subscription ที่หมดอายุ
     await Promise.allSettled(dead.map(ep => fetch(`${sUrl}/rest/v1/push_subscriptions?endpoint=eq.${encodeURIComponent(ep)}`, { method: 'DELETE', headers: H })));
 
-    return res.status(200).json({ ok: true, total: rows.length, sent, failed, removed: dead.length });
+    return res.status(200).json({ ok: true, total: rows.length, sent, failed, removed: dead.length, reasons });
   } catch (e) {
     console.error('Push send error:', e.message);
     return res.status(500).json({ error: 'เกิดข้อผิดพลาดในการส่งแจ้งเตือน' });
