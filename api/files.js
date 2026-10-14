@@ -98,6 +98,15 @@ module.exports = async (req, res) => {
       const c = await commit(repo, branch, snap, tree, `admin: ย้าย ${from} -> ${to}`);
       return res.json({ ok: true, commit: c });
     }
+    if (b.action === 'commit-time') {
+      const p = String(b.path || '');
+      if (!okPath(p)) throw bad('path ไม่ถูกต้อง');
+      const fp = P(p);
+      const commits = await gh(`/repos/${repo}/commits?path=${encodeURIComponent(fp)}&per_page=1&sha=${encodeURIComponent(branch)}`);
+      if (!commits.length) return res.json({ ok: true, date: null });
+      return res.json({ ok: true, date: commits[0].commit.committer.date, message: commits[0].commit.message.split('\n')[0] });
+    }
+
     throw bad('unknown action');
   } catch (e) { res.status(e.status && e.status < 600 && e.status >= 400 ? e.status : 500).json({ error: String(e.message || e) }); }
 };
