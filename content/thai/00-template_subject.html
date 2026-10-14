@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="th">
-<head>
+<html lang="th" data-theme="light" class="embedded"><head>
 <meta charset="UTF-8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#eef3fb">
 <script>
@@ -2431,30 +2430,54 @@ html[data-theme="light"] .qx-btn.danger{color:#be123c;border-color:rgba(190,18,6
 <body>
 
 <header>
-  <div class="logo" id="subjLogo"></div>
+  <div class="logo" id="subjLogo"><span class="lg-ico"><svg class="hi" viewBox="0 0 24 24" fill="none" fill-opacity="0" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"></path><path d="M4 21.5v-16"></path><path d="M9 8h7"></path></svg></span><span class="lg-txt" contenteditable="false">thaiชื่อบทเรียน</span></div>
   <div class="header-actions">
-    <button class="home-top" onclick="goHomeFromSubject()" aria-label="กลับหน้าหลัก"><span data-hi="home" data-c="#fff"></span></button>
+    <button class="home-top" onclick="goHomeFromSubject()" aria-label="กลับหน้าหลัก"><span data-hi="home" data-c="#fff"><svg class="hi" viewBox="0 0 24 24" fill="none" fill-opacity="0" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7"></path><path d="M6 9.5V20h12V9.5"></path><path d="M10 20v-5h4v5"></path></svg></span></button>
     <button class="menu" onclick="openMenu()" aria-label="เปิดเมนู"><span></span><span></span><span></span></button>
   </div>
 </header>
 <div class="overlay" id="overlay" onclick="closeMenu()"></div>
 <aside class="drawer" id="drawer">
-  <div class="drawer-head"><h2><span data-hi="list"></span> <span id="drawerTitle">บทเรียน</span></h2><button class="close" onclick="closeMenu()">×</button></div>
-  <input class="search" id="search" placeholder="ค้นหาบทเรียน" oninput="filterMenu()">
-  <div id="menuList"></div>
+  <div class="drawer-head"><h2><span data-hi="list"><svg class="hi" viewBox="0 0 24 24" fill="none" fill-opacity="0" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"></path></svg></span> <span id="drawerTitle">ชื่อบทเรียน</span></h2><button class="close" onclick="closeMenu()">×</button></div>
+  <input class="search" id="search" placeholder="ค้นหาใน ชื่อบทเรียน" oninput="filterMenu()">
+  <div id="menuList"><button class="topic-btn active" data-topic-index="0"><span class="topic-num">01</span>
+   <span class="topic-copy">
+     <span class="topic-label">ชื่อบทที่ 1</span>
+     <span class="topic-sub">หัวข้อย่อย 1 · หัวข้อย่อย 2</span>
+   </span>
+   <span class="topic-arrow">›</span></button><div class="menu-section">Quiz</div><button class="topic-btn" data-topic-index="1"><span class="topic-num">02</span>
+   <span class="topic-copy">
+     <span class="topic-label">Quiz</span>
+     <span class="topic-sub"></span>
+   </span>
+   <span class="topic-arrow">›</span></button></div>
 </aside>
 <main>
 <section class="hero">
-  <span class="badge" id="subjBadge"></span>
-  <h1><span id="subjTitle"></span> <span id="subjAccent"></span></h1>
-  <p id="subjDesc"></p>
-  <div class="progress-wrap"><div class="progress-label"><span id="progressText">หน้า 1</span><span>ความคืบหน้า</span></div><div class="progress"><i id="progress"></i></div></div>
+  <span class="badge" id="subjBadge">บทเรียน · ชื่อบทเรียน</span>
+  <h1><span id="subjTitle" contenteditable="false">ชื่อบทเรียน</span> <span id="subjAccent"></span></h1>
+  <p id="subjDesc">เนื้อหา + Quiz ท้ายบท</p>
+  <div class="progress-wrap"><div class="progress-label"><span id="progressText">หน้า 1 / 2</span><span>ความคืบหน้า</span></div><div class="progress"><i id="progress" style="width: 50%;"></i></div></div>
 </section>
 
-<section class="page" id="page"></section>
+<section class="page" id="page" style="">
+  <div class="topic-head">
+   <div class="topic-no">1</div>
+   <div><h2>ชื่อบทที่ 1</h2>
+   <div class="subtitle">บทย่อย: หัวข้อย่อย 1 · หัวข้อย่อย 2</div></div>
+  </div>
+  <p class="intro">คำนำสั้น ๆ ของบทนี้</p>
+  <section class="sec-card"><h3>หัวข้อกล่องที่ 1</h3><ul><li>ข้อความบรรทัดที่ 1</li><li>ข้อความบรรทัดที่ 2</li></ul></section>
+  
+  <div class="note"><b><svg class="hi" viewBox="0 0 24 24" fill="#fbbf24" fill-opacity=".25" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 3 1.1-6.2L3 9.7l6.2-.9z"></path></svg> จุดที่ควรจำ</b><br>สรุปสั้น ๆ ที่ต้องจำ</div>
+  
+  <div class="nav">
+   <button onclick="showTopic(-1)" disabled=""><svg class="hi" viewBox="0 0 24 24" fill="none" fill-opacity="0" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg> หน้าก่อนหน้า</button>
+   <button onclick="showTopic(1)">หน้าถัดไป <svg class="hi" viewBox="0 0 24 24" fill="none" fill-opacity="0" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+  </div></section>
 </main>
 
-<div class="footer" id="subjFooter"></div>
+<div class="footer" id="subjFooter"><span class="ft-ico"><svg class="hi" viewBox="0 0 24 24" fill="none" fill-opacity="0" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"></path><path d="M4 21.5v-16"></path><path d="M9 8h7"></path></svg></span> ชื่อบทเรียน · เรียนให้เข้าใจ ทบทวนได้ทุกเมื่อ</div>
 
 <!-- ════════════════════════════════════════════════════════════════════
      ①②③  ข้อมูลวิชา  —  ส่วนที่ต้องแก้เมื่อทำวิชาใหม่ (ทั้งหมดอยู่ในบล็อกเดียว)
@@ -3305,6 +3328,7 @@ catch(e){ document.documentElement.classList.add("embedded"); }
 })();
 
 showTopic(0);
-</script>
-</body>
-</html>
+</script><button class="to-top" type="button" aria-label="เลื่อนขึ้นบน"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"></path></svg></button><button class="to-top" type="button" aria-label="เลื่อนขึ้นบน"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"></path></svg></button>
+
+
+</body></html>
