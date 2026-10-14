@@ -332,7 +332,7 @@ button{letter-spacing:.1px}
 .act.yel::before{display:none}.act.yel small{color:#3b2a00;opacity:1}
 .act.yel .ai{background:#1a130018;color:#1a1300;box-shadow:none}
 .act.yel:hover{border-color:#fff5b0;box-shadow:0 16px 30px -16px #f59e0bcc}
-.ms-row{display:flex;gap:8px;align-items:stretch}.ms-row .pri{flex:1;width:auto;min-height:50px;font-size:15.5px}.ms-row .ghost{flex:none;width:50px;padding:0}
+.ms-row{display:flex;gap:8px;align-items:stretch}.ms-row .pri{flex:1;width:auto;min-height:50px;font-size:15.5px}.ms-row .ghost{flex:none;width:42px;min-height:42px;padding:0}.ms-row .ybo{flex:1;width:auto;padding:0 14px;font-size:14px;background:transparent;border:1px solid #fbbf2477;color:#fde047}.ms-row .ybo:hover{background:#fbbf2418;border-color:#fbbf24}.ms-row .ybo .i{width:1em;height:1em;stroke-width:3}
 .ms-top{display:flex;justify-content:space-between;gap:8px;margin-bottom:12px}
 .ms-top .ghost{min-height:40px}
 .ms-sum{font-size:12.5px;color:var(--muted);margin:10px 2px 6px}
@@ -354,6 +354,11 @@ button{letter-spacing:.1px}
 .pend .chk{background:var(--panel)}
 .nmrow{display:flex;align-items:center;gap:6px}.nmrow input{flex:1;min-width:0}.nmrow .ext{flex:none;color:var(--muted);font-size:13px}
 .hidden{display:none!important}
+
+.dupbox{margin-top:8px;padding:8px 10px;border-radius:10px;background:#fbbf2414;border:1px solid #fbbf2455;font-size:12.5px}
+.dupbox .dh{color:var(--warn);font-weight:600;line-height:1.4}.dupbox .dh .i{width:15px;height:15px;vertical-align:-3px}
+.dupbox .dr{display:flex;align-items:center;gap:8px;margin-top:6px}.dupbox .dr span{flex:1;min-width:0;word-break:break-all;color:var(--ink)}.dupbox .dr small{color:var(--muted)}
+.dupbox .dr .ghost{flex:none;min-height:34px;padding:0 12px;font-size:13px}
 </style>
 </head>
 <body>
@@ -508,7 +513,7 @@ function msGrid(){
 }
 function msList(){
   MS.v = 'list'; CUR = ''; SEL.clear(); FILES = []; msTitle('จัดการวิชา');
-  $('msMain').innerHTML = `<div class="ms-row"><button class="pri yb" id="msNew" type="button">${M_PLUS} เพิ่มวิชา</button><button class="ghost" id="msRef" type="button" aria-label="รีเฟรช">${M_REF}</button></div>
+  $('msMain').innerHTML = `<div class="ms-row"><button class="ghost ybo" id="msNew" type="button">${M_PLUS} เพิ่มวิชา</button><button class="ghost" id="msRef" type="button" aria-label="รีเฟรช">${M_REF}</button></div>
     ${SUBJECTS.length > 8 ? '<input class="ssr" id="msQ" placeholder="ค้นหาชื่อหรือรหัสวิชา" autocomplete="off">' : ''}
     <div class="ms-sum" id="msSum"></div><div class="mg" id="mg"></div><div id="fOut"></div>`;
   $('msNew').onclick = msAddSubject;
@@ -966,25 +971,44 @@ function fmNaming(items, pre){
     const ov = document.createElement('div'); ov.className = 'ov'; ov.style.zIndex = 30;
     ov.innerHTML = `<div class="dlg sheet" role="dialog" aria-modal="true" aria-label="ตั้งชื่อไฟล์"><div class="sh"><h3>ตั้งชื่อไฟล์ก่อนอัปโหลด</h3><button class="x" data-c type="button" aria-label="ปิด">${MI('<path d="M6 6l12 12M18 6L6 18"/>')}</button></div><div class="sbody">
       <div class="hint" style="margin:0 0 10px">อัปโหลดไปที่ /${esc(FM.dir)} · แก้ชื่อได้ตามต้องการ (ใส่ / เพื่อสร้างโฟลเดอร์ย่อย)</div>
+      <label class="chk" style="margin:0 0 10px"><input type="checkbox" id="nmAuto"${ss.get('fmAuto') === '1' ? ' checked' : ''}><span>ย้ายไฟล์อัตโนมัติ — ถ้าชื่อซ้ำกับไฟล์ที่อื่นแค่ที่เดียว ให้อัปโหลดไปทับตัวเดิมที่ตำแหน่งนั้นเลย</span></label>
       ${plain.map((x, i) => `<div class="fl"><span class="fic" aria-hidden="true">${M_FILE}</span><div class="fb"><input data-n="${i}" value="${esc(x.path.slice(pre.length))}" aria-label="ชื่อไฟล์" autocomplete="off" autocapitalize="off"><div class="t">${fmSize(x.size)}</div><span data-g="${i}"></span></div></div>`).join('')}
-      ${nz ? `<div class="hint">+ จาก .zip อีก ${nz} ไฟล์ (ใช้ path ตามโครงสร้างใน zip)</div>` : ''}
+      ${nz ? `<div class="hint">+ จาก .zip อีก ${nz} ไฟล์ (ใช้ path ตามโครงสร้างใน zip)<span id="nmZ"></span></div>` : ''}
       <div class="btns"><button class="ghost" data-c type="button">ยกเลิก</button><button class="pri yb" id="nmGo" type="button" style="min-height:48px"></button></div></div></div>`;
     document.body.appendChild(ov);
     const ins = [...ov.querySelectorAll('[data-n]')], go = ov.querySelector('#nmGo');
-    const pathOf = i => pre + ins[i].value.trim().replace(/^\/+|\/+$/g, '');
+    const bn = p => p.split('/').pop().toLowerCase();
+    const same = p => FM.files.filter(f => f.path !== p && bn(f.path) === bn(p) && !/(^|\/)\.gitkeep$/.test(f.path));
+    const pathOf = i => { const v = ins[i].value; return ins[i].dataset.abs && v === ins[i].dataset.abs ? v : pre + v.trim().replace(/^\/+|\/+$/g, ''); };
+    const auto = () => ov.querySelector('#nmAuto').checked;
+    const applyAuto = () => {
+      ins.forEach((t, i) => {
+        if (auto()) { if (t.dataset.abs) return; const c = same(pathOf(i)); if (c.length === 1) { t.dataset.orig = t.value; t.value = c[0].path; t.dataset.abs = c[0].path; t.dataset.au = '1'; } }
+        else if (t.dataset.au) { t.value = t.dataset.orig || t.value; delete t.dataset.abs; delete t.dataset.au; }
+      });
+    };
     const check = () => {
       const all = plain.map((_, i) => pathOf(i)), zp = items.filter(x => x.z).map(x => x.path); let ok = true;
       all.forEach((p, i) => {
-        const bad = !okP(p) || all.indexOf(p) !== i || zp.includes(p), g = ov.querySelector(`[data-g="${i}"]`);
+        const au = !!ins[i].dataset.au, bad = !okP(p) || all.indexOf(p) !== i || zp.includes(p), g = ov.querySelector(`[data-g="${i}"]`);
         if (bad) ok = false; ins[i].closest('.fl').classList.toggle('bad', bad);
-        g.innerHTML = bad ? '<span class="tag warn">ชื่อไม่ถูกต้องหรือซ้ำ</span>' : fmByPath(p) ? '<span class="tag over">จะเขียนทับไฟล์เดิม</span>' : '<span class="tag new">ไฟล์ใหม่</span>';
+        const oth = bad ? [] : same(p);
+        g.innerHTML = (bad ? '<span class="tag warn">ชื่อไม่ถูกต้องหรือซ้ำ</span>' : fmByPath(p) ? `<span class="tag over">${au ? 'ย้ายอัตโนมัติ — จะเขียนทับไฟล์เดิมที่นี่' : 'จะเขียนทับไฟล์เดิม'}</span>` : '<span class="tag new">ไฟล์ใหม่</span>')
+          + (oth.length ? `<div class="dupbox"><div class="dh">${ICO.warn} มีไฟล์ชื่อเดียวกันอยู่ที่อื่น ${oth.length} ไฟล์ (ตัวเลือก: อัปโหลดเป็นไฟล์ใหม่ตรงนี้ หรือกด “ใช้ที่นี่” เพื่อเขียนทับตัวเดิมที่ตำแหน่งนั้น)</div>${oth.slice(0, 4).map(f => `<div class="dr"><span>${esc(f.path)}<small> · ${fmSize(f.size)}</small></span><button class="ghost" data-use="${i}" data-p="${esc(f.path)}" type="button">ใช้ที่นี่</button></div>`).join('')}${oth.length > 4 ? `<div class="hint" style="margin:4px 0 0">… และอีก ${oth.length - 4}</div>` : ''}</div>` : '');
       });
+      const zs = items.filter(x => x.z && same(x.path).length).length, zo = ov.querySelector('#nmZ');
+      if (zo) zo.textContent = zs ? ` · ในนั้น ${zs} ไฟล์มีชื่อซ้ำกับไฟล์ในโฟลเดอร์อื่น` : '';
       go.disabled = !ok; go.textContent = `อัปโหลด ${items.length} ไฟล์`;
     };
     const done = v => { ov.remove(); res(v); };
-    ov.addEventListener('input', check); check();
-    ov.addEventListener('click', e => { if (e.target === ov || e.target.closest('[data-c]')) return done(null); });
-    go.onclick = () => { plain.forEach((x, i) => { x.path = pathOf(i); }); done(items); };
+    ov.addEventListener('input', e => { const t = e.target; if (t.id === 'nmAuto') return; if (t.dataset && t.dataset.abs && t.value !== t.dataset.abs) { delete t.dataset.abs; delete t.dataset.au; } check(); });
+    ov.addEventListener('change', e => { if (e.target.id !== 'nmAuto') return; ss.set('fmAuto', e.target.checked ? '1' : '0'); applyAuto(); check(); });
+    applyAuto(); check();
+    ov.addEventListener('click', e => { const u = e.target.closest('[data-use]'); if (u) { const t = ins[+u.dataset.use]; t.value = u.dataset.p; t.dataset.abs = u.dataset.p; return check(); } if (e.target === ov || e.target.closest('[data-c]')) return done(null); });
+    go.onclick = () => {
+      if (auto()) items.forEach(x => { if (x.z) { const c = same(x.path); if (c.length === 1) x.path = c[0].path; } });
+      plain.forEach((x, i) => { x.path = pathOf(i); }); done(items);
+    };
   });
 }
 async function fmNewFile(){
