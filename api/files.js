@@ -107,12 +107,13 @@ module.exports = async (req, res) => {
       const out = {};
       for (let i = 0; i < items.length; i += 8) {
         await Promise.all(items.slice(i, i + 8).map(async it => {
-          const key = branch + '|' + it.path + '|' + it.sha;
-          if (TIME_CACHE.has(key)) { out[it.path] = TIME_CACHE.get(key); return; }
+          const key = branch + '|' + it.path + '|' + (it.dir ? 'dir' : it.sha);   // โฟลเดอร์ = commit ล่าสุดที่แตะไฟล์ใดก็ตามข้างใน (แคช 60 วินาที)
+          const hit = TIME_CACHE.get(key);
+          if (hit && (!it.dir || hit.exp > Date.now())) { out[it.path] = hit.v; return; }
           try {
             const r = await gh(`/repos/${repo}/commits?sha=${encodeURIComponent(branch)}&path=${encodeURIComponent(P(it.path))}&per_page=1`);
             const d = r && r[0] && r[0].commit && (r[0].commit.committer || r[0].commit.author);
-            if (d && d.date) { out[it.path] = d.date; if (TIME_CACHE.size > 3000) TIME_CACHE.clear(); TIME_CACHE.set(key, d.date); }
+            if (d && d.date) { out[it.path] = d.date; if (TIME_CACHE.size > 3000) TIME_CACHE.clear(); TIME_CACHE.set(key, { v: d.date, exp: Date.now() + 60000 }); }
           } catch (e) {}
         }));
       }
