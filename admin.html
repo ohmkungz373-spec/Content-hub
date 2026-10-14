@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>Admin Dashboard | CONTENT HUB</title>
+<link rel="manifest" href="/admin.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon-admin.png">
+<link rel="icon" type="image/png" href="/icon-admin-192.png">
+<meta name="theme-color" content="#080d1b">
+<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Hub Admin"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -263,7 +269,7 @@ button:active:not(:disabled){transform:scale(.98)}
   <div id="panelView" class="hidden">
     <div class="top">
       <div class="brand"><div class="logo" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></div><div><h1>Admin Dashboard</h1><p class="sub">เลือกสิ่งที่อยากทำ</p></div></div>
-      <div class="acts"><button class="ghost" id="logoutBtn" type="button">ออกจากระบบ</button></div>
+      <div class="acts"><button class="ghost hidden" id="installBtn" type="button">ติดตั้งแอป</button><button class="ghost" id="logoutBtn" type="button">ออกจากระบบ</button></div>
     </div>
     <div class="stats"><div class="st"><b id="nSub">0</b><small>วิชาทั้งหมด</small></div><div class="st"><b id="nCh">0</b><small>บทเรียนทั้งหมด</small></div></div>
     <div class="home">
@@ -280,7 +286,7 @@ button:active:not(:disabled){transform:scale(.98)}
 <script>
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const ss = { get(k){ try { return sessionStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { sessionStorage.setItem(k,v); } catch(e){} }, del(k){ try { sessionStorage.removeItem(k); } catch(e){} } };
+const ss = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }, del(k){ try { localStorage.removeItem(k); } catch(e){} } };
 let TOKEN = ss.get('hub-admin') || '', SUBJECTS = [], FILES = [], CUR = '', SEL = new Set();
 const FILE_RE = /^[^\\/:*?"<>|\u0000-\u001f]{1,100}\.html$/i;
 const okMsg = (t, extra) => `<div class="msg ok">${t}${extra ? '<br>' + extra : ''}</div>`, badMsg = t => `<div class="msg bad">${esc(t)}</div>`;
@@ -752,6 +758,17 @@ document.querySelector('.home').addEventListener('click', e => {
   const g = e.target.closest('[data-go]'); if (!g) return;
   ({ subject: subjectSheet, lesson: lessonSheet, manage: manageSheet, push: pushSheet, files: filesSheet })[g.dataset.go]();
 });
+/* ติดตั้งเป็นแอปแยก (Hub Admin) */
+let installEv = null;
+const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+if (!standalone) $('installBtn').classList.remove('hidden');
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEv = e; });
+window.addEventListener('appinstalled', () => { installEv = null; $('installBtn').classList.add('hidden'); });
+$('installBtn').onclick = async () => {
+  if (installEv) { installEv.prompt(); await installEv.userChoice.catch(() => {}); installEv = null; return; }
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  ask({ title: 'ติดตั้งเป็นแอป “Hub Admin”', body: ios ? 'iPhone/iPad: แตะปุ่มแชร์ (สี่เหลี่ยมมีลูกศรขึ้น) ใน Safari แล้วเลือก “เพิ่มไปยังหน้าจอโฮม”' : 'เปิดเมนูของเบราว์เซอร์ (⋮) แล้วเลือก “ติดตั้งแอป” หรือ “เพิ่มไปยังหน้าจอหลัก”', ok: 'เข้าใจแล้ว' });
+};
 async function enter(){ await loadSubjects(); showPanel(true); }
 (async () => { if (!TOKEN) return; try { await api('check'); await enter(); } catch(e){} })();
 </script>
