@@ -1,131 +1,61 @@
-
-const crypto = require('crypto');
 const webpush = require('web-push');
-
-const PASS = process.env.ADMIN_PASSWORD || 'zazaq123';
-const SECRET = process.env.ADMIN_SECRET || ('hub-admin:' + PASS);
-
-const sign = (s) =>
-  crypto.createHmac('sha256', SECRET).update(s).digest('base64url');
-
-const safeEq = (a, b) => {
-  const x = Buffer.from(String(a));
-  const y = Buffer.from(String(b));
-  return x.length === y.length && crypto.timingSafeEqual(x, y);
-};
-
-function validToken(token) {
-  const [exp, sig] = String(token || '').split('.');
-  return !!(
-    exp &&
-    sig &&
-    safeEq(sig, sign(exp)) &&
-    Number(exp) > Date.now()
-  );
-}
+const { validToken } = require('./_auth');
 
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
-
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+  if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'Method not allowed' }); }
   try {
-    const body = typeof req.body === 'string'
-      ? JSON.parse(req.body || '{}')
-      : (req.body || {});
+    let body;
+    try { body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {}); }
+    catch (e) { return res.status(400).json({ error: 'ข้อมูลไม่ถูกต้อง' }); }
 
-    if (!validToken(body.token)) {
-      return res.status(401).json({
-        error: 'กรุณาเข้าสู่ระบบแอดมินใหม่'
-      });
-    }
+    if (!validToken(body.token)) return res.status(401).json({ error: 'กรุณาเข้าสู่ระบบแอดมินใหม่' });
 
     const title = String(body.title || '').trim().slice(0, 100);
     const message = String(body.message || '').trim().slice(0, 500);
-    const targetUrl = String(body.url || '/');
+    const targetUrl = String(body.url || '/').trim() || '/';
+    if (!title || !message) return res.status(400).json({ error: 'กรุณาระบุหัวข้อและข้อความ' });
+    if (!targetUrl.startsWith('/') || targetUrl.startsWith('//') || targetUrl.includes('\\'))
+      return res.status(400).json({ error: 'URL ต้องเป็นเส้นทางภายในเว็บ' });
 
-    if (!title || !message) {
-      return res.status(400).json({
-        error: 'กรุณาระบุหัวข้อและข้อความ'
-      });
+    const sUrl = process.env.SUPABASE_URL, sKey = process.env.SUPABASE_SECRET_KEY;
+    const pub = process.env.VAPID_PUBLIC_KEY, priv = process.env.VAPID_PRIVATE_KEY, subj = process.env.VAPID_SUBJECT;
+    if (!sUrl || !sKey || !pub || !priv || !subj) return res.status(500).json({ error: 'กรุณาตรวจสอบ Environment Variables ใน Vercel' });
+    webpush.setVapidDetails(subj, pub, priv);
+
+    const H = { apikey: sKey, Authorization: `Bearer ${sKey}` };
+    // ดึงทั้งหมดเป็นหน้า ๆ (PostgREST จำกัดต่อคำขอ)
+    const rows = [];
+    for (let off = 0; off < 10000; off += 1000) {
+      const r = await fetch(`${sUrl}/rest/v1/push_subscriptions?select=endpoint,subscription&order=created_at.asc&limit=1000&offset=${off}`, { headers: H });
+      if (!r.ok) { console.error('Supabase query failed:', r.status); return res.status(502).json({ error: 'อ่านข้อมูลผู้รับแจ้งเตือนไม่สำเร็จ' }); }
+      const part = await r.json();
+      rows.push(...part);
+      if (part.length < 1000) break;
     }
 
-    if (
-      !targetUrl.startsWith('/') ||
-      targetUrl.startsWith('//') ||
-      targetUrl.includes('\\')
-    ) {
-      return res.status(400).json({
-        error: 'URL ต้องเป็นเส้นทางภายในเว็บ'
-      });
-    }
-
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SECRET_KEY;
-    const publicKey = process.env.VAPID_PUBLIC_KEY;
-    const privateKey = process.env.VAPID_PRIVATE_KEY;
-    const subject = process.env.VAPID_SUBJECT;
-
-    if (!supabaseUrl || !supabaseKey ||
-        !publicKey || !privateKey || !subject) {
-      return res.status(500).json({
-        error: 'กรุณาตรวจสอบ Environment Variables ใน Vercel'
-      });
-    }
-
-    webpush.setVapidDetails(subject, publicKey, privateKey);
-
-    const db = await fetch(
-      `${supabaseUrl}/rest/v1/push_subscriptions?select=subscription`,
-      {
-        headers: {
-          apikey: supabaseKey,
-          Authorization: `Bearer ${supabaseKey}`
+    const payload = JSON.stringify({ title, body: message, url: targetUrl });
+    let sent = 0, failed = 0; const dead = [];
+    for (let i = 0; i < rows.length; i += 20) {
+      const batch = rows.slice(i, i + 20);
+      const out = await Promise.allSettled(batch.map(row => webpush.sendNotification(row.subscription, payload, { TTL: 86400, urgency: 'normal' })));
+      out.forEach((o, k) => {
+        if (o.status === 'fulfilled') sent++;
+        else {
+          failed++;
+          const code = o.reason && o.reason.statusCode;
+          if (code === 404 || code === 410) dead.push(batch[k].endpoint);
+          else console.error('Push delivery failed:', code || (o.reason && o.reason.message));
         }
-      }
-    );
-
-    if (!db.ok) {
-      console.error('Supabase query failed:', db.status);
-      return res.status(502).json({
-        error: 'อ่านข้อมูลผู้รับแจ้งเตือนไม่สำเร็จ'
       });
     }
 
-    const rows = await db.json();
-    let sent = 0;
-    let failed = 0;
+    // ลบ subscription ที่หมดอายุ
+    await Promise.allSettled(dead.map(ep => fetch(`${sUrl}/rest/v1/push_subscriptions?endpoint=eq.${encodeURIComponent(ep)}`, { method: 'DELETE', headers: H })));
 
-    for (const row of rows) {
-      try {
-        await webpush.sendNotification(
-          row.subscription,
-          JSON.stringify({
-            title,
-            body: message,
-            url: targetUrl
-          })
-        );
-        sent++;
-      } catch (e) {
-        failed++;
-        console.error('Push delivery failed:', e.statusCode || e.message);
-      }
-    }
-
-    return res.status(200).json({
-      ok: true,
-      total: rows.length,
-      sent,
-      failed
-    });
+    return res.status(200).json({ ok: true, total: rows.length, sent, failed, removed: dead.length });
   } catch (e) {
     console.error('Push send error:', e.message);
-    return res.status(500).json({
-      error: 'เกิดข้อผิดพลาดในการส่งแจ้งเตือน'
-    });
+    return res.status(500).json({ error: 'เกิดข้อผิดพลาดในการส่งแจ้งเตือน' });
   }
 };
