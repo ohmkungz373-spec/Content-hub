@@ -543,7 +543,7 @@ function renderFiles(){
 }
 const toB64 = buf => { const u = new Uint8Array(buf); let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); };
 function titleOf(buf){ try { const t = new TextDecoder('utf-8').decode(buf).replace(/<!--[\s\S]*?-->/g, '').match(/<title>([\s\S]*?)<\/title>/i); return t ? t[1].replace(/\s+/g, ' ').trim().split('|')[0].trim() : ''; } catch(e){ return ''; } }
-async async function addFiles(list){
+async function addFiles(list){
   for (const f of list) {
     if (!/\.html?$/i.test(f.name)) continue;
     const buf = await f.arrayBuffer(), name = f.name.replace(/\.htm$/i, '.html');
@@ -897,7 +897,7 @@ async function fmUpload(list){
     return f;
   });
   const dup = list.filter(f => fmByPath(pre + f.name)).map(f => f.name);
-const prog = t => { const o = $('fmOut'); if (o) o.innerHTML = '<div class="msg ok">' + t + '</div>'; };
+  const prog = t => { const o = $('fmOut'); if (o) o.innerHTML = '<div class="msg ok">' + t + '</div>'; };
   prog('กำลังเตรียมไฟล์…');
   try {
     // 1) แปลงไฟล์พร้อมกัน  2) ส่งเนื้อไฟล์ขึ้นขนานกันทีละ 3 คำขอ  3) commit ครั้งเดียวจบ
@@ -950,7 +950,7 @@ const INSP_JS = '(function(){var on=false,bx=document.createElement("div");bx.st
   'for(var i=0;i<all.length;i++){if(all[i]===el){idx=i;break}if(st(all[i])===s0)n++}' +
   'parent.postMessage({t:"hub-pick",tag:tag,idx:idx,n:n,start:s0,id:el.id||"",cls:typeof el.className==="string"?el.className:""},"*")},true)})();';
 function hubPreviewDoc(src, base, withInsp){
-  const inj = '<base href="' + base + '">' + (withInsp ? '<script>' + INSP_JS + '<\/script>' : '');
+  const inj = '<base href="' + base + '">' + (withInsp ? '<scr'+'ipt>' + INSP_JS + '</scr'+'ipt>' : '');
   if (/<head[^>]*>/i.test(src)) return src.replace(/<head[^>]*>/i, m => m + inj);
   if (/<html[^>]*>/i.test(src)) return src.replace(/<html[^>]*>/i, m => m + '<head>' + inj + '</head>');
   return inj + src;
