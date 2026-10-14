@@ -712,14 +712,14 @@ function filesSheet(){
 }
 function fmHome(){
   FM.dirty = false;
-  FM.box.innerHTML = `<div class="fm-bar"><button class="pri" id="fmUp" type="button">${ICO.up}อัปโหลด</button><button class="ghost" id="fmNF" type="button">+ ไฟล์ใหม่</button><button class="ghost" id="fmND" type="button">+ โฟลเดอร์</button><button class="ghost" id="fmRf" type="button">รีเฟรช</button><button class="ghost" id="fmBk" type="button">${ICO.db}สำรอง / กู้คืน</button><button class="ghost" id="fmZip" type="button" style="margin-left:auto">${ICO.dn}โหลดทั้งระบบ (.zip)</button></div>
+  FM.box.innerHTML = `<div class="fm-bar"><button class="pri" id="fmUp" type="button">${ICO.up}อัปโหลด</button><button class="ghost" id="fmNF" type="button">+ ไฟล์ใหม่</button><button class="ghost" id="fmND" type="button">+ โฟลเดอร์</button><button class="ghost" id="fmRf" type="button">รีเฟรช</button><button class="ghost" id="fmBk" type="button">${ICO.db}สำรอง / กู้คืน</button></div>
     <input type="file" id="fmFile" multiple hidden>
     <div class="fm-srch"><input id="fmQ" placeholder="ค้นหาไฟล์ทั้งหมด…" autocomplete="off" value="${esc(FM.q)}"><button class="ghost" id="fmSort" type="button"></button></div>
     <div class="fm-bc" id="fmBc"></div><div class="fm-sum" id="fmSum"></div><div class="fm-list" id="fmList"></div><div id="fmSelBar"></div><div id="fmOut"></div>
     <div class="hint">แตะชื่อเพื่อเปิด · ติ๊กช่องซ้ายเพื่อเลือกหลายรายการแล้วลบ · ปุ่มสามจุด = เปลี่ยนชื่อ/ย้าย/ดาวน์โหลด/ลบ · ไฟล์ที่บันทึกจะ commit ขึ้น GitHub แล้วเว็บ deploy ใหม่ ~1 นาที</div>`;
   $('fmUp').onclick = () => $('fmFile').click();
   $('fmFile').onchange = async e => { const l = [...e.target.files]; e.target.value = ''; if (l.length) fmUpload(l); };
-  $('fmZip').onclick = fmZip; $('fmBk').onclick = () => { BK.from = 'files'; fmBackup(); }; $('fmNF').onclick = fmNewFile; $('fmND').onclick = fmNewDir; $('fmRf').onclick = fmLoad;
+  $('fmBk').onclick = () => { BK.from = 'files'; fmBackup(); }; $('fmNF').onclick = fmNewFile; $('fmND').onclick = fmNewDir; $('fmRf').onclick = fmLoad;
   $('fmQ').oninput = e => { FM.q = e.target.value; fmList(); };
   const sortLbl = () => { $('fmSort').innerHTML = (FM.sort === 'new' ? ICO.clock : ICO.az) + (FM.sort === 'new' ? 'ใหม่สุดก่อน' : 'ตามชื่อ'); };
   sortLbl(); $('fmSort').onclick = () => { FM.sort = FM.sort === 'new' ? 'name' : 'new'; ss.set('fmSort', FM.sort); sortLbl(); fmList(); };
@@ -800,12 +800,6 @@ async function fmUpload(list){
     items.forEach(it => touchP(it.path)); fmMerge(r.entries); FM.sel.clear(); fmList();
     fmToast(`อัปโหลด ${items.length} ไฟล์สำเร็จ · ${DEPLOY}`);
   } catch(e){ fmToast(e.message, true); }
-}
-async function fmZip(){
-  const b = $('fmZip'); b.disabled = true; b.textContent = 'กำลังเตรียมไฟล์…';
-  try { const j = await fapi('zip'); const l = document.createElement('a'); l.href = j.url; l.download = 'content-hub.zip'; document.body.appendChild(l); l.click(); l.remove(); fmToast('เริ่มดาวน์โหลด .zip แล้ว (ไฟล์ทั้งระบบจาก GitHub ล่าสุด)'); }
-  catch(e){ fmToast(e.message, true); }
-  b.disabled = false; b.innerHTML = ICO.dn + 'โหลดทั้งระบบ (.zip)';
 }
 async function fmNewFile(){
   const n = await ask({ title: 'ไฟล์ใหม่', body: `สร้างใน /${FM.dir} · ใส่ / ในชื่อเพื่อสร้างโฟลเดอร์ย่อยพร้อมกัน`, input: '', ok: 'สร้าง' });
@@ -953,7 +947,7 @@ async function bkClick(e){
   const l = e.target.closest('[data-bl]'), d = e.target.closest('[data-bd]'), id = (l || d || {}).dataset ? (l ? l.dataset.bl : d.dataset.bd) : ''; if (!id) return;
   const it = BK.items.find(x => x.id === id); if (!it) return;
   if (l) {
-    const ok = await ask({ title: 'โหลด “' + it.name + '”?', body: 'ไฟล์ทั้งระบบจะเหมือนตอนที่บันทึกชุดนี้ทุกไฟล์: ไฟล์ที่อยู่ในชุดจะถูกคืนมา ไฟล์ที่ไม่มีในชุดจะถูกลบทิ้ง\n\nระบบจะเก็บสภาพปัจจุบันไว้เป็นชุดสำรอง “ก่อนกู้คืน…” ให้อัตโนมัติ จึงย้อนกลับได้', ok: 'โหลดเลย', danger: true });
+    const ok = await ask({ title: 'โหลด “' + it.name + '”?', body: 'ไฟล์ทั้งระบบจะเหมือนตอนที่บันทึกชุดนี้ทุกไฟล์: ไฟล์ที่อยู่ในชุดจะถูกคืนมา ไฟล์ที่ไม่มีในชุดจะถูกลบทิ้ง\n\n(ไม่สร้างชุดสำรอง “ก่อนกู้คืน” อัตโนมัติ — ถ้าต้องการย้อนกลับ ให้บันทึกสำรองเองก่อน)', ok: 'โหลดเลย', danger: true });
     if (!ok) return;
     l.disabled = true; l.textContent = 'กำลังโหลด…';
     try {
