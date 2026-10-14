@@ -182,6 +182,23 @@ button:active:not(:disabled){transform:scale(.98)}
 .sheet .cur{margin-bottom:12px}.sheet .grp .subs{grid-template-columns:1fr 1fr}
 .sheet #picker{border:0;padding:0;background:none;margin-bottom:12px}
 @media (min-width:600px){.sheet{border-radius:22px}.ov{align-items:center;padding:16px}}
+
+/* --- อัปโหลดไฟล์ (ปรับปรุง) --- */
+.pick{padding:28px 16px 22px;border:2px dashed color-mix(in srgb,var(--acc2) 55%,transparent);background:linear-gradient(180deg,color-mix(in srgb,var(--acc2) 9%,transparent),transparent),var(--bg2)}
+.pick:active{transform:scale(.99)}
+.pick .ic{width:60px;height:60px;margin:0 auto 10px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--acc2) 16%,transparent)}
+.pick .sub{font-size:13px;color:var(--muted);margin-top:4px}
+.pick .cta{display:inline-block;margin-top:14px;padding:10px 22px;border-radius:999px;background:linear-gradient(135deg,#6d7dff,#38c8c0);color:#071022;font-weight:700;font-size:14px}
+.pick.has{padding:14px;border-style:solid}.pick.has .ic{width:40px;height:40px;margin-bottom:6px}.pick.has .ic .i{width:22px;height:22px}.pick.has .sub,.pick.has .cta{display:none}
+.fl{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:14px}
+.fl.bad{border-color:#f87171aa}
+.fl .fic{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--acc2) 15%,transparent);color:var(--acc2)}
+.fl .fic .i{width:22px;height:22px}
+.fl .fb{flex:1;min-width:0}.fl input{padding-right:12px}
+.fl .rm{position:static;flex:none;width:34px;height:34px;border-radius:50%;border:0;background:#f8717122;color:#f87171;font-size:20px;line-height:1;cursor:pointer}
+.fl .tag{margin-top:8px;display:inline-block}
+.cur.nudge{animation:nud .45s}@keyframes nud{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.sticky .pri{box-shadow:0 10px 24px -10px #6d7dff99}
 </style>
 </head>
 <body>
@@ -331,7 +348,6 @@ function subjectBar(root, onPick){
   };
   const pick = () => pickPopup(() => { paint(); onPick(); });
   btn.onclick = pick; paint();
-  if (!CUR) setTimeout(pick, 120);
   return paint;
 }
 
@@ -367,7 +383,7 @@ function subjectSheet(){
 function lessonSheet(){
   FILES = [];
   const b = openSheet('เพิ่มบทเรียน', `
-    <label class="pick" id="drop"><span class="ic" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><b>แตะเพื่อเลือกไฟล์ .html</b><span>เลือกได้หลายไฟล์ หรือลากมาวางที่นี่</span><input id="file" type="file" accept=".html,text/html" multiple></label>
+    <label class="pick" id="drop"><span class="ic" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 8.5a4 4 0 0 1-.5 7.97"/><path d="M12 12v8M8.5 15.5 12 12l3.5 3.5"/></svg></span><b>เลือกไฟล์ .html</b><span class="sub">แตะเพื่อเลือก (เลือกได้หลายไฟล์) หรือลากมาวางที่นี่</span><span class="cta">เลือกไฟล์</span><input id="file" type="file" accept=".html,text/html" multiple></label>
     <div id="fileList"></div>
     <div class="hint">ชื่อไฟล์ซ้ำจะถูกเขียนทับ · ชื่อบทดึงจากแท็ก &lt;title&gt; · ขึ้นต้นชื่อไฟล์ด้วยเลขเพื่อกำหนดลำดับ</div>
     <label class="chk"><input type="checkbox" id="fNotify"><span>แจ้งเตือนผู้ใช้ว่ามีบทเรียนใหม่</span></label>
@@ -385,14 +401,16 @@ function lessonSheet(){
 function renderFiles(){
   if (!$('fileList')) return;
   const s = curSubject(), have = new Set((s ? s.chapters : []).map(c => c.file.toLowerCase())), names = FILES.map(f => f.name.toLowerCase());
+  $('drop').classList.toggle('has', FILES.length > 0);
+  $('drop').querySelector('b').textContent = FILES.length ? `เลือกแล้ว ${FILES.length} ไฟล์ · แตะเพื่อเพิ่ม` : 'เลือกไฟล์ .html';
   $('fileList').innerHTML = FILES.map((f, i) => {
     const bad = !FILE_RE.test(f.name) || /^[._]/.test(f.name) || names.indexOf(f.name.toLowerCase()) !== i;
     const tag = bad ? '<span class="tag warn">ชื่อไฟล์ไม่ถูกต้องหรือซ้ำ</span>' : have.has(f.name.toLowerCase()) ? '<span class="tag over">จะเขียนทับไฟล์เดิม</span>' : '<span class="tag new">บทใหม่</span>';
-    return `<div class="fl"><button class="rm" data-rm="${i}" type="button" aria-label="เอาออก">×</button><input data-name="${i}" value="${esc(f.name)}" aria-label="ชื่อไฟล์"><div class="t">ชื่อบท: <b>${f.title ? esc(f.title) : '(ไม่พบ &lt;title&gt; จะใช้ชื่อไฟล์แทน)'}</b> · ${(f.size / 1024).toFixed(0)} KB</div>${tag}</div>`;
+    return `<div class="fl${bad ? ' bad' : ''}"><span class="fic" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/></svg></span><div class="fb"><input data-name="${i}" value="${esc(f.name)}" aria-label="ชื่อไฟล์"><div class="t">ชื่อบท: <b>${f.title ? esc(f.title) : '(ไม่พบ &lt;title&gt; จะใช้ชื่อไฟล์แทน)'}</b> · ${(f.size / 1024).toFixed(0)} KB</div>${tag}</div><button class="rm" data-rm="${i}" type="button" aria-label="เอาออก">×</button></div>`;
   }).join('');
   const ok = FILES.length && FILES.every((f, i) => FILE_RE.test(f.name) && !/^[._]/.test(f.name) && names.indexOf(f.name.toLowerCase()) === i);
-  $('upBtn').disabled = FILES.length ? (!ok || !s) : false;
-  $('upBtn').textContent = FILES.length ? (s ? `อัปโหลด ${FILES.length} ไฟล์เข้า “${s.name}” (มีอยู่ ${s.chapters.length} บท)` : 'เลือกวิชาก่อน') : 'เลือกไฟล์ .html';
+  $('upBtn').disabled = FILES.length ? !ok : false;
+  $('upBtn').textContent = FILES.length ? (s ? `อัปโหลด ${FILES.length} ไฟล์เข้า “${s.name}”` : 'แตะเพื่อเลือกวิชา แล้วอัปโหลด') : 'เลือกไฟล์ .html';
 }
 const toB64 = buf => { const u = new Uint8Array(buf); let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); };
 function titleOf(buf){ try { const t = new TextDecoder('utf-8').decode(buf).replace(/<!--[\s\S]*?-->/g, '').match(/<title>([\s\S]*?)<\/title>/i); return t ? t[1].replace(/\s+/g, ' ').trim().split('|')[0].trim() : ''; } catch(e){ return ''; } }
@@ -406,7 +424,8 @@ async function addFiles(list){
   renderFiles();
 }
 async function doUpload(){
-  const s = curSubject(); if (!FILES.length) return $('file').click(); if (!s) return;
+  const s = curSubject(); if (!FILES.length) return $('file').click();
+  if (!s) { const c = document.querySelector('.cur'); if (c) { c.classList.add('nudge'); setTimeout(() => c.classList.remove('nudge'), 900); c.click(); } return; }
   if (FILES.reduce((a, f) => a + f.size, 0) > 3 * 1024 * 1024) { $('fOut').innerHTML = badMsg('ไฟล์รวมใหญ่เกิน 3 MB ให้แบ่งอัปโหลดทีละชุด'); return; }
   const b = $('upBtn'); b.disabled = true; b.textContent = 'กำลังอัปโหลด...'; $('fOut').innerHTML = '';
   const titles = FILES.map(f => f.title || f.name.replace(/\.html$/i, ''));
