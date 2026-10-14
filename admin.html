@@ -140,6 +140,16 @@ button:active:not(:disabled){transform:scale(.98)}
 .bar .in{max-width:620px;margin:0 auto}
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.i{width:1.15em;height:1.15em;vertical-align:-.2em;flex:none}
+.act .ai{color:var(--c)}.act .ai .i{width:26px;height:26px}.logo .i{width:22px;height:22px}.x .i{width:18px;height:18px}.pick .ic .i{width:30px;height:30px}.ck .i{width:15px;height:15px;stroke-width:3}.ghost .i{margin-right:4px}.chg .i{margin-left:4px;width:1em;height:1em}
+.sic{width:100%;height:100%;display:block}.si{width:40px;height:40px;flex:none}
+.srow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;min-height:62px;padding:8px 12px;border-radius:14px;background:var(--bg2);border:1px solid var(--line);margin-bottom:8px;color:var(--ink)}
+.srow .tx{flex:1;min-width:0}.srow b{display:block;font-size:15.5px;line-height:1.3;font-weight:600}.srow small{display:block;color:var(--muted);font-size:12.5px;font-weight:500}
+.srow[aria-pressed=true]{border-color:var(--acc);background:var(--panel2);box-shadow:0 0 0 1px var(--acc)}
+.cnt{flex:none;font-size:12.5px;font-weight:700;border-radius:999px;padding:3px 11px;background:#8b9bff22;border:1px solid #8b9bff55;color:var(--ink)}.cnt.zero{background:var(--panel2);border-color:var(--line);color:var(--muted);font-weight:500}
+.ssr{margin-bottom:12px}#plist{max-height:46dvh;overflow:auto}
+.cur .chg{display:flex;align-items:center}
+.icg{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.ict{min-height:56px;padding:6px;border-radius:12px;background:var(--bg2);border:1px solid var(--line);font-size:11.5px;color:var(--muted)}.ict svg{width:100%;height:38px}.ict[aria-pressed=true]{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc);color:var(--ink)}
 .home{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 16px}
 .act{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;padding:16px 14px;min-height:140px;border-radius:18px;background:var(--panel);border:1px solid var(--line);position:relative;overflow:hidden;color:var(--ink)}
 .act::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--c)}
@@ -169,7 +179,7 @@ button:active:not(:disabled){transform:scale(.98)}
 <body>
 <div class="wrap">
   <div id="loginView" class="login">
-    <div class="brand"><div class="logo" aria-hidden="true">🔒</div><div><h1>Admin Dashboard</h1><p class="sub">เข้าสู่ระบบเพื่อจัดการเว็บ</p></div></div>
+    <div class="brand"><div class="logo" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><div><h1>Admin Dashboard</h1><p class="sub">เข้าสู่ระบบเพื่อจัดการเว็บ</p></div></div>
     <div class="card">
       <label for="pw">รหัสผ่าน</label>
       <div class="pwbox"><input id="pw" type="password" autocomplete="current-password" placeholder="กรอกรหัสผ่าน"><button class="eye" id="eye" type="button">แสดง</button></div>
@@ -180,15 +190,15 @@ button:active:not(:disabled){transform:scale(.98)}
 
   <div id="panelView" class="hidden">
     <div class="top">
-      <div class="brand"><div class="logo" aria-hidden="true">🛠</div><div><h1>Admin Dashboard</h1><p class="sub">เลือกสิ่งที่อยากทำ</p></div></div>
+      <div class="brand"><div class="logo" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></div><div><h1>Admin Dashboard</h1><p class="sub">เลือกสิ่งที่อยากทำ</p></div></div>
       <div class="acts"><button class="ghost" id="logoutBtn" type="button">ออกจากระบบ</button></div>
     </div>
     <div class="stats"><div class="st"><b id="nSub">0</b><small>วิชาทั้งหมด</small></div><div class="st"><b id="nCh">0</b><small>บทเรียนทั้งหมด</small></div></div>
     <div class="home">
-      <button class="act" data-go="subject" style="--c:#a78bfa" type="button"><span class="ai">📚</span><b>เพิ่มวิชา</b><small>สร้างวิชาใหม่ พร้อมแจ้งเตือนผู้ใช้</small></button>
-      <button class="act" data-go="lesson" style="--c:#4ade80" type="button"><span class="ai">📄</span><b>เพิ่มบทเรียน</b><small>อัปโหลดไฟล์ .html เข้าวิชา</small></button>
-      <button class="act" data-go="manage" style="--c:#fbbf24" type="button"><span class="ai">🗂</span><b>จัดการบทเรียน</b><small>แก้ชื่อ · ลบ · รีเฟรชรายการ</small></button>
-      <button class="act" data-go="push" style="--c:#38bdf8" type="button"><span class="ai">🔔</span><b>ส่งแจ้งเตือน</b><small>วิชาใหม่ · การบ้าน · ข้อความอิสระ</small></button>
+      <button class="act" data-go="subject" style="--c:#a78bfa" type="button"><span class="ai"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M12 9v6M9 12h6"/></svg></span><b>เพิ่มวิชา</b><small>สร้างวิชาใหม่ พร้อมแจ้งเตือนผู้ใช้</small></button>
+      <button class="act" data-go="lesson" style="--c:#4ade80" type="button"><span class="ai"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M13 12v6M10 15h6"/></svg></span><b>เพิ่มบทเรียน</b><small>อัปโหลดไฟล์ .html เข้าวิชา</small></button>
+      <button class="act" data-go="manage" style="--c:#fbbf24" type="button"><span class="ai"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span><b>จัดการบทเรียน</b><small>แก้ชื่อ · ลบ · รีเฟรชรายการ</small></button>
+      <button class="act" data-go="push" style="--c:#38bdf8" type="button"><span class="ai"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg></span><b>ส่งแจ้งเตือน</b><small>วิชาใหม่ · การบ้าน · ข้อความอิสระ</small></button>
     </div>
     <div id="status" role="status"></div>
   </div>
@@ -237,7 +247,7 @@ $('eye').onclick = () => { const p = $('pw'), show = p.type === 'password'; p.ty
 function openSheet(title, html){
   closeSheet();
   const ov = document.createElement('div'); ov.className = 'ov'; ov.id = 'sheet';
-  ov.innerHTML = `<div class="dlg sheet" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="sh"><h3>${esc(title)}</h3><button class="x" data-close type="button" aria-label="ปิด">✕</button></div><div class="sbody" id="sheetBody">${html}</div></div>`;
+  ov.innerHTML = `<div class="dlg sheet" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="sh"><h3>${esc(title)}</h3><button class="x" data-close type="button" aria-label="ปิด"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="sbody" id="sheetBody">${html}</div></div>`;
   ov.addEventListener('mousedown', e => { if (e.target === ov) closeSheet(); });
   ov.addEventListener('click', e => { if (e.target.closest('[data-close]')) closeSheet(); });
   document.body.appendChild(ov); document.body.style.overflow = 'hidden';
@@ -266,6 +276,18 @@ const CATS = [
   {name:'สุขภาพ/ศิลปะ/การงาน', color:'#ec4899', test:c => 'พศง'.includes(c)}
 ];
 const catOf = s => CATS.find(c => c.test((s.code || '')[0] || '')) || CATS[CATS.length - 1];
+const SUBJ_ICONS = {"globe":"<circle cx=\"32\" cy=\"32\" r=\"27\" fill=\"#2f8cf0\"/><path d=\"M14 22c3-6 10-9 15-8 3 1 2 4 0 6-3 3-1 5-4 8-3 2-5-1-8 1-3 2-4 6-5 9-3-4-3-11 2-16z\" fill=\"#4ade80\"/><path d=\"M36 12c6-1 12 2 16 7-3 0-4 3-7 3-4 0-3 4-7 4-3 0-5-3-4-6 1-3 0-6 2-8z\" fill=\"#4ade80\"/><path d=\"M34 34c5-2 11 0 13 5 2 5-2 11-7 13-5 1-6-4-6-8s-1-8 0-10z\" fill=\"#4ade80\"/><path d=\"M13 16a27 27 0 0 1 13-9\" stroke=\"#fff\" stroke-opacity=\".55\" stroke-width=\"3\" stroke-linecap=\"round\" fill=\"none\"/><circle cx=\"32\" cy=\"32\" r=\"27\" fill=\"none\" stroke=\"#1b5fc4\" stroke-width=\"2\"/>","atom":"<g fill=\"none\" stroke-width=\"3\"><ellipse cx=\"32\" cy=\"32\" rx=\"27\" ry=\"10\" stroke=\"#38bdf8\"/><ellipse cx=\"32\" cy=\"32\" rx=\"27\" ry=\"10\" stroke=\"#a78bfa\" transform=\"rotate(60 32 32)\"/><ellipse cx=\"32\" cy=\"32\" rx=\"27\" ry=\"10\" stroke=\"#f472b6\" transform=\"rotate(120 32 32)\"/></g><circle cx=\"32\" cy=\"32\" r=\"6.5\" fill=\"#fbbf24\"/><circle cx=\"59\" cy=\"32\" r=\"3.8\" fill=\"#38bdf8\"/><circle cx=\"18.5\" cy=\"8.6\" r=\"3.8\" fill=\"#a78bfa\"/><circle cx=\"18.5\" cy=\"55.4\" r=\"3.8\" fill=\"#f472b6\"/>","flask":"<path d=\"M27 6V24L13 50c-2 4 0 8 4 8h30c4 0 6-4 4-8L37 24V6\" fill=\"#93c5fd\" fill-opacity=\".18\" stroke=\"#93c5fd\" stroke-width=\"3.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M26 6h12\" stroke=\"#93c5fd\" stroke-width=\"4\" stroke-linecap=\"round\"/><path d=\"M20 40H44L51 52c1.5 3 0 6-3.500 6H16.500c-3.500 0-5-3-3.500-6z\" fill=\"#34d399\"/><circle cx=\"28\" cy=\"48\" r=\"2.5\" fill=\"#bbf7d0\"/><circle cx=\"37\" cy=\"52\" r=\"2\" fill=\"#bbf7d0\"/><circle cx=\"33\" cy=\"30\" r=\"2\" fill=\"#bfdbfe\"/><circle cx=\"30\" cy=\"22\" r=\"1.6\" fill=\"#bfdbfe\"/>","calc":"<rect x=\"12\" y=\"6\" width=\"40\" height=\"52\" rx=\"7\" fill=\"#6366f1\"/><rect x=\"17\" y=\"12\" width=\"30\" height=\"14\" rx=\"3.5\" fill=\"#c7d2fe\"/><path d=\"M23 19h12\" stroke=\"#6366f1\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"20\" cy=\"34\" r=\"3.6\" fill=\"#f472b6\"/><circle cx=\"32\" cy=\"34\" r=\"3.6\" fill=\"#fbbf24\"/><circle cx=\"44\" cy=\"34\" r=\"3.6\" fill=\"#34d399\"/><circle cx=\"20\" cy=\"43\" r=\"3.6\" fill=\"#fbbf24\"/><circle cx=\"32\" cy=\"43\" r=\"3.6\" fill=\"#34d399\"/><circle cx=\"44\" cy=\"43\" r=\"3.6\" fill=\"#f472b6\"/><circle cx=\"20\" cy=\"52\" r=\"3.6\" fill=\"#34d399\"/><circle cx=\"32\" cy=\"52\" r=\"3.6\" fill=\"#f472b6\"/><circle cx=\"44\" cy=\"52\" r=\"3.6\" fill=\"#fbbf24\"/>","chart":"<path d=\"M10 8v46h46\" fill=\"none\" stroke=\"#94a3b8\" stroke-width=\"3.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M15 48L55 18\" fill=\"none\" stroke=\"#38bdf8\" stroke-width=\"3.5\" stroke-linecap=\"round\"/><path d=\"M16 12C21 46 31 52 38 40S50 18 56 12\" fill=\"none\" stroke=\"#f472b6\" stroke-width=\"3.8\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"12\" r=\"3.5\" fill=\"#fbbf24\"/><circle cx=\"40\" cy=\"37\" r=\"3.5\" fill=\"#fbbf24\"/><circle cx=\"56\" cy=\"12\" r=\"3.5\" fill=\"#fbbf24\"/>","book":"<rect x=\"12\" y=\"6\" width=\"42\" height=\"52\" rx=\"5\" fill=\"#3b82f6\"/><rect x=\"12\" y=\"6\" width=\"10\" height=\"52\" rx=\"4\" fill=\"#1d4ed8\"/><rect x=\"28\" y=\"30\" width=\"20\" height=\"4.5\" rx=\"2.2\" fill=\"#fde68a\"/><rect x=\"28\" y=\"39\" width=\"14\" height=\"3.5\" rx=\"1.7\" fill=\"#bfdbfe\"/><path d=\"M40 6v17l5-4 5 4V6z\" fill=\"#f43f5e\"/><path d=\"M16 59h38\" stroke=\"#e2e8f0\" stroke-width=\"3\" stroke-linecap=\"round\"/>","code":"<rect x=\"4\" y=\"8\" width=\"56\" height=\"48\" rx=\"9\" fill=\"#1e293b\" stroke=\"#64748b\" stroke-width=\"2\"/><circle cx=\"13\" cy=\"16\" r=\"2.3\" fill=\"#f87171\"/><circle cx=\"20\" cy=\"16\" r=\"2.3\" fill=\"#fbbf24\"/><circle cx=\"27\" cy=\"16\" r=\"2.3\" fill=\"#4ade80\"/><path d=\"M24 28L14 37l10 9\" fill=\"none\" stroke=\"#34d399\" stroke-width=\"5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M40 28l10 9-10 9\" fill=\"none\" stroke=\"#f472b6\" stroke-width=\"5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M35.500 24l-7 26\" stroke=\"#fbbf24\" stroke-width=\"4\" stroke-linecap=\"round\"/>","bio":"<g fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M41.1 9.9H22.9\" stroke=\"#fde68a\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M46 15.1H18\" stroke=\"#fde68a\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M33.1 22.9H30.9\" stroke=\"#fde68a\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M21.4 28.1H42.6\" stroke=\"#fde68a\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M21.4 35.9H42.6\" stroke=\"#fde68a\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M33.1 41.1H30.9\" stroke=\"#fde68a\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M46 48.9H18\" stroke=\"#fde68a\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M41.1 54.1H22.9\" stroke=\"#fde68a\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M32 6 L35.3 7.3 L38.4 8.6 L41.1 9.9 L43.3 11.2 L44.9 12.5 L45.8 13.8 L46 15.1 L45.3 16.4 L43.9 17.7 L41.9 19 L39.3 20.3 L36.3 21.6 L33.1 22.9 L29.8 24.2 L26.6 25.5 L23.8 26.8 L21.4 28.1 L19.5 29.4 L18.4 30.7 L18 32 L18.4 33.3 L19.5 34.6 L21.4 35.9 L23.8 37.2 L26.6 38.5 L29.8 39.8 L33.1 41.1 L36.3 42.4 L39.3 43.7 L41.9 45 L43.9 46.3 L45.3 47.6 L46 48.9 L45.8 50.2 L44.9 51.5 L43.3 52.8 L41.1 54.1 L38.4 55.4 L35.3 56.7 L32 58\" stroke=\"#34d399\" stroke-width=\"4.5\"/><path d=\"M32 6 L28.7 7.3 L25.6 8.6 L22.9 9.9 L20.7 11.2 L19.1 12.5 L18.2 13.8 L18 15.1 L18.7 16.4 L20.1 17.7 L22.1 19 L24.7 20.3 L27.7 21.6 L30.9 22.9 L34.2 24.2 L37.4 25.5 L40.2 26.8 L42.6 28.1 L44.5 29.4 L45.6 30.7 L46 32 L45.6 33.3 L44.5 34.6 L42.6 35.9 L40.2 37.2 L37.4 38.5 L34.2 39.8 L30.9 41.1 L27.7 42.4 L24.7 43.7 L22.1 45 L20.1 46.3 L18.7 47.6 L18 48.9 L18.2 50.2 L19.1 51.5 L20.7 52.8 L22.9 54.1 L25.6 55.4 L28.7 56.7 L32 58\" stroke=\"#f472b6\" stroke-width=\"4.5\"/></g>","history":"<path d=\"M5 24L32 8l27 16z\" fill=\"#f59e0b\"/><rect x=\"8\" y=\"26\" width=\"48\" height=\"4\" rx=\"1\" fill=\"#fbbf24\"/><g fill=\"#fde68a\"><rect x=\"12\" y=\"32\" width=\"7\" height=\"18\" rx=\"1.500\"/><rect x=\"24.5\" y=\"32\" width=\"7\" height=\"18\" rx=\"1.500\"/><rect x=\"37\" y=\"32\" width=\"7\" height=\"18\" rx=\"1.500\"/><rect x=\"49\" y=\"32\" width=\"5\" height=\"18\" rx=\"1.500\"/></g><rect x=\"7\" y=\"50\" width=\"50\" height=\"5\" rx=\"1.500\" fill=\"#d97706\"/><rect x=\"3\" y=\"55\" width=\"58\" height=\"5\" rx=\"1.500\" fill=\"#b45309\"/>","music":"<path d=\"M25 14L51 8V16L25 22Z\" fill=\"#f472b6\"/><path d=\"M25 46V16M51 40V10\" stroke=\"#f472b6\" stroke-width=\"4\" stroke-linecap=\"round\"/><ellipse cx=\"18\" cy=\"47\" rx=\"8.500\" ry=\"6.500\" fill=\"#a78bfa\" transform=\"rotate(-15 18 47)\"/><ellipse cx=\"44\" cy=\"41\" rx=\"8.500\" ry=\"6.500\" fill=\"#a78bfa\" transform=\"rotate(-15 44 41)\"/>","art":"<path d=\"M32 6C16 6 5 17 5 31s11 27 26 27c5 0 6-3 5-6s0-6 4-6h8c7 0 11-4 11-10C59 15 48 6 32 6z\" fill=\"#fcd34d\"/><circle cx=\"19\" cy=\"25\" r=\"5\" fill=\"#ef4444\"/><circle cx=\"32\" cy=\"16\" r=\"5\" fill=\"#3b82f6\"/><circle cx=\"46\" cy=\"22\" r=\"5\" fill=\"#22c55e\"/><circle cx=\"18\" cy=\"41\" r=\"5\" fill=\"#a855f7\"/><ellipse cx=\"44\" cy=\"46\" rx=\"5.500\" ry=\"4.500\" fill=\"#1e293b\"/>","sport":"<circle cx=\"32\" cy=\"32\" r=\"26\" fill=\"#fb923c\"/><g fill=\"none\" stroke=\"#7c2d12\" stroke-width=\"2.6\" stroke-linecap=\"round\"><path d=\"M32 6V58M6 32H58\"/><path d=\"M12 12C23 22 23 42 12 52\"/><path d=\"M52 12C41 22 41 42 52 52\"/></g><circle cx=\"32\" cy=\"32\" r=\"26\" fill=\"none\" stroke=\"#7c2d12\" stroke-width=\"2.6\"/>","health":"<path d=\"M32 57C10 41 5 29 5 21 5 13 11 7 19 7c6 0 10 3 13 8 3-5 7-8 13-8 8 0 14 6 14 14 0 8-5 20-27 36z\" fill=\"#f43f5e\"/><path d=\"M12 33h12l5-10 7 19 5-9h11\" fill=\"none\" stroke=\"#fff\" stroke-width=\"3.500\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>","thai":"<path d=\"M10 8h44a6 6 0 0 1 6 6v28a6 6 0 0 1-6 6H30L17 59V48h-7a6 6 0 0 1-6-6V14a6 6 0 0 1 6-6z\" fill=\"#f472b6\"/><text x=\"32\" y=\"36\" text-anchor=\"middle\" font-family=\"IBM Plex Sans Thai,Tahoma,Arial,sans-serif\" font-weight=\"700\" font-size=\"34\" fill=\"#fff\">ก</text>","english":"<path d=\"M10 8h44a6 6 0 0 1 6 6v28a6 6 0 0 1-6 6H30L17 59V48h-7a6 6 0 0 1-6-6V14a6 6 0 0 1 6-6z\" fill=\"#38bdf8\"/><text x=\"32\" y=\"36\" text-anchor=\"middle\" font-family=\"IBM Plex Sans Thai,Tahoma,Arial,sans-serif\" font-weight=\"700\" font-size=\"32\" fill=\"#fff\">A</text>","planet":"<g fill=\"#fff\"><circle cx=\"9\" cy=\"12\" r=\"1.8\"/><circle cx=\"55\" cy=\"10\" r=\"2.200\"/><circle cx=\"52\" cy=\"54\" r=\"1.600\"/></g><ellipse cx=\"32\" cy=\"32\" rx=\"29\" ry=\"9\" transform=\"rotate(-22 32 32)\" fill=\"none\" stroke=\"#fde68a\" stroke-width=\"4\"/><circle cx=\"32\" cy=\"32\" r=\"15\" fill=\"#fb923c\"/><path d=\"M19 28c8 3 18 3 26 0M18 36c9 4 19 4 28 0\" fill=\"none\" stroke=\"#c2410c\" stroke-opacity=\".5\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M3 32a29 9 0 0 0 58 0\" transform=\"rotate(-22 32 32)\" fill=\"none\" stroke=\"#fde68a\" stroke-width=\"4\"/>","coin":"<circle cx=\"32\" cy=\"32\" r=\"26\" fill=\"#fbbf24\"/><circle cx=\"32\" cy=\"32\" r=\"19\" fill=\"none\" stroke=\"#f59e0b\" stroke-width=\"3\"/><text x=\"32\" y=\"42\" text-anchor=\"middle\" font-family=\"IBM Plex Sans Thai,Tahoma,Arial,sans-serif\" font-weight=\"700\" font-size=\"28\" fill=\"#b45309\">฿</text>","tools":"<path d=\"M51.6 27.9 L58.8 28.4 L58.8 35.6 L51.6 36.1 L48.7 43 L53.5 48.4 L48.4 53.5 L43 48.7 L36.1 51.6 L35.6 58.8 L28.4 58.8 L27.9 51.6 L21 48.7 L15.6 53.5 L10.5 48.4 L15.3 43 L12.4 36.1 L5.2 35.6 L5.2 28.4 L12.4 27.9 L15.3 21 L10.5 15.6 L15.6 10.5 L21 15.3 L27.9 12.4 L28.4 5.2 L35.6 5.2 L36.1 12.4 L43 15.3 L48.4 10.5 L53.5 15.6 L48.7 21Z M32 22a10 10 0 1 0 .01 0Z\" fill=\"#60a5fa\" fill-rule=\"evenodd\"/><circle cx=\"32\" cy=\"32\" r=\"10\" fill=\"none\" stroke=\"#fbbf24\" stroke-width=\"4\"/>"};
+const SUBJ_KEYS = {"globe":["ภูมิศาสตร์","ภูมิภาค","สังคม","พลเมือง","geograph","world","earth"],"planet":["ดาราศาสตร์","อวกาศ","โลกและ","space","astro"],"bio":["ชีว","พันธุ","bio","สิ่งมีชีวิต"],"flask":["เคมี","chem","วิทยาศาสตร์","science"],"atom":["ฟิสิกส์","physic","ไฟฟ้า"],"chart":["ฟังก์ชัน","สถิติ","กราฟ","function","statistic"],"calc":["คณิต","math","เลข","แคลคูลัส"],"code":["คอมพิวเตอร์","เทคโนโลยี","โปรแกรม","code","computer","ดิจิทัล"],"history":["ประวัติศาสตร์","history","ศาสนา","วัฒนธรรม"],"thai":["ภาษาไทย","วรรณ","ไทย"],"english":["อังกฤษ","english","ภาษา","language"],"music":["ดนตรี","music","นาฏศิลป์"],"art":["ศิลปะ","art","วาด","ทัศนศิลป์"],"sport":["พละ","กีฬา","พลศึกษา","sport"],"health":["สุขศึกษา","สุขภาพ","health"],"coin":["เศรษฐ","การเงิน","บัญชี","econom","ธุรกิจ"],"tools":["การงาน","อาชีพ","ช่าง","งานบ้าน","tool"]};
+const SUBJ_EMOJI = {"🌍":"globe","🌏":"globe","🌎":"globe","🌐":"globe","⚛️":"atom","⚛":"atom","🧪":"flask","🔬":"bio","🧬":"bio","🧮":"calc","➗":"calc","📐":"calc","📈":"chart","📊":"chart","📖":"book","📚":"book","📕":"book","💻":"code","🖥️":"code","🏛️":"history","🎵":"music","🎶":"music","🎨":"art","⚽":"sport","🏀":"sport","❤️":"health","🪐":"planet","🚀":"planet","💰":"coin","🛠️":"tools","🔧":"tools","🇹🇭":"thai","🔤":"english"};
+const subjIconKey = (v,name) => {
+  v=String(v==null?"":v).trim();
+  if(SUBJ_ICONS[v]) return v;
+  const t=String(name||"").toLowerCase();
+  for(const k in SUBJ_KEYS){ if(SUBJ_KEYS[k].some(w=>t.includes(w))) return k; }
+  return SUBJ_EMOJI[v]||"book";
+};
+// icon: ชื่อโลโก้ (globe planet atom flask bio calc chart code history thai english music art sport health coin tools book) หรือ <svg>…</svg> เอง; ถ้าไม่ระบุ/ไม่รู้จัก จะเดาจากชื่อวิชา
+const subjIcon = (v,name) => { v=String(v==null?"":v).trim(); if(v.startsWith("<svg")) return v; return '<svg class="sic" viewBox="0 0 64 64" aria-hidden="true">'+SUBJ_ICONS[subjIconKey(v,name)]+'</svg>'; };
 const curSubject = () => SUBJECTS.find(s => s.id === CUR);
 async function loadSubjects(){
   const d = await (await fetch('/subjects.json?t=' + Date.now(), { cache:'no-store' })).json();
@@ -273,11 +295,15 @@ async function loadSubjects(){
   if (!SUBJECTS.some(s => s.id === CUR)) CUR = '';
   $('nSub').textContent = SUBJECTS.length; $('nCh').textContent = SUBJECTS.reduce((n, s) => n + s.chapters.length, 0);
 }
-function pickerHtml(){
-  return CATS.map(c => {
-    const l = SUBJECTS.filter(s => catOf(s) === c); if (!l.length) return '';
-    return `<div class="grp" style="--c:${c.color}"><div class="gh"><i></i>${esc(c.name)}<span>${l.length} วิชา</span></div><div class="subs">${l.map(s => `<button class="sb" data-sid="${esc(s.id)}" aria-pressed="${s.id === CUR}" type="button">${s.code ? `<small>${esc(s.code)}</small>` : ''}${esc(s.name)}</button>`).join('')}</div></div>`;
-  }).join('') || '<div class="hint" style="text-align:center">ยังไม่มีวิชา — กด “เพิ่มวิชา” ก่อน</div>';
+const cntHtml = n => `<span class="cnt${n ? '' : ' zero'}">${n} บท</span>`;
+const rowHtml = s => `<button class="srow" data-sid="${esc(s.id)}" aria-pressed="${s.id === CUR}" type="button"><span class="si">${subjIcon(s.icon, s.name)}</span><span class="tx"><b>${esc(s.name)}</b>${s.code ? `<small>${esc(s.code)}</small>` : ''}</span>${cntHtml(s.chapters.length)}</button>`;
+function listHtml(q){
+  q = String(q || '').trim().toLowerCase();
+  const h = CATS.map(c => {
+    const l = SUBJECTS.filter(s => catOf(s) === c && (!q || (s.name + ' ' + (s.code || '')).toLowerCase().includes(q))); if (!l.length) return '';
+    return `<div class="grp" style="--c:${c.color}"><div class="gh"><i></i>${esc(c.name)}<span>${l.length} วิชา</span></div>${l.map(rowHtml).join('')}</div>`;
+  }).join('');
+  return h || '<div class="hint" style="text-align:center">ไม่พบวิชา</div>';
 }
 /* แถบเลือกวิชาในป็อปอัพ: กดแล้วขยายรายการ เลือกแล้วพับ แล้วเรียก onPick */
 function subjectBar(root, onPick){
@@ -288,30 +314,36 @@ function subjectBar(root, onPick){
   const paint = () => {
     const c = curSubject();
     btn.setAttribute('aria-expanded', open); btn.style.setProperty('--c', c ? catOf(c).color : 'var(--muted)');
-    btn.innerHTML = c ? `<i></i><div class="tx"><small>วิชา</small><b>${esc((c.code ? c.code + ' · ' : '') + c.name)}</b></div><span class="chg">${open ? 'ปิด ▴' : 'เปลี่ยน ▾'}</span>` : '<div class="tx"><b>เลือกวิชา ▾</b></div>';
-    pk.classList.toggle('hidden', !open); if (open) pk.innerHTML = pickerHtml();
+    btn.innerHTML = c ? `<span class="si">${subjIcon(c.icon, c.name)}</span><div class="tx"><small>วิชาที่เลือก</small><b>${esc(c.name)}</b></div>${cntHtml(c.chapters.length)}<span class="chg">${open ? 'ปิด' : 'เปลี่ยน'}<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span>` : '<div class="tx"><b>แตะเพื่อเลือกวิชา</b></div><span class="chg">เลือก<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span>';
+    pk.classList.toggle('hidden', !open);
+    if (open) { pk.innerHTML = (SUBJECTS.length > 6 ? '<input class="ssr" id="pq" placeholder="ค้นหาชื่อหรือรหัสวิชา" autocomplete="off">' : '') + '<div id="plist">' + listHtml() + '</div>'; }
   };
   btn.onclick = () => { open = !open; paint(); };
+  pk.addEventListener('input', e => { if (e.target.id === 'pq') $('plist').innerHTML = listHtml(e.target.value); });
   pk.addEventListener('click', e => { const b = e.target.closest('[data-sid]'); if (!b) return; CUR = b.dataset.sid; open = false; paint(); onPick(); });
   paint(); return paint;
 }
 
 /* ---------- 1) เพิ่มวิชา ---------- */
 const slug = s => (String(s).toLowerCase().match(/[a-z0-9]+/g) || []).join('-').slice(0, 40);
+let ICON_SEL = '';
 function subjectSheet(){
+  ICON_SEL = '';
   const b = openSheet('เพิ่มวิชา', `
     <div class="field"><label for="fName">ชื่อวิชา *</label><input id="fName" maxlength="80" placeholder="เช่น ฟิสิกส์ 2"></div>
-    <div class="row2 field"><div><label for="fCode">รหัสวิชา</label><input id="fCode" maxlength="20" placeholder="เช่น ว31201"></div><div><label for="fIcon">ไอคอน</label><input id="fIcon" maxlength="4" value="📖" style="text-align:center;font-size:22px"></div></div>
+    <div class="field"><label for="fCode">รหัสวิชา</label><input id="fCode" maxlength="20" placeholder="เช่น ว31201"></div>
+    <div class="field"><label>ไอคอนวิชา</label><div class="icg" id="icg"><button class="ict auto" data-ic="" aria-pressed="true" type="button">อัตโนมัติ</button>${Object.keys(SUBJ_ICONS).map(k => `<button class="ict" data-ic="${k}" aria-pressed="false" type="button">${subjIcon(k)}</button>`).join('')}</div></div>
     <div class="field"><label for="fId">ชื่อโฟลเดอร์ (อังกฤษ — เว้นว่างให้ตั้งอัตโนมัติ)</label><input id="fId" maxlength="60" placeholder="เช่น physics-2" autocapitalize="none"></div>
     <label class="chk"><input type="checkbox" id="fNotify" checked><span>แจ้งเตือนผู้ใช้ว่ามีวิชาใหม่</span></label>
     <button class="pri" id="fGo" type="button">สร้างวิชา</button><div id="fOut"></div>`);
+  $('icg').addEventListener('click', e => { const t = e.target.closest('[data-ic]'); if (!t) return; ICON_SEL = t.dataset.ic; $('icg').querySelectorAll('.ict').forEach(x => x.setAttribute('aria-pressed', x === t)); });
   $('fGo').onclick = async () => {
     const name = $('fName').value.trim(); if (!name) { $('fName').focus(); return; }
     const code = $('fCode').value.trim(), id = ($('fId').value.trim() || slug(code + ' ' + name) || 'subject-' + Date.now().toString(36)).toLowerCase();
     const order = SUBJECTS.reduce((m, s) => s.order < 999 ? Math.max(m, s.order) : m, 0) + 1;
     const g = $('fGo'); g.disabled = true; g.textContent = 'กำลังสร้าง...'; $('fOut').innerHTML = '';
     try {
-      const j = await api('addSubject', { id, name, code, icon: $('fIcon').value.trim() || '📖', order });
+      const j = await api('addSubject', { id, name, code, icon: ICON_SEL, order });
       let note = DEPLOY + ' แล้ววิชาจะขึ้น';
       if ($('fNotify').checked) { try { note = pushRes(await sendPush('มีวิชาใหม่: ' + name, 'เข้าไปดูเนื้อหาวิชาใหม่ได้เลย', '/')) + '<br>' + note; } catch(e){ note = 'ส่งแจ้งเตือนไม่สำเร็จ: ' + esc(e.message) + '<br>' + note; } }
       $('fOut').innerHTML = okMsg(`สร้างวิชา “${esc(name)}” แล้ว (commit ${esc(j.commit)})`, note);
@@ -324,7 +356,7 @@ function subjectSheet(){
 function lessonSheet(){
   FILES = [];
   const b = openSheet('เพิ่มบทเรียน', `
-    <label class="pick" id="drop"><span class="ic" aria-hidden="true">＋</span><b>แตะเพื่อเลือกไฟล์ .html</b><span>เลือกได้หลายไฟล์ หรือลากมาวางที่นี่</span><input id="file" type="file" accept=".html,text/html" multiple></label>
+    <label class="pick" id="drop"><span class="ic" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><b>แตะเพื่อเลือกไฟล์ .html</b><span>เลือกได้หลายไฟล์ หรือลากมาวางที่นี่</span><input id="file" type="file" accept=".html,text/html" multiple></label>
     <div id="fileList"></div>
     <div class="hint">ชื่อไฟล์ซ้ำจะถูกเขียนทับ · ชื่อบทดึงจากแท็ก &lt;title&gt; · ขึ้นต้นชื่อไฟล์ด้วยเลขเพื่อกำหนดลำดับ</div>
     <label class="chk"><input type="checkbox" id="fNotify"><span>แจ้งเตือนผู้ใช้ว่ามีบทเรียนใหม่</span></label>
@@ -349,7 +381,7 @@ function renderFiles(){
   }).join('');
   const ok = FILES.length && FILES.every((f, i) => FILE_RE.test(f.name) && !/^[._]/.test(f.name) && names.indexOf(f.name.toLowerCase()) === i);
   $('upBtn').disabled = FILES.length ? (!ok || !s) : false;
-  $('upBtn').textContent = FILES.length ? (s ? `อัปโหลด ${FILES.length} ไฟล์เข้า “${s.name}”` : 'เลือกวิชาก่อน') : 'เลือกไฟล์ .html';
+  $('upBtn').textContent = FILES.length ? (s ? `อัปโหลด ${FILES.length} ไฟล์เข้า “${s.name}” (มีอยู่ ${s.chapters.length} บท)` : 'เลือกวิชาก่อน') : 'เลือกไฟล์ .html';
 }
 const toB64 = buf => { const u = new Uint8Array(buf); let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); };
 function titleOf(buf){ try { const t = new TextDecoder('utf-8').decode(buf).replace(/<!--[\s\S]*?-->/g, '').match(/<title>([\s\S]*?)<\/title>/i); return t ? t[1].replace(/\s+/g, ' ').trim().split('|')[0].trim() : ''; } catch(e){ return ''; } }
@@ -380,17 +412,17 @@ async function doUpload(){
 function manageSheet(){
   SEL.clear();
   const b = openSheet('จัดการบทเรียน', `
-    <div class="tools"><button class="ghost" id="selAll" type="button">เลือกทั้งหมด</button><button class="ghost" id="refBtn" type="button">↻ รีเฟรชรายการ</button><span class="sel" id="selInfo"></span></div>
+    <div class="tools"><button class="ghost" id="selAll" type="button">เลือกทั้งหมด</button><button class="ghost" id="refBtn" type="button"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14-4M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14 4M20 20v-4h-4"/></svg> รีเฟรชรายการ</button><span class="sel" id="selInfo"></span></div>
     <div class="chs" id="chs"></div>
     <div class="hint">แตะที่บทเพื่อเลือกหลายบท แล้วกดลบ · ปุ่ม “แก้ชื่อ” ใช้เปลี่ยนชื่อไฟล์ (ลำดับบทเรียงตามชื่อไฟล์)</div>
     <div class="sticky"><button class="pri dangerbtn hidden" id="delBtn" type="button">ลบที่เลือก</button></div><div id="fOut"></div>`);
   subjectBar(b, () => { SEL.clear(); renderChs(); });
   $('selAll').onclick = () => { const s = curSubject(), l = s ? s.chapters : []; if (SEL.size === l.length) SEL.clear(); else l.forEach(c => SEL.add(c.file)); renderChs(); };
   $('refBtn').onclick = async () => {
-    const r = $('refBtn'); r.disabled = true; r.textContent = '↻ กำลังโหลด...';
+    const r = $('refBtn'); r.disabled = true; r.textContent = 'กำลังโหลด...';
     try { await loadSubjects(); renderChs(); $('fOut').innerHTML = okMsg('อัปเดตรายการบทแล้ว'); setTimeout(() => { if ($('fOut')) $('fOut').innerHTML = ''; }, 2200); }
     catch(e){ $('fOut').innerHTML = badMsg('รีเฟรชไม่สำเร็จ ลองใหม่อีกครั้ง'); }
-    r.disabled = false; r.textContent = '↻ รีเฟรชรายการ';
+    r.disabled = false; r.innerHTML = '<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14-4M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14 4M20 20v-4h-4"/></svg> รีเฟรชรายการ';
   };
   $('chs').addEventListener('click', onChsClick); $('delBtn').onclick = doDelete; renderChs();
 }
@@ -398,8 +430,8 @@ function renderChs(){
   if (!$('chs')) return;
   const s = curSubject(), list = s ? s.chapters : [];
   SEL = new Set([...SEL].filter(f => list.some(c => c.file === f)));
-  $('chs').innerHTML = !s ? '<div class="empty">เลือกวิชาด้านบนก่อน</div>' : list.length ? list.map((c, i) => `<div class="row${SEL.has(c.file) ? ' on' : ''}" data-i="${i}"><span class="ck" aria-hidden="true">✓</span><span class="n">${i + 1}</span><div class="tx" title="${esc(c.file)}"><div class="tt">${esc(c.title)}</div><div class="ff">${esc(c.file)}</div></div><button class="edit" data-edit="${i}" type="button">แก้ชื่อ</button></div>`).join('') : '<div class="empty">ยังไม่มีบทเรียนในวิชานี้<br>กลับไปกด “เพิ่มบทเรียน” เพื่อเพิ่ม</div>';
-  $('selInfo').textContent = SEL.size ? `เลือก ${SEL.size}/${list.length}` : '';
+  $('chs').innerHTML = !s ? '<div class="empty">เลือกวิชาด้านบนก่อน</div>' : list.length ? list.map((c, i) => `<div class="row${SEL.has(c.file) ? ' on' : ''}" data-i="${i}"><span class="ck" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></span><span class="n">${i + 1}</span><div class="tx" title="${esc(c.file)}"><div class="tt">${esc(c.title)}</div><div class="ff">${esc(c.file)}</div></div><button class="edit" data-edit="${i}" type="button">แก้ชื่อ</button></div>`).join('') : '<div class="empty">ยังไม่มีบทเรียนในวิชานี้<br>กลับไปกด “เพิ่มบทเรียน” เพื่อเพิ่ม</div>';
+  $('selInfo').textContent = s ? (SEL.size ? `เลือก ${SEL.size} จาก ${list.length} บท` : `ทั้งหมด ${list.length} บท`) : '';
   $('selAll').textContent = list.length && SEL.size === list.length ? 'ยกเลิกทั้งหมด' : 'เลือกทั้งหมด'; $('selAll').classList.toggle('hidden', !list.length);
   $('delBtn').classList.toggle('hidden', !SEL.size); $('delBtn').textContent = `ลบที่เลือก (${SEL.size} บท)`;
 }
@@ -438,7 +470,7 @@ async function doDelete(){
 /* ---------- 4) ส่งแจ้งเตือน ---------- */
 function pushSheet(){
   openSheet('ส่งแจ้งเตือน', `
-    <div class="tpl"><button class="ghost" data-t="0" type="button">📚 วิชาใหม่</button><button class="ghost" data-t="1" type="button">📝 การบ้าน</button><button class="ghost" data-t="2" type="button">📢 ทั่วไป</button></div>
+    <div class="tpl"><button class="ghost" data-t="0" type="button"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M8 17h10"/></svg> วิชาใหม่</button><button class="ghost" data-t="1" type="button"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="5" width="12" height="16" rx="2"/><path d="M9 5V4h6v1M9 11h6M9 15h4"/></svg> การบ้าน</button><button class="ghost" data-t="2" type="button"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg> ทั่วไป</button></div>
     <div class="field"><label for="pTitle">หัวข้อ</label><input id="pTitle" maxlength="100" placeholder="หัวข้อ"></div>
     <div class="field"><label for="pMsg">ข้อความ</label><input id="pMsg" maxlength="500" placeholder="ข้อความ"></div>
     <div class="field"><label for="pUrl">ลิงก์ในเว็บ</label><input id="pUrl" value="/" placeholder="เช่น /"></div>
