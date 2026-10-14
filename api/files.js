@@ -44,6 +44,13 @@ module.exports = async (req, res) => {
     if (!process.env.GITHUB_TOKEN || !process.env.GITHUB_REPO) throw bad('ยังไม่ได้ตั้งค่า GITHUB_TOKEN / GITHUB_REPO ใน Vercel', 500);
     const repo = process.env.GITHUB_REPO, branch = process.env.GITHUB_BRANCH || 'main';
 
+    if (b.action === 'zip') {   // ลิงก์ดาวน์โหลด zip ทั้ง repo (GitHub ออกลิงก์ชั่วคราวให้ ไม่ผ่านเซิร์ฟเวอร์เรา จึงไม่ติดขีดจำกัดขนาด)
+      const r = await fetch(`https://api.github.com/repos/${repo}/zipball/${encodeURIComponent(branch)}`, { redirect: 'manual', headers: { Authorization: 'Bearer ' + process.env.GITHUB_TOKEN, Accept: 'application/vnd.github+json', 'User-Agent': 'content-hub-admin' } });
+      const url = r.headers.get('location');
+      if (!url) throw bad('สร้างลิงก์ดาวน์โหลดไม่สำเร็จ (' + r.status + ')', 502);
+      return res.json({ ok: true, url });
+    }
+
     if (b.action === 'list') { const s = await snapshot(repo, branch); return res.json({ ok: true, files: s.entries.slice(0, 8000), truncated: s.truncated }); }
 
     if (b.action === 'read') {
