@@ -322,6 +322,11 @@ button{letter-spacing:.1px}
 .bk-new{padding:14px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(160deg,#34d3991a,transparent 70%),var(--bg2)}
 .bk-r{transition:background .12s}.bk-r:hover{background:#18214099}
 .bk-r .t b{font-weight:600}
+.tabs.t3{grid-template-columns:repeat(3,1fr)}.tabs.t3 .tab{padding:0 6px;font-size:14.5px}
+.pc.new{border:1.5px dashed color-mix(in srgb,var(--acc2) 60%,transparent);background:color-mix(in srgb,var(--acc2) 7%,var(--bg2));--c:var(--acc2);align-items:center;justify-content:center;text-align:center}
+.pc.new .si{background:color-mix(in srgb,var(--acc2) 20%,transparent);color:var(--acc2)}.pc.new .si .i{width:26px;height:26px}.pc.new b{text-align:center}
+.rn{display:flex;gap:8px}.rn input{text-align:center;font-size:22px;font-weight:700;letter-spacing:2px}.rn button{flex:none;width:56px;padding:0;font-size:22px;min-height:48px}
+.rn-pv{margin-top:12px;padding:10px 12px;border-radius:12px;background:var(--bg2);border:1px solid var(--line);font-size:14px;color:var(--muted);word-break:break-all}.rn-pv b{color:var(--ink)}
 </style>
 </head>
 <body>
@@ -343,9 +348,7 @@ button{letter-spacing:.1px}
     </div>
     <div class="stats"><div class="st"><b id="nSub">0</b><small>วิชาทั้งหมด</small></div><div class="st"><b id="nCh">0</b><small>บทเรียนทั้งหมด</small></div></div>
     <div class="home">
-      <button class="act" data-go="subject" style="--c:#a78bfa" type="button"><span class="ai"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M12 9v6M9 12h6"/></svg></span><b>เพิ่มวิชา</b><small>สร้างวิชาใหม่ พร้อมแจ้งเตือนผู้ใช้</small></button>
-      <button class="act" data-go="lesson" style="--c:#4ade80" type="button"><span class="ai"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M13 12v6M10 15h6"/></svg></span><b>เพิ่มบทเรียน</b><small>อัปโหลดไฟล์ .html เข้าวิชา</small></button>
-      <button class="act" data-go="manage" style="--c:#fbbf24" type="button"><span class="ai"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span><b>จัดการบทเรียน</b><small>แก้ชื่อ · ลบ · รีเฟรชรายการ</small></button>
+      <button class="act" data-go="subjects" style="--c:#a78bfa" type="button"><span class="ai"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M12 9v6M9 12h6"/></svg></span><b>จัดการวิชา</b><small>เพิ่มวิชา · อัปโหลดบท · ลบ · เปลี่ยนชื่อ</small></button>
       <button class="act" data-go="push" style="--c:#38bdf8" type="button"><span class="ai"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg></span><b>ส่งแจ้งเตือน</b><small>วิชาใหม่ · การบ้าน · ข้อความอิสระ</small></button>
       <button class="act wide" data-go="files" style="--c:#f472b6" type="button"><span class="ai"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 11v6M9 14l3-3 3 3"/></svg></span><b>จัดการไฟล์</b><small>เปิดดูทุกโฟลเดอร์ · แก้ไข เขียน อัปโหลด ลบ ย้ายไฟล์ได้ทุกไฟล์</small></button>
       <button class="act wide" data-go="backup" style="--c:#34d399" type="button"><span class="ai"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></span><b>สำรอง / กู้คืนข้อมูล</b><small>บันทึกทั้งระบบเป็นชื่อได้หลายชุด · เลือกชื่อเพื่อโหลดกลับ</small></button>
@@ -448,30 +451,32 @@ async function loadSubjects(){
 const cntHtml = n => `<span class="cnt${n ? '' : ' zero'}">${n} บท</span>`;
 const cardHtml = s => `<button class="pc${s.id === CUR ? ' on' : ''}" data-sid="${esc(s.id)}" style="--c:${catOf(s).color}" type="button"><span class="pcn${s.chapters.length ? '' : ' zero'}">${s.chapters.length} บท</span><span class="si">${subjIcon(s.icon, s.name)}</span><b>${esc(s.name)}</b><small>${esc(s.code || '')}</small></button>`;
 /* ป็อปอัพเลือกวิชา — แบบเดียวกับหน้าเลือกวิชาในการบ้านของหน้าเว็บ */
-function pickPopup(onSel){
+function pickPopup(onSel, onNew){
   const old = $('pickOv'); if (old) old.remove();
   const ov = document.createElement('div'); ov.className = 'ov pov'; ov.id = 'pickOv';
   const many = SUBJECTS.length > 8;
-  const grid = q => { q = String(q || '').trim().toLowerCase(); const l = SUBJECTS.filter(s => !q || (s.name + ' ' + (s.code || '')).toLowerCase().includes(q)); return l.map(cardHtml).join('') || '<div class="hint" style="grid-column:1/-1;text-align:center">ไม่พบวิชา</div>'; };
-  ov.innerHTML = `<div class="dlg sheet pk" role="dialog" aria-label="เลือกวิชา"><div class="sh"><h3>เลือกวิชา</h3><button class="x" data-pclose type="button" aria-label="ปิด"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="sbody">${many ? '<input class="ssr" id="pq" placeholder="ค้นหาชื่อหรือรหัสวิชา" autocomplete="off">' : ''}<div class="pg" id="pg">${SUBJECTS.length ? grid() : '<div class="hint" style="grid-column:1/-1;text-align:center">ยังไม่มีวิชา — กด “เพิ่มวิชา” ก่อน</div>'}</div></div></div>`;
+  const newCard = onNew ? '<button class="pc new" data-new type="button"><span class="si"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><b>เพิ่มวิชาใหม่</b><small>สร้างโฟลเดอร์วิชา</small></button>' : '';
+  const grid = q => { q = String(q || '').trim().toLowerCase(); const l = SUBJECTS.filter(s => !q || (s.name + ' ' + (s.code || '')).toLowerCase().includes(q)); return (q ? '' : newCard) + (l.map(cardHtml).join('') || '<div class="hint" style="grid-column:1/-1;text-align:center">ไม่พบวิชา</div>'); };
+  ov.innerHTML = `<div class="dlg sheet pk" role="dialog" aria-label="เลือกวิชา"><div class="sh"><h3>เลือกวิชา</h3><button class="x" data-pclose type="button" aria-label="ปิด"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="sbody">${many ? '<input class="ssr" id="pq" placeholder="ค้นหาชื่อหรือรหัสวิชา" autocomplete="off">' : ''}<div class="pg" id="pg">${SUBJECTS.length ? grid() : newCard + '<div class="hint" style="grid-column:1/-1;text-align:center">ยังไม่มีวิชา — กด “เพิ่มวิชาใหม่” ก่อน</div>'}</div></div></div>`;
   ov.addEventListener('mousedown', e => { if (e.target === ov) ov.remove(); });
   ov.addEventListener('input', e => { if (e.target.id === 'pq') $('pg').innerHTML = grid(e.target.value); });
   ov.addEventListener('click', e => {
     if (e.target.closest('[data-pclose]')) return ov.remove();
+    if (e.target.closest('[data-new]')) { ov.remove(); return onNew && onNew(); }
     const b = e.target.closest('[data-sid]'); if (!b) return;
     CUR = b.dataset.sid; ov.remove(); onSel();
   });
   document.body.appendChild(ov);
 }
 /* แถบวิชาที่เลือก: แตะแล้วเปิดป็อปอัพเลือกวิชา */
-function subjectBar(root, onPick){
+function subjectBar(root, onPick, onNew){
   const btn = document.createElement('button'); btn.className = 'cur'; btn.type = 'button'; root.prepend(btn);
   const paint = () => {
     const c = curSubject(); btn.classList.toggle('empty', !c);
     btn.style.setProperty('--c', c ? catOf(c).color : 'var(--muted)');
     btn.innerHTML = c ? `<span class="si">${subjIcon(c.icon, c.name)}</span><div class="tx"><small>วิชาที่เลือก</small><b>${esc(c.name)}</b></div>${cntHtml(c.chapters.length)}<span class="chg">เปลี่ยน<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span>` : '<span class="si ei"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M8 17h10M9 8h5"/></svg></span><div class="tx"><small>ขั้นแรก</small><b>แตะเพื่อเลือกวิชา</b></div><span class="chg">เลือกวิชา<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span>';
   };
-  const pick = () => pickPopup(() => { paint(); onPick(); });
+  const pick = () => pickPopup(() => { paint(); onPick(); }, onNew);
   btn.onclick = pick; paint();
   return paint;
 }
@@ -479,15 +484,15 @@ function subjectBar(root, onPick){
 /* ---------- 1) เพิ่มวิชา ---------- */
 const slug = s => (String(s).toLowerCase().match(/[a-z0-9]+/g) || []).join('-').slice(0, 40);
 let ICON_SEL = '';
-function subjectSheet(){
+function subjectPane(b){
   ICON_SEL = '';
-  const b = openSheet('เพิ่มวิชา', `
+  b.innerHTML = `
     <div class="field"><label for="fName">ชื่อวิชา *</label><input id="fName" maxlength="80" placeholder="เช่น ฟิสิกส์ 2"></div>
     <div class="field"><label for="fCode">รหัสวิชา</label><input id="fCode" maxlength="20" placeholder="เช่น ว31201"></div>
     <div class="field"><label>ไอคอนวิชา</label><div class="icg" id="icg"><button class="ict auto" data-ic="" aria-pressed="true" type="button">อัตโนมัติ</button>${Object.keys(SUBJ_ICONS).map(k => `<button class="ict" data-ic="${k}" aria-pressed="false" type="button">${subjIcon(k)}</button>`).join('')}</div></div>
     <div class="field"><label for="fId">ชื่อโฟลเดอร์ (อังกฤษ — เว้นว่างให้ตั้งอัตโนมัติ)</label><input id="fId" maxlength="60" placeholder="เช่น physics-2" autocapitalize="none"></div>
     <label class="chk"><input type="checkbox" id="fNotify" checked><span>แจ้งเตือนผู้ใช้ว่ามีวิชาใหม่</span></label>
-    <button class="pri" id="fGo" type="button">สร้างวิชา</button><div id="fOut"></div>`);
+    <button class="pri" id="fGo" type="button">สร้างวิชา</button><div id="fOut"></div>`;
   $('icg').addEventListener('click', e => { const t = e.target.closest('[data-ic]'); if (!t) return; ICON_SEL = t.dataset.ic; $('icg').querySelectorAll('.ict').forEach(x => x.setAttribute('aria-pressed', x === t)); });
   $('fGo').onclick = async () => {
     const name = $('fName').value.trim(); if (!name) { $('fName').focus(); return; }
@@ -499,21 +504,20 @@ function subjectSheet(){
       let note = DEPLOY + ' แล้ววิชาจะขึ้น';
       if ($('fNotify').checked) { try { note = pushRes(await sendPush('มีวิชาใหม่: ' + name, 'เข้าไปดูเนื้อหาวิชาใหม่ได้เลย', '/?s=' + encodeURIComponent(id))) + '<br>' + note; } catch(e){ note = 'ส่งแจ้งเตือนไม่สำเร็จ: ' + esc(e.message) + '<br>' + note; } }
       $('fOut').innerHTML = okMsg(`สร้างวิชา “${esc(name)}” แล้ว (commit ${esc(j.commit)})`, note);
-      g.textContent = 'เสร็จแล้ว'; setTimeout(() => loadSubjects().catch(() => {}), 70000);
+      SUBJECTS.push({ id, name, code, icon: ICON_SEL, order, chapters: [] }); CUR = id; paintStats();   // ขึ้นในรายการทันที ไม่ต้องรอ deploy
+      g.disabled = false; g.textContent = 'ไปเพิ่มบทเรียนเข้าวิชานี้'; g.onclick = () => mgShow('add'); setTimeout(() => loadSubjects().then(paintStats).catch(() => {}), 70000);
     } catch(e){ $('fOut').innerHTML = badMsg(e.message); g.disabled = false; g.textContent = 'สร้างวิชา'; }
   };
 }
 
 /* ---------- 2) เพิ่มบทเรียน ---------- */
-function lessonSheet(){
-  FILES = [];
-  const b = openSheet('เพิ่มบทเรียน', `
+function lessonPane(b){
+  b.innerHTML = `
     <label class="pick" id="drop"><span class="ic" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 8.5a4 4 0 0 1-.5 7.97"/><path d="M12 12v8M8.5 15.5 12 12l3.5 3.5"/></svg></span><b>เลือกไฟล์ .html</b><span class="sub">แตะเพื่อเลือก (เลือกได้หลายไฟล์) หรือลากมาวางที่นี่</span><span class="cta">เลือกไฟล์</span><input id="file" type="file" accept=".html,text/html" multiple></label>
     <div id="fileList"></div>
     <div class="hint">ชื่อไฟล์ซ้ำจะถูกเขียนทับ · ชื่อบทดึงจากแท็ก &lt;title&gt; · ขึ้นต้นชื่อไฟล์ด้วยเลขเพื่อกำหนดลำดับ</div>
     <label class="chk"><input type="checkbox" id="fNotify"><span>แจ้งเตือนผู้ใช้ว่ามีบทเรียนใหม่</span></label>
-    <div class="sticky"><button class="pri" id="upBtn" type="button">เลือกไฟล์ .html</button></div><div id="fOut"></div>`);
-  subjectBar(b, renderFiles);
+    <div class="sticky"><button class="pri" id="upBtn" type="button">เลือกไฟล์ .html</button></div><div id="fOut"></div>`;
   $('file').addEventListener('change', async e => { await addFiles(e.target.files); e.target.value = ''; });
   const d = $('drop');
   ['dragenter','dragover'].forEach(t => d.addEventListener(t, e => { e.preventDefault(); d.classList.add('drag'); }));
@@ -560,19 +564,19 @@ async function doUpload(){
     let note = DEPLOY + ' แล้วบทเรียนจะขึ้น';
     if ($('fNotify').checked) { try { note = pushRes(await sendPush('มีบทเรียนใหม่: ' + s.name, titles.slice(0, 3).join(', ') + (titles.length > 3 ? ` และอีก ${titles.length - 3} บท` : ''), lessonUrl)) + '<br>' + note; } catch(e){ note = 'ส่งแจ้งเตือนไม่สำเร็จ: ' + esc(e.message) + '<br>' + note; } }
     $('fOut').innerHTML = okMsg(`อัปโหลด ${j.count} ไฟล์สำเร็จ (commit ${esc(j.commit)})`, note);
-    FILES = []; renderFiles(); $('upBtn').textContent = 'เสร็จแล้ว'; $('upBtn').disabled = true; setTimeout(() => loadSubjects().catch(() => {}), 70000);
+    FILES.forEach(f => { const t = f.title || f.name.replace(/\.html$/i, ''), e = s.chapters.find(c => c.file.toLowerCase() === f.name.toLowerCase()); if (e) e.title = t; else s.chapters.push({ file: f.name, title: t }); });
+    s.chapters.sort(chCmp); paintStats(); mgTabs();   // เห็นในหน้า “จัดการบท” ทันที
+    FILES = []; renderFiles(); $('upBtn').textContent = 'เสร็จแล้ว'; $('upBtn').disabled = true; setTimeout(() => loadSubjects().then(paintStats).catch(() => {}), 70000);
   } catch(e){ $('fOut').innerHTML = badMsg(e.message); renderFiles(); }
 }
 
 /* ---------- 3) จัดการบทเรียน (มีปุ่มรีเฟรชอยู่ที่นี่) ---------- */
-function manageSheet(){
-  SEL.clear();
-  const b = openSheet('จัดการบทเรียน', `
+function managePane(b){
+  b.innerHTML = `
     <div class="tools"><button class="ghost" id="selAll" type="button">เลือกทั้งหมด</button><button class="ghost" id="refBtn" type="button"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14-4M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14 4M20 20v-4h-4"/></svg> รีเฟรชรายการ</button><span class="sel" id="selInfo"></span></div>
     <div class="chs" id="chs"></div>
     <div class="hint">แตะที่บทเพื่อเลือกหลายบท แล้วกดลบ · ปุ่ม “แก้ชื่อ” ใช้เปลี่ยนชื่อไฟล์ (ลำดับบทเรียงตามชื่อไฟล์)</div>
-    <div class="sticky"><button class="pri dangerbtn hidden" id="delBtn" type="button">ลบที่เลือก</button></div><div id="fOut"></div>`);
-  subjectBar(b, () => { SEL.clear(); renderChs(); });
+    <div class="sticky"><button class="pri dangerbtn hidden" id="delBtn" type="button">ลบที่เลือก</button></div><div id="fOut"></div>`;
   $('selAll').onclick = () => { const s = curSubject(), l = s ? s.chapters : []; if (SEL.size === l.length) SEL.clear(); else l.forEach(c => SEL.add(c.file)); renderChs(); };
   $('refBtn').onclick = async () => {
     const r = $('refBtn'); r.disabled = true; r.textContent = 'กำลังโหลด...';
@@ -586,7 +590,7 @@ function renderChs(){
   if (!$('chs')) return;
   const s = curSubject(), list = s ? s.chapters : [];
   SEL = new Set([...SEL].filter(f => list.some(c => c.file === f)));
-  $('chs').innerHTML = !s ? '<div class="empty">เลือกวิชาด้านบนก่อน</div>' : list.length ? list.map((c, i) => `<div class="row${SEL.has(c.file) ? ' on' : ''}" data-i="${i}"><span class="ck" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></span><span class="n">${i + 1}</span><div class="tx" title="${esc(c.file)}"><div class="tt">${esc(c.title)}</div><div class="ff">${esc(c.file)}</div></div><button class="edit" data-edit="${i}" type="button">แก้ชื่อ</button></div>`).join('') : '<div class="empty">ยังไม่มีบทเรียนในวิชานี้<br>กลับไปกด “เพิ่มบทเรียน” เพื่อเพิ่ม</div>';
+  $('chs').innerHTML = !s ? '<div class="empty">เลือกวิชาด้านบนก่อน</div>' : list.length ? list.map((c, i) => `<div class="row${SEL.has(c.file) ? ' on' : ''}" data-i="${i}"><span class="ck" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></span><span class="n">${i + 1}</span><div class="tx" title="${esc(c.file)}"><div class="tt">${esc(c.title)}</div><div class="ff">${esc(c.file)}</div></div><button class="edit" data-edit="${i}" type="button">แก้ชื่อ</button></div>`).join('') : '<div class="empty">ยังไม่มีบทเรียนในวิชานี้<br>ไปที่แท็บ “เพิ่มบท” เพื่ออัปโหลด</div>';
   $('selInfo').textContent = s ? (SEL.size ? `เลือก ${SEL.size} จาก ${list.length} บท` : `ทั้งหมด ${list.length} บท`) : '';
   $('selAll').textContent = list.length && SEL.size === list.length ? 'ยกเลิกทั้งหมด' : 'เลือกทั้งหมด'; $('selAll').classList.toggle('hidden', !list.length);
   $('delBtn').classList.toggle('hidden', !SEL.size); $('delBtn').textContent = `ลบที่เลือก (${SEL.size} บท)`;
@@ -596,12 +600,12 @@ async function onChsClick(e){
   const ed = e.target.closest('[data-edit]');
   if (ed) {
     const c = s.chapters[+ed.dataset.edit]; if (!c) return;
-    const nn = await ask({ title: 'แก้ชื่อไฟล์', body: `ชื่อเดิม: ${c.file}\nขึ้นต้นด้วยตัวเลขเพื่อกำหนดลำดับ เช่น 05-เรื่องใหม่.html`, input: c.file, ok: 'บันทึกชื่อ' });
+    const nn = await renameDlg(c.file);
     if (nn === null || nn === c.file) return;
     if (!FILE_RE.test(nn) || /^[._]/.test(nn) || s.chapters.some(x => x !== c && x.file.toLowerCase() === nn.toLowerCase())) { $('fOut').innerHTML = badMsg('ชื่อไฟล์ไม่ถูกต้องหรือซ้ำกับบทอื่น (ต้องลงท้าย .html)'); return; }
     try {
       const j = await api('rename', { subject: s.id, from: c.file, to: nn });
-      c.file = nn; s.chapters.sort((a, b) => a.file.localeCompare(b.file, 'th', { numeric:true })); SEL.clear(); renderChs();
+      c.file = nn; s.chapters.sort(chCmp); SEL.clear(); renderChs();
       $('fOut').innerHTML = okMsg(`เปลี่ยนชื่อเป็น ${esc(nn)} แล้ว${j && j.commit ? ' (commit ' + esc(j.commit) + ')' : ''}`, DEPLOY);
     } catch(err){ if ($('fOut')) $('fOut').innerHTML = badMsg(err.message); }
     return;
@@ -617,10 +621,59 @@ async function doDelete(){
   const b = $('delBtn'); b.disabled = true; b.textContent = 'กำลังลบ...';
   try {
     const j = await api('delete', { subject: s.id, files });
-    s.chapters = s.chapters.filter(c => !files.includes(c.file)); SEL.clear(); renderChs();
+    s.chapters = s.chapters.filter(c => !files.includes(c.file)); SEL.clear(); renderChs(); paintStats(); mgTabs();
     $('fOut').innerHTML = okMsg(`ลบ ${files.length} บทแล้ว (commit ${esc(j.commit)})`, DEPLOY + ' บทจะหายจากหน้าเว็บ');
   } catch(err){ if ($('fOut')) $('fOut').innerHTML = badMsg(err.message); }
   if ($('delBtn')) b.disabled = false;
+}
+
+const chCmp = (a, b) => a.file.localeCompare(b.file, 'en', { numeric: true });   // เรียงแบบเดียวกับตอน build (scan.js)
+const paintStats = () => { $('nSub').textContent = SUBJECTS.length; $('nCh').textContent = SUBJECTS.reduce((n, s) => n + s.chapters.length, 0); };
+/* ช่องเปลี่ยนชื่อ: แยก “ลำดับ” (00–99+) กับ “ชื่อไฟล์” ให้ตั้งเลขนำหน้าได้ตรงใจ มีปุ่ม − + และดูชื่อใหม่ก่อนบันทึก */
+function renameDlg(file){
+  return new Promise(res => {
+    const stem = file.replace(/\.html?$/i, ''), m = stem.match(/^(\d+)[-_.\s]*([\s\S]*)$/), num0 = m ? m[1] : '', base0 = m ? m[2] : stem;
+    const ov = document.createElement('div'); ov.className = 'ov'; ov.style.zIndex = 30;
+    ov.innerHTML = `<div class="dlg" role="dialog" aria-modal="true" style="margin:16px"><h3>แก้ชื่อไฟล์</h3><p>ชื่อเดิม: ${esc(file)}</p>
+      <label for="rnNum">ลำดับ (เว้นว่าง = ไม่มีเลขนำหน้า)</label>
+      <div class="rn"><button class="ghost" id="rnMinus" type="button" aria-label="ลดเลข">−</button><input id="rnNum" inputmode="numeric" maxlength="3" placeholder="01" autocomplete="off" value="${esc(num0)}"><button class="ghost" id="rnPlus" type="button" aria-label="เพิ่มเลข">+</button></div>
+      <label for="rnName" style="margin-top:12px">ชื่อไฟล์ (ไม่ต้องพิมพ์ .html)</label><input id="rnName" autocomplete="off" value="${esc(base0)}">
+      <div class="rn-pv" id="rnPv"></div>
+      <div class="btns"><button class="ghost" data-x="0" type="button">ยกเลิก</button><button class="pri" data-x="1" type="button" style="min-height:48px">บันทึกชื่อ</button></div></div>`;
+    document.body.appendChild(ov);
+    const num = ov.querySelector('#rnNum'), nm = ov.querySelector('#rnName'), pv = ov.querySelector('#rnPv');
+    const pad = n => String(n).padStart(2, '0');
+    const build = () => { let n = num.value.replace(/\D/g, '').slice(0, 3); if (n.length === 1) n = '0' + n; const b = nm.value.trim().replace(/\.html?$/i, ''); return (n && b ? n + '-' + b : (n || b)) + ((n || b) ? '.html' : ''); };
+    const paint = () => { pv.innerHTML = 'ชื่อใหม่: <b>' + (esc(build()) || '—') + '</b>'; };
+    num.oninput = () => { num.value = num.value.replace(/\D/g, '').slice(0, 3); paint(); }; nm.oninput = paint;
+    ov.querySelector('#rnMinus').onclick = () => { const v = num.value === '' ? 1 : +num.value; num.value = pad(Math.max(0, v - 1)); paint(); };
+    ov.querySelector('#rnPlus').onclick = () => { const v = num.value === '' ? 0 : +num.value; num.value = pad(Math.min(999, v + 1)); paint(); };
+    paint(); nm.focus();
+    const done = v => { ov.remove(); res(v); };
+    ov.addEventListener('click', e => { if (e.target === ov) done(null); const x = e.target.closest('[data-x]'); if (x) done(x.dataset.x === '1' ? build() : null); });
+    ov.addEventListener('keydown', e => { if (e.key === 'Escape') done(null); if (e.key === 'Enter') done(build()); });
+  });
+}
+/* ---------- จัดการวิชา (รวม: เพิ่มวิชา · เพิ่มบท · จัดการบท) ---------- */
+let MG = { tab: 'manage', paint: null };
+function mgTabs(){
+  const o = $('mgTabs'); if (!o) return; const c = curSubject();
+  o.innerHTML = `<div class="tabs t3" role="tablist">${[['manage', 'จัดการบท' + (c ? `<span class="pill">${c.chapters.length}</span>` : '')], ['add', 'เพิ่มบท'], ['new', 'วิชาใหม่']].map(([k, t]) => `<button class="tab" role="tab" data-tab="${k}" aria-selected="${MG.tab === k}" type="button">${t}</button>`).join('')}</div>`;
+}
+function mgShow(tab){
+  const pane = $('mgPane'); if (!pane) return; if (tab) MG.tab = tab;
+  mgTabs(); const bar = document.querySelector('#sheetBody > .cur'); if (bar) bar.classList.toggle('hidden', MG.tab === 'new');
+  SEL.clear();
+  if (MG.tab === 'add') lessonPane(pane); else if (MG.tab === 'new') subjectPane(pane); else managePane(pane);
+  if (MG.paint) MG.paint();
+}
+function subjectsSheet(){
+  MG.tab = SUBJECTS.length ? 'manage' : 'new'; FILES = [];
+  const b = openSheet('จัดการวิชา', '<div id="mgTabs"></div><div id="mgPane"></div>');
+  MG.paint = subjectBar(b, () => mgShow(), () => mgShow('new'));
+  $('mgTabs').addEventListener('click', e => { const t = e.target.closest('[data-tab]'); if (t) mgShow(t.dataset.tab); });
+  mgShow();
+  if (SUBJECTS.length) pickPopup(() => { MG.paint(); mgShow(MG.tab === 'new' ? 'manage' : MG.tab); }, () => mgShow('new'));
 }
 
 /* ---------- 4) ส่งแจ้งเตือน ---------- */
@@ -972,7 +1025,7 @@ window.addEventListener('beforeunload', e => { if (FM.dirty) { e.preventDefault(
 
 document.querySelector('.home').addEventListener('click', e => {
   const g = e.target.closest('[data-go]'); if (!g) return;
-  ({ subject: subjectSheet, lesson: lessonSheet, manage: manageSheet, push: pushSheet, files: filesSheet, backup: backupSheet })[g.dataset.go]();
+  ({ subjects: subjectsSheet, push: pushSheet, files: filesSheet, backup: backupSheet })[g.dataset.go]();
 });
 /* ติดตั้งเป็นแอปแยก (Hub Admin) */
 let installEv = null;
