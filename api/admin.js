@@ -124,7 +124,7 @@ module.exports = async (req, res) => {
       if (!SUBJECT_RE.test(id)) return res.status(400).json({ error: 'ชื่อโฟลเดอร์ใช้ได้เฉพาะ a-z 0-9 - _' });
       const name = String(b.name || '').trim().slice(0, 80);
       if (!name) return res.status(400).json({ error: 'กรุณาใส่ชื่อวิชา' });
-      const code = String(b.code || '').trim().slice(0, 20), icon = String(b.icon || '').trim().slice(0, 8) || '📖';
+      const code = String(b.code || '').trim().slice(0, 20), icon = String(b.icon || '').trim().slice(0, 20);
       const order = Number.isFinite(+b.order) ? Math.round(+b.order) : 999;
       try { await gh(`/repos/${repo}/contents/${P('content/' + id).split('/').map(encodeURIComponent).join('/')}?ref=${encodeURIComponent(branch)}`); return res.status(409).json({ error: `มีโฟลเดอร์ ${id} อยู่แล้ว` }); }
       catch (e) { if (e.status !== 404) throw e; }
