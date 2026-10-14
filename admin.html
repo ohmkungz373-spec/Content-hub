@@ -214,6 +214,24 @@ button:active:not(:disabled){transform:scale(.98)}
 @keyframes curPulse{0%,100%{box-shadow:0 0 0 0 #6d7dff66,0 12px 28px -12px #6d7dffcc}50%{box-shadow:0 0 0 7px #6d7dff00,0 12px 28px -12px #38c8c0cc}}
 @keyframes curNudge{0%,100%{transform:translateX(0)}50%{transform:translateX(3px)}}
 @media (prefers-reduced-motion:reduce){.cur.empty,.cur.empty .chg{animation:none}}
+
+/* --- จัดการไฟล์ --- */
+.act.wide{grid-column:1/-1;min-height:0;flex-direction:row;align-items:center;gap:14px}.act.wide b{margin:0}.act.wide small{display:block}
+.fm-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.fm-bar .ghost{min-height:40px}
+.fm-bar .pri{width:auto;min-height:40px;font-size:14px;padding:0 16px;border-radius:12px}
+.fm-bc{display:flex;flex-wrap:wrap;align-items:center;gap:2px;margin:0 0 10px;font-size:14px}
+.fm-bc button{background:none;border:0;color:var(--acc);padding:4px 6px;border-radius:8px;font-size:14px;font-weight:600}.fm-bc button:last-child{color:var(--ink)}.fm-bc i{font-style:normal;color:var(--muted)}
+.fm-list{border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.fm-r{display:flex;align-items:center;gap:10px;padding:8px 10px;border-bottom:1px solid var(--line);background:var(--bg2)}.fm-r:last-child{border-bottom:0}
+.fm-r.on{background:color-mix(in srgb,var(--acc) 14%,var(--bg2))}
+.fm-r input{width:20px;height:20px;min-height:0;flex:none;accent-color:#6d7dff}
+.fm-r .n{flex:1;min-width:0;text-align:left;background:none;border:0;color:var(--ink);padding:6px 0;display:flex;align-items:center;gap:10px;font-size:14.5px}
+.fm-r .n .i{width:22px;height:22px;flex:none}.fm-r .n.d .i{color:#fbbf24}.fm-r .n.f .i{color:var(--muted)}
+.fm-r .n span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fm-r .n small{display:block;color:var(--muted);font-size:12px}
+.fm-r .mo{flex:none;width:36px;height:36px;border-radius:10px;background:none;border:0;color:var(--muted);font-size:20px;line-height:1}
+.fm-ed{width:100%;min-height:52dvh;font:13px/1.55 ui-monospace,Menlo,Consolas,monospace;white-space:pre;overflow:auto;resize:vertical;tab-size:2}
+.fm-sel{position:sticky;bottom:0;padding-top:10px;background:linear-gradient(to top,var(--panel) 70%,transparent)}
+.fm-sel .dangerbtn{min-height:50px}
 </style>
 </head>
 <body>
@@ -239,6 +257,7 @@ button:active:not(:disabled){transform:scale(.98)}
       <button class="act" data-go="lesson" style="--c:#4ade80" type="button"><span class="ai"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M13 12v6M10 15h6"/></svg></span><b>เพิ่มบทเรียน</b><small>อัปโหลดไฟล์ .html เข้าวิชา</small></button>
       <button class="act" data-go="manage" style="--c:#fbbf24" type="button"><span class="ai"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span><b>จัดการบทเรียน</b><small>แก้ชื่อ · ลบ · รีเฟรชรายการ</small></button>
       <button class="act" data-go="push" style="--c:#38bdf8" type="button"><span class="ai"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg></span><b>ส่งแจ้งเตือน</b><small>วิชาใหม่ · การบ้าน · ข้อความอิสระ</small></button>
+      <button class="act wide" data-go="files" style="--c:#f472b6" type="button"><span class="ai"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 11v6M9 14l3-3 3 3"/></svg></span><b>จัดการไฟล์</b><small>เปิดดูทุกโฟลเดอร์ · แก้ไข เขียน อัปโหลด ลบ ย้ายไฟล์ได้ทุกไฟล์</small></button>
     </div>
     <div id="status" role="status"></div>
   </div>
@@ -533,9 +552,151 @@ function pushSheet(){
   };
 }
 
+
+/* ---------- 4) จัดการไฟล์ (ทุกโฟลเดอร์ใน repo) ---------- */
+const TEXT_EXT = /\.(html?|css|js|mjs|json|md|txt|svg|xml|webmanifest|csv|ya?ml|toml|env|gitignore|gitkeep)$/i;
+const IC_DIR = '<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>';
+const IC_FILE = '<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/></svg>';
+let FM = { files: [], dir: '', q: '', sel: new Set(), box: null, dirty: false };
+async function fapi(action, data){
+  let r, j;
+  try { r = await fetch('/api/files', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.assign({ action, token: TOKEN }, data || {})) }); }
+  catch(e){ throw new Error('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้'); }
+  try { j = await r.json(); } catch(e){ throw new Error('ใช้งานได้เฉพาะบน Vercel (ไม่มี /api/files) — อัปโหลดไฟล์ api/files.js ด้วย'); }
+  if (r.status === 401) { logout(); throw new Error(j.error || 'หมดเวลา'); }
+  if (!r.ok) throw new Error(j.error || ('เกิดข้อผิดพลาด ' + r.status));
+  return j;
+}
+const fmSize = n => n < 1024 ? n + ' B' : n < 1048576 ? (n / 1024).toFixed(0) + ' KB' : (n / 1048576).toFixed(1) + ' MB';
+const fmB64 = u8 => { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); };
+const fmBytes = b64 => Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+const fmToast = (h, bad) => { const o = $('fmOut'); if (o) { o.innerHTML = bad ? badMsg(h) : okMsg(h); } };
+async function fmLoad(){
+  const o = $('fmList'); if (o && !FM.files.length) o.innerHTML = '<div class="empty">กำลังโหลดรายการไฟล์…</div>';
+  try { FM.files = (await fapi('list')).files; } catch(e){ fmToast(e.message, true); }
+  FM.sel.clear(); fmList();
+}
+function filesSheet(){
+  FM.dir = ''; FM.q = ''; FM.sel.clear(); FM.dirty = false;
+  FM.box = openSheet('จัดการไฟล์', '<div id="fmMain"></div>');
+  fmHome(); fmLoad();
+}
+function fmHome(){
+  FM.dirty = false;
+  FM.box.innerHTML = `<div class="fm-bar"><button class="pri" id="fmUp" type="button">⬆ อัปโหลด</button><button class="ghost" id="fmNF" type="button">+ ไฟล์ใหม่</button><button class="ghost" id="fmND" type="button">+ โฟลเดอร์</button><button class="ghost" id="fmRf" type="button">รีเฟรช</button></div>
+    <input type="file" id="fmFile" multiple hidden>
+    <input id="fmQ" placeholder="ค้นหาไฟล์ทั้งหมด…" autocomplete="off" style="margin-bottom:10px" value="${esc(FM.q)}">
+    <div class="fm-bc" id="fmBc"></div><div class="fm-list" id="fmList"></div><div id="fmSelBar"></div><div id="fmOut"></div>
+    <div class="hint">แตะชื่อเพื่อเปิด · ติ๊กช่องซ้ายเพื่อเลือกหลายรายการแล้วลบ · ปุ่ม ⋯ = เปลี่ยนชื่อ/ย้าย/ดาวน์โหลด/ลบ · ไฟล์ที่บันทึกจะ commit ขึ้น GitHub แล้วเว็บ deploy ใหม่ ~1 นาที</div>`;
+  $('fmUp').onclick = () => $('fmFile').click();
+  $('fmFile').onchange = async e => { const l = [...e.target.files]; e.target.value = ''; if (l.length) fmUpload(l); };
+  $('fmNF').onclick = fmNewFile; $('fmND').onclick = fmNewDir; $('fmRf').onclick = fmLoad;
+  $('fmQ').oninput = e => { FM.q = e.target.value; fmList(); };
+  $('fmList').onclick = fmClick; $('fmList').onchange = e => { const c = e.target.closest('[data-ck]'); if (!c) return; c.checked ? FM.sel.add(c.dataset.ck) : FM.sel.delete(c.dataset.ck); fmList(true); };
+  $('fmBc').onclick = e => { const b = e.target.closest('[data-d]'); if (b) { FM.dir = b.dataset.d; FM.q = ''; $('fmQ').value = ''; FM.sel.clear(); fmList(); } };
+}
+function fmList(keep){
+  const o = $('fmList'); if (!o) return;
+  const dir = FM.dir, pre = dir ? dir + '/' : '', q = FM.q.trim().toLowerCase();
+  const segs = dir ? dir.split('/') : [];
+  $('fmBc').innerHTML = q ? '<span class="hint" style="margin:0">ผลการค้นหา</span>' : `<button data-d="" type="button">📁 ราก</button>` + segs.map((s, i) => `<i>/</i><button data-d="${esc(segs.slice(0, i + 1).join('/'))}" type="button">${esc(s)}</button>`).join('');
+  let rows = [];
+  if (q) rows = FM.files.filter(f => f.path.toLowerCase().includes(q) && !/(^|\/)\.gitkeep$/.test(f.path)).slice(0, 200).map(f => ({ k: 'f', path: f.path, name: f.path, f }));
+  else {
+    const dirs = new Map(), fl = [];
+    FM.files.forEach(f => { if (!f.path.startsWith(pre)) return; const rest = f.path.slice(pre.length), i = rest.indexOf('/');
+      if (i < 0) { if (rest !== '.gitkeep') fl.push({ k: 'f', path: f.path, name: rest, f }); } else { const n = rest.slice(0, i); dirs.set(n, (dirs.get(n) || 0) + (rest.endsWith('/.gitkeep') ? 0 : 1)); } });
+    rows = [...dirs].sort((x, y) => x[0].localeCompare(y[0])).map(([n, c]) => ({ k: 'd', path: pre + n, name: n, c })).concat(fl.sort((x, y) => x.name.localeCompare(y.name)));
+  }
+  o.innerHTML = rows.length ? rows.map(r => `<div class="fm-r${FM.sel.has(r.path) ? ' on' : ''}"><input type="checkbox" data-ck="${esc(r.path)}" ${FM.sel.has(r.path) ? 'checked' : ''} aria-label="เลือก"><button class="n ${r.k}" data-o="${esc(r.path)}" data-k="${r.k}" type="button">${r.k === 'd' ? IC_DIR : IC_FILE}<span>${esc(r.name)}<small>${r.k === 'd' ? r.c + ' ไฟล์' : fmSize(r.f.size)}</small></span></button><button class="mo" data-m="${esc(r.path)}" data-k="${r.k}" type="button" aria-label="เมนู">⋯</button></div>`).join('')
+    : `<div class="empty">${q ? 'ไม่พบไฟล์ที่ค้นหา' : 'โฟลเดอร์นี้ยังว่าง<br>กด “อัปโหลด” หรือ “+ ไฟล์ใหม่” ได้เลย'}</div>`;
+  const n = FM.sel.size; $('fmSelBar').innerHTML = n ? `<div class="fm-sel"><button class="dangerbtn" id="fmDelSel" type="button">ลบที่เลือก (${n})</button></div>` : '';
+  if (n) $('fmDelSel').onclick = () => fmDelete([...FM.sel]);
+}
+async function fmClick(e){
+  const m = e.target.closest('[data-m]'); if (m) return fmMenu(m.dataset.m, m.dataset.k);
+  const b = e.target.closest('[data-o]'); if (!b) return;
+  if (b.dataset.k === 'd') { FM.dir = b.dataset.o; FM.q = ''; $('fmQ').value = ''; FM.sel.clear(); return fmList(); }
+  fmOpen(b.dataset.o);
+}
+const fmByPath = p => FM.files.find(f => f.path === p);
+async function fmMenu(path, k){
+  const name = path.split('/').pop();
+  const ov = document.createElement('div'); ov.className = 'ov'; ov.style.zIndex = 30;
+  ov.innerHTML = `<div class="dlg" style="margin:16px"><h3>${esc(name)}</h3><p>${esc(path)}</p><div class="btns" style="flex-direction:column"><button class="ghost" data-a="mv" type="button" style="min-height:48px">เปลี่ยนชื่อ / ย้าย</button>${k === 'f' ? '<button class="ghost" data-a="dl" type="button" style="min-height:48px">ดาวน์โหลด</button>' : ''}<button class="dangerbtn" data-a="rm" type="button" style="min-height:48px">ลบ${k === 'd' ? 'ทั้งโฟลเดอร์' : ''}</button><button class="ghost" data-a="" type="button" style="min-height:44px">ปิด</button></div></div>`;
+  document.body.appendChild(ov);
+  ov.onclick = async e => { if (e.target !== ov && !e.target.closest('[data-a]')) return; const x = e.target.closest('[data-a]'); ov.remove(); const act = x ? x.dataset.a : ''; if (act === 'mv') fmMove(path); else if (act === 'rm') fmDelete([path]); else if (act === 'dl') fmDownload(path); };
+}
+async function fmMove(path){
+  const to = await ask({ title: 'เปลี่ยนชื่อ / ย้าย', body: 'แก้ชื่อได้เลย หรือพิมพ์ที่อยู่ใหม่เพื่อย้าย เช่น content/physics/01.html', input: path, ok: 'บันทึก' });
+  if (!to || to === path) return;
+  try { await fapi('move', { from: path, to }); fmToast('เปลี่ยนชื่อ/ย้ายแล้ว · ' + DEPLOY); FM.sel.clear(); await fmLoad(); } catch(e){ fmToast(e.message, true); }
+}
+async function fmDelete(paths){
+  const cnt = paths.reduce((n, p) => n + FM.files.filter(f => f.path === p || f.path.startsWith(p + '/')).length, 0);
+  const ok = await ask({ title: `ลบ ${paths.length} รายการ?`, body: paths.slice(0, 12).map(p => '• ' + p).join('\n') + (paths.length > 12 ? `\n… และอีก ${paths.length - 12}` : '') + `\n\nรวม ${cnt} ไฟล์ · ลบแล้วกู้คืนผ่านหน้านี้ไม่ได้ (ย้อนได้ผ่านประวัติ GitHub)`, ok: 'ลบเลย', danger: true });
+  if (!ok) return;
+  try { const j = await fapi('delete', { paths }); fmToast(`ลบแล้ว ${j.count} ไฟล์ · ${DEPLOY}`); FM.sel.clear(); await fmLoad(); } catch(e){ fmToast(e.message, true); }
+}
+async function fmDownload(path){
+  const f = fmByPath(path); if (!f) return;
+  try { const j = await fapi('read', { sha: f.sha }); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([fmBytes(j.b64)])); a.download = path.split('/').pop(); a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); } catch(e){ fmToast(e.message, true); }
+}
+async function fmUpload(list){
+  const pre = FM.dir ? FM.dir + '/' : '', dup = list.filter(f => fmByPath(pre + f.name)).map(f => f.name);
+  const big = list.find(f => f.size > 3 * 1024 * 1024); if (big) return fmToast(`“${big.name}” ใหญ่เกิน 3 MB (ข้อจำกัดของ Vercel)`, true);
+  const ok = await ask({ title: `อัปโหลด ${list.length} ไฟล์`, body: `ไปที่ /${FM.dir}\n` + list.slice(0, 8).map(f => '• ' + f.name + ' (' + fmSize(f.size) + ')').join('\n') + (dup.length ? `\n\nจะเขียนทับไฟล์เดิม: ${dup.join(', ')}` : ''), ok: 'อัปโหลด' });
+  if (!ok) return;
+  $('fmOut').innerHTML = '<div class="msg ok">กำลังอัปโหลด…</div>';
+  try {
+    const items = []; for (const f of list) items.push({ path: pre + f.name, b64: fmB64(new Uint8Array(await f.arrayBuffer())) });
+    let batch = [], sz = 0, n = 0; const flush = async () => { if (batch.length) { await fapi('write', { files: batch }); n += batch.length; batch = []; sz = 0; } };
+    for (const it of items) { if (sz + it.b64.length > 3.2e6) await flush(); batch.push(it); sz += it.b64.length; } await flush();
+    fmToast(`อัปโหลด ${n} ไฟล์สำเร็จ · ${DEPLOY}`); await fmLoad();
+  } catch(e){ fmToast(e.message, true); }
+}
+async function fmNewFile(){
+  const n = await ask({ title: 'ไฟล์ใหม่', body: `สร้างใน /${FM.dir} · ใส่ / ในชื่อเพื่อสร้างโฟลเดอร์ย่อยพร้อมกัน`, input: '', ok: 'สร้าง' });
+  if (!n) return; fmEdit((FM.dir ? FM.dir + '/' : '') + n, '', true);
+}
+async function fmNewDir(){
+  const n = await ask({ title: 'โฟลเดอร์ใหม่', body: `สร้างใน /${FM.dir}`, input: '', ok: 'สร้าง' });
+  if (!n) return;
+  try { await fapi('write', { files: [{ path: (FM.dir ? FM.dir + '/' : '') + n + '/.gitkeep', b64: '' }] }); fmToast('สร้างโฟลเดอร์แล้ว'); FM.dir = (FM.dir ? FM.dir + '/' : '') + n.replace(/\/+$/, ''); await fmLoad(); } catch(e){ fmToast(e.message, true); }
+}
+async function fmOpen(path){
+  const f = fmByPath(path); if (!f) return;
+  $('fmOut').innerHTML = '<div class="msg ok">กำลังเปิดไฟล์…</div>';
+  try {
+    if (f.size > 2.5 * 1024 * 1024) throw new Error('ไฟล์ใหญ่เกินไปที่จะเปิดแก้ — ใช้ ⋯ → ดาวน์โหลดแทน');
+    const j = await fapi('read', { sha: f.sha }), u8 = fmBytes(j.b64);
+    let txt = null; try { txt = new TextDecoder('utf-8', { fatal: true }).decode(u8); if (!TEXT_EXT.test(path) && txt.includes('\u0000')) txt = null; } catch(e){}
+    if (txt === null) { $('fmOut').innerHTML = badMsg('นี่ไม่ใช่ไฟล์ข้อความ (รูป/PDF ฯลฯ) แก้ในนี้ไม่ได้ — ใช้ ⋯ เพื่อดาวน์โหลด เปลี่ยนชื่อ หรือลบ'); return; }
+    fmEdit(path, txt, false);
+  } catch(e){ fmToast(e.message, true); }
+}
+function fmEdit(path, text, isNew){
+  FM.dirty = !!isNew;
+  const sys = /^(api\/|vercel\.json|package\.json|build\.js|server\.js|scan\.js)/.test(path);
+  FM.box.innerHTML = `<div class="fm-bar"><button class="ghost" id="edBack" type="button">← กลับ</button><button class="pri" id="edSave" type="button" style="margin-left:auto">บันทึก</button></div>
+    <div class="hint" style="margin:0 0 8px;word-break:break-all"><b style="color:var(--ink)">${esc(path)}</b>${isNew ? ' · ไฟล์ใหม่' : ''}${sys ? '<br><span style="color:#fbbf24">⚠ ไฟล์ระบบ — แก้ผิดอาจทำให้เว็บหรือแอดมินพัง</span>' : ''}</div>
+    <textarea class="fm-ed" id="edTx" spellcheck="false" autocapitalize="off" autocorrect="off">${esc(text)}</textarea><div class="hint" id="edInfo"></div><div id="fmOut"></div>`;
+  const tx = $('edTx'), info = () => { $('edInfo').textContent = tx.value.split('\n').length + ' บรรทัด · ' + fmSize(new Blob([tx.value]).size); };
+  info(); tx.oninput = () => { FM.dirty = true; info(); };
+  tx.onkeydown = e => { if (e.key === 'Tab') { e.preventDefault(); const s = tx.selectionStart; tx.setRangeText('  ', s, tx.selectionEnd, 'end'); FM.dirty = true; } if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); } };
+  const save = async () => {
+    if (sys && !(await ask({ title: 'บันทึกไฟล์ระบบ?', body: path + '\n\nแก้ผิดอาจทำให้เว็บหรือหน้าแอดมินใช้ไม่ได้', ok: 'บันทึก' }))) return;
+    const b = $('edSave'); b.disabled = true; b.textContent = 'กำลังบันทึก…';
+    try { await fapi('write', { files: [{ path, b64: fmB64(new TextEncoder().encode(tx.value)) }] }); FM.dirty = false; fmToast('บันทึกแล้ว · ' + DEPLOY); b.textContent = 'บันทึกแล้ว ✓'; setTimeout(() => { b.disabled = false; b.textContent = 'บันทึก'; }, 1500); fapi('list').then(r => { FM.files = r.files; }).catch(() => {}); }
+    catch(e){ fmToast(e.message, true); b.disabled = false; b.textContent = 'บันทึก'; }
+  };
+  $('edSave').onclick = save;
+  $('edBack').onclick = async () => { if (FM.dirty && !(await ask({ title: 'ยังไม่ได้บันทึก', body: 'ออกโดยไม่บันทึกการแก้ไข?', ok: 'ออกเลย', danger: true }))) return; fmHome(); fmList(); };
+}
+
 document.querySelector('.home').addEventListener('click', e => {
   const g = e.target.closest('[data-go]'); if (!g) return;
-  ({ subject: subjectSheet, lesson: lessonSheet, manage: manageSheet, push: pushSheet })[g.dataset.go]();
+  ({ subject: subjectSheet, lesson: lessonSheet, manage: manageSheet, push: pushSheet, files: filesSheet })[g.dataset.go]();
 });
 async function enter(){ await loadSubjects(); showPanel(true); }
 (async () => { if (!TOKEN) return; try { await api('check'); await enter(); } catch(e){} })();
