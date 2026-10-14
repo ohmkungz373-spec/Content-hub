@@ -1,4 +1,6 @@
+const crypto = require('crypto');
 const webpush = require('web-push');
+const clean = v => String(v || '').trim().replace(/^["']|["']$/g, '').replace(/=+$/, '');
 const { validToken } = require('./_auth');
 
 module.exports = async (req, res) => {
@@ -19,8 +21,17 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'URL ต้องเป็นเส้นทางภายในเว็บ' });
 
     const sUrl = process.env.SUPABASE_URL, sKey = process.env.SUPABASE_SECRET_KEY;
-    const pub = process.env.VAPID_PUBLIC_KEY, priv = process.env.VAPID_PRIVATE_KEY, subj = process.env.VAPID_SUBJECT;
+    const pub = clean(process.env.VAPID_PUBLIC_KEY), priv = clean(process.env.VAPID_PRIVATE_KEY), subj = String(process.env.VAPID_SUBJECT || '').trim().replace(/^["']|["']$/g, '');
     if (!sUrl || !sKey || !pub || !priv || !subj) return res.status(500).json({ error: 'กรุณาตรวจสอบ Environment Variables ใน Vercel' });
+    // ตรวจว่า Public/Private เป็นคู่เดียวกันจริง
+    try {
+      const ecdh = crypto.createECDH('prime256v1');
+      ecdh.setPrivateKey(Buffer.from(priv, 'base64url'));
+      if (ecdh.getPublicKey().toString('base64url') !== pub)
+        return res.status(500).json({ error: 'VAPID_PUBLIC_KEY กับ VAPID_PRIVATE_KEY ไม่ใช่คู่เดียวกัน — ตั้งใหม่ทั้งสองค่าใน Vercel แล้ว Redeploy' });
+    } catch (e) {
+      return res.status(500).json({ error: 'VAPID_PRIVATE_KEY รูปแบบไม่ถูกต้อง (ต้องเป็น base64url ยาว 43 ตัว)' });
+    }
     webpush.setVapidDetails(subj, pub, priv);
 
     const H = { apikey: sKey, Authorization: `Bearer ${sKey}` };
