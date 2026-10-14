@@ -323,6 +323,37 @@ button{letter-spacing:.1px}
 .bk-new{padding:14px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(160deg,#34d3991a,transparent 70%),var(--bg2)}
 .bk-r{transition:background .12s,transform .1s}
 .bk-r .t b{font-weight:600}
+
+/* ================= จัดการวิชา (รวมเป็นที่เดียว) + ปุ่มสีเหลือง ================= */
+.yb{background:linear-gradient(135deg,#fde047,#f59e0b);color:#1a1300;box-shadow:0 12px 26px -12px #f59e0bcc}
+.yb:hover:not(:disabled){filter:brightness(1.06);box-shadow:0 14px 30px -12px #fbbf24cc}
+.yb .i{width:1.1em;height:1.1em;vertical-align:-.2em;margin-right:2px;stroke-width:3}
+.act.yel{background:linear-gradient(135deg,#fde047,#f59e0b);border-color:#fde047;color:#1a1300}
+.act.yel::before{display:none}.act.yel small{color:#3b2a00;opacity:1}
+.act.yel .ai{background:#1a130018;color:#1a1300;box-shadow:none}
+.act.yel:hover{border-color:#fff5b0;box-shadow:0 16px 30px -16px #f59e0bcc}
+.ms-row{display:flex;gap:8px;align-items:stretch}.ms-row .pri{flex:1;width:auto;min-height:50px;font-size:15.5px}.ms-row .ghost{flex:none;width:50px;padding:0}
+.ms-top{display:flex;justify-content:space-between;gap:8px;margin-bottom:12px}
+.ms-top .ghost{min-height:40px}
+.ms-sum{font-size:12.5px;color:var(--muted);margin:10px 2px 6px}
+.ssr{margin-top:10px}
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.mc{display:flex;align-items:center;gap:8px;text-align:left;min-height:46px;padding:5px 8px;border-radius:12px;background:var(--bg2);border:1px solid var(--line);border-left:3px solid var(--c);color:var(--ink);min-width:0}
+.mc:hover{background:var(--panel2)}
+.mc .si{width:28px;height:28px}
+.mc .mt{flex:1;min-width:0}
+.mc b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.25;font-weight:600}
+.mc small{display:block;color:var(--muted);font-size:11px;line-height:1.2}
+.mc .n{flex:none;font-size:11px;font-weight:700;border-radius:999px;padding:1px 7px;background:#8b9bff22;color:var(--ink)}.mc .n.z{background:transparent;color:var(--muted);font-weight:500}
+.ms-cur{display:flex;align-items:center;gap:10px;padding:8px 12px;margin-bottom:12px;border-radius:14px;background:var(--bg2);border:1px solid var(--line);border-left:4px solid var(--c)}
+.ms-cur .si{width:36px;height:36px}.ms-cur .tx{flex:1;min-width:0}.ms-cur b{display:block;font-size:15.5px;line-height:1.3}.ms-cur small{color:var(--muted);font-size:12px}
+#msAdd{margin-bottom:12px;min-height:52px;font-size:16px}
+.pend{border:1.5px solid #fbbf2480;border-radius:16px;padding:12px;margin-bottom:14px;background:linear-gradient(180deg,#fbbf2410,transparent),var(--bg2)}
+.pend-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:2px}.pend-h b{font-size:15px}.pend-h .ghost{min-height:36px;font-size:13px}
+.pend .fl{background:var(--panel)}
+.pend .chk{background:var(--panel)}
+.nmrow{display:flex;align-items:center;gap:6px}.nmrow input{flex:1;min-width:0}.nmrow .ext{flex:none;color:var(--muted);font-size:13px}
+.hidden{display:none!important}
 </style>
 </head>
 <body>
@@ -344,9 +375,7 @@ button{letter-spacing:.1px}
     </div>
     <div class="stats"><div class="st"><b id="nSub">0</b><small>วิชาทั้งหมด</small></div><div class="st"><b id="nCh">0</b><small>บทเรียนทั้งหมด</small></div></div>
     <div class="home">
-      <button class="act" data-go="subject" style="--c:#a78bfa" type="button"><span class="ai"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M12 9v6M9 12h6"/></svg></span><b>เพิ่มวิชา</b><small>สร้างวิชาใหม่ พร้อมแจ้งเตือนผู้ใช้</small></button>
-      <button class="act" data-go="lesson" style="--c:#4ade80" type="button"><span class="ai"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M13 12v6M10 15h6"/></svg></span><b>เพิ่มบทเรียน</b><small>อัปโหลดไฟล์ .html เข้าวิชา</small></button>
-      <button class="act" data-go="manage" style="--c:#fbbf24" type="button"><span class="ai"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span><b>จัดการบทเรียน</b><small>แก้ชื่อ · ลบ · รีเฟรชรายการ</small></button>
+      <button class="act yel" data-go="subjects" type="button"><span class="ai"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 10v6M9 13h6"/></svg></span><b>จัดการวิชา</b><small>เพิ่มวิชา · เพิ่มบท · แก้ชื่อ · ลบ ในที่เดียว</small></button>
       <button class="act" data-go="push" style="--c:#38bdf8" type="button"><span class="ai"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg></span><b>ส่งแจ้งเตือน</b><small>วิชาใหม่ · การบ้าน · ข้อความอิสระ</small></button>
       <button class="act wide" data-go="files" style="--c:#f472b6" type="button"><span class="ai"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 11v6M9 14l3-3 3 3"/></svg></span><b>จัดการไฟล์</b><small>เปิดดูทุกโฟลเดอร์ · แก้ไข เขียน อัปโหลด ลบ ย้ายไฟล์ได้ทุกไฟล์</small></button>
       <button class="act wide" data-go="backup" style="--c:#34d399" type="button"><span class="ai"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></span><b>สำรอง / กู้คืนข้อมูล</b><small>บันทึกทั้งระบบเป็นชื่อได้หลายชุด · เลือกชื่อเพื่อโหลดกลับ</small></button>
@@ -411,7 +440,7 @@ function ask(o){
     const ov = document.createElement('div'); ov.className = 'ov'; ov.style.zIndex = 30;
     ov.innerHTML = `<div class="dlg" role="dialog" aria-modal="true" style="margin:16px"><h3>${esc(o.title)}</h3><p>${esc(o.body || '')}</p>${o.input !== undefined ? `<input id="dlgIn" value="${esc(o.input)}">` : ''}<div class="btns"><button class="ghost" data-x="0" type="button">ยกเลิก</button><button class="${o.danger ? 'dangerbtn' : 'pri'}" data-x="1" type="button" style="min-height:48px">${esc(o.ok || 'ตกลง')}</button></div></div>`;
     document.body.appendChild(ov);
-    const inp = ov.querySelector('#dlgIn'); (inp || ov.querySelector('[data-x="1"]')).focus();
+    const inp = ov.querySelector('#dlgIn'); ov.querySelector('[data-x="1"]').focus({ preventScroll: true });
     const done = v => { ov.remove(); res(v); };
     ov.addEventListener('click', e => { if (e.target === ov) done(null); const x = e.target.closest('[data-x]'); if (x) done(x.dataset.x === '1' ? (inp ? inp.value.trim() : true) : null); });
     ov.addEventListener('keydown', e => { if (e.key === 'Escape') done(null); if (e.key === 'Enter' && inp) done(inp.value.trim()); });
@@ -442,53 +471,64 @@ const subjIcon = (v,name) => { v=String(v==null?"":v).trim(); if(v.startsWith("<
 const curSubject = () => SUBJECTS.find(s => s.id === CUR);
 async function loadSubjects(){
   const d = await (await fetch('/subjects.json?t=' + Date.now(), { cache:'no-store' })).json();
-  SUBJECTS = d.subjects || [];
-  if (!SUBJECTS.some(s => s.id === CUR)) CUR = '';
+  const srv = d.subjects || [];
+  SUBJECTS = srv.concat(SUBJECTS.filter(s => s._new && !srv.some(x => x.id === s.id)));
   $('nSub').textContent = SUBJECTS.length; $('nCh').textContent = SUBJECTS.reduce((n, s) => n + s.chapters.length, 0);
 }
 const cntHtml = n => `<span class="cnt${n ? '' : ' zero'}">${n} บท</span>`;
 const cardHtml = s => `<button class="pc${s.id === CUR ? ' on' : ''}" data-sid="${esc(s.id)}" style="--c:${catOf(s).color}" type="button"><span class="pcn${s.chapters.length ? '' : ' zero'}">${s.chapters.length} บท</span><span class="si">${subjIcon(s.icon, s.name)}</span><b>${esc(s.name)}</b><small>${esc(s.code || '')}</small></button>`;
-/* ป็อปอัพเลือกวิชา — แบบเดียวกับหน้าเลือกวิชาในการบ้านของหน้าเว็บ */
-function pickPopup(onSel){
-  const old = $('pickOv'); if (old) old.remove();
-  const ov = document.createElement('div'); ov.className = 'ov pov'; ov.id = 'pickOv';
-  const many = SUBJECTS.length > 8;
-  const grid = q => { q = String(q || '').trim().toLowerCase(); const l = SUBJECTS.filter(s => !q || (s.name + ' ' + (s.code || '')).toLowerCase().includes(q)); return l.map(cardHtml).join('') || '<div class="hint" style="grid-column:1/-1;text-align:center">ไม่พบวิชา</div>'; };
-  ov.innerHTML = `<div class="dlg sheet pk" role="dialog" aria-label="เลือกวิชา"><div class="sh"><h3>เลือกวิชา</h3><button class="x" data-pclose type="button" aria-label="ปิด"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="sbody">${many ? '<input class="ssr" id="pq" placeholder="ค้นหาชื่อหรือรหัสวิชา" autocomplete="off">' : ''}<div class="pg" id="pg">${SUBJECTS.length ? grid() : '<div class="hint" style="grid-column:1/-1;text-align:center">ยังไม่มีวิชา — กด “เพิ่มวิชา” ก่อน</div>'}</div></div></div>`;
-  ov.addEventListener('mousedown', e => { if (e.target === ov) ov.remove(); });
-  ov.addEventListener('input', e => { if (e.target.id === 'pq') $('pg').innerHTML = grid(e.target.value); });
-  ov.addEventListener('click', e => {
-    if (e.target.closest('[data-pclose]')) return ov.remove();
-    const b = e.target.closest('[data-sid]'); if (!b) return;
-    CUR = b.dataset.sid; ov.remove(); onSel();
-  });
-  document.body.appendChild(ov);
-}
-/* แถบวิชาที่เลือก: แตะแล้วเปิดป็อปอัพเลือกวิชา */
-function subjectBar(root, onPick){
-  const btn = document.createElement('button'); btn.className = 'cur'; btn.type = 'button'; root.prepend(btn);
-  const paint = () => {
-    const c = curSubject(); btn.classList.toggle('empty', !c);
-    btn.style.setProperty('--c', c ? catOf(c).color : 'var(--muted)');
-    btn.innerHTML = c ? `<span class="si">${subjIcon(c.icon, c.name)}</span><div class="tx"><small>วิชาที่เลือก</small><b>${esc(c.name)}</b></div>${cntHtml(c.chapters.length)}<span class="chg">เปลี่ยน<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span>` : '<span class="si ei"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M8 17h10M9 8h5"/></svg></span><div class="tx"><small>ขั้นแรก</small><b>แตะเพื่อเลือกวิชา</b></div><span class="chg">เลือกวิชา<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span>';
-  };
-  const pick = () => pickPopup(() => { paint(); onPick(); });
-  btn.onclick = pick; paint();
-  return paint;
+/* ---------- จัดการวิชา (เพิ่มวิชา + จัดการบท + เพิ่มบท รวมเป็นที่เดียว) ---------- */
+const slug = s => (String(s).toLowerCase().match(/[a-z0-9]+/g) || []).join('-').slice(0, 40);
+const toB64 = buf => { const u = new Uint8Array(buf); let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); };
+function titleOf(buf){ try { const t = new TextDecoder('utf-8').decode(buf).replace(/<!--[\s\S]*?-->/g, '').match(/<title>([\s\S]*?)<\/title>/i); return t ? t[1].replace(/\s+/g, ' ').trim().split('|')[0].trim() : ''; } catch(e){ return ''; } }
+const MI = d => `<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const M_PLUS = MI('<path d="M12 5v14M5 12h14"/>'), M_BACK = MI('<path d="M15 5l-7 7 7 7"/>'), M_REF = MI('<path d="M20 11a8 8 0 0 0-14-4M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14 4M20 20v-4h-4"/>');
+const M_FILE = MI('<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/>');
+let ICON_SEL = '', NOTIFY = false, MS = { v: 'list', q: '' };
+const msTitle = t => { const h = document.querySelector('#sheet .sh h3'); if (h) h.textContent = t; };
+const statsUpdate = () => { $('nSub').textContent = SUBJECTS.length; $('nCh').textContent = SUBJECTS.reduce((n, s) => n + s.chapters.length, 0); };
+const sortCh = s => s.chapters.sort((a, b) => a.file.localeCompare(b.file, 'th', { numeric: true }));
+
+function subjectsSheet(){
+  FILES = []; SEL.clear(); CUR = ''; MS = { v: 'list', q: '' };
+  const b = openSheet('จัดการวิชา', '<div id="msMain"></div>');
+  b.addEventListener('dragover', e => { if ($('file')) e.preventDefault(); });
+  b.addEventListener('drop', e => { if (!$('file')) return; e.preventDefault(); if (e.dataTransfer && e.dataTransfer.files) addFiles(e.dataTransfer.files); });
+  msList();
 }
 
-/* ---------- 1) เพิ่มวิชา ---------- */
-const slug = s => (String(s).toLowerCase().match(/[a-z0-9]+/g) || []).join('-').slice(0, 40);
-let ICON_SEL = '';
-function subjectSheet(){
-  ICON_SEL = '';
-  const b = openSheet('เพิ่มวิชา', `
-    <div class="field"><label for="fName">ชื่อวิชา *</label><input id="fName" maxlength="80" placeholder="เช่น ฟิสิกส์ 2"></div>
-    <div class="field"><label for="fCode">รหัสวิชา</label><input id="fCode" maxlength="20" placeholder="เช่น ว31201"></div>
+/* ----- หน้ารวมทุกวิชา ----- */
+function msGrid(){
+  const g = $('mg'); if (!g) return;
+  const q = MS.q.trim().toLowerCase();
+  const l = SUBJECTS.filter(s => !q || (s.name + ' ' + (s.code || '')).toLowerCase().includes(q));
+  g.innerHTML = l.map(s => `<button class="mc" data-sid="${esc(s.id)}" style="--c:${catOf(s).color}" type="button"><span class="si">${subjIcon(s.icon, s.name)}</span><span class="mt"><b>${esc(s.name)}</b><small>${esc(s.code || '')}</small></span><span class="n${s.chapters.length ? '' : ' z'}">${s.chapters.length} บท</span></button>`).join('')
+    || `<div class="empty" style="grid-column:1/-1">${SUBJECTS.length ? 'ไม่พบวิชา' : 'ยังไม่มีวิชา — กด “+ เพิ่มวิชา” ด้านบน'}</div>`;
+  $('msSum').textContent = `${SUBJECTS.length} วิชา · ${SUBJECTS.reduce((n, s) => n + s.chapters.length, 0)} บท`;
+}
+function msList(){
+  MS.v = 'list'; CUR = ''; SEL.clear(); FILES = []; msTitle('จัดการวิชา');
+  $('msMain').innerHTML = `<div class="ms-row"><button class="pri yb" id="msNew" type="button">${M_PLUS} เพิ่มวิชา</button><button class="ghost" id="msRef" type="button" aria-label="รีเฟรช">${M_REF}</button></div>
+    ${SUBJECTS.length > 8 ? '<input class="ssr" id="msQ" placeholder="ค้นหาชื่อหรือรหัสวิชา" autocomplete="off">' : ''}
+    <div class="ms-sum" id="msSum"></div><div class="mg" id="mg"></div><div id="fOut"></div>`;
+  $('msNew').onclick = msAddSubject;
+  $('msRef').onclick = async () => { const r = $('msRef'); r.disabled = true; try { await loadSubjects(); msGrid(); } catch(e){ $('fOut').innerHTML = badMsg('รีเฟรชไม่สำเร็จ ลองใหม่อีกครั้ง'); } r.disabled = false; };
+  if ($('msQ')) $('msQ').oninput = e => { MS.q = e.target.value; msGrid(); };
+  $('mg').onclick = e => { const c = e.target.closest('[data-sid]'); if (c) msSubject(c.dataset.sid); };
+  msGrid();
+}
+
+/* ----- เพิ่มวิชา (แสดงในหน้าเดียวกัน ไม่ป็อปอัพ) ----- */
+function msAddSubject(){
+  MS.v = 'add'; ICON_SEL = ''; msTitle('เพิ่มวิชา');
+  $('msMain').innerHTML = `<div class="ms-top"><button class="ghost" id="msBack" type="button">${M_BACK} วิชาทั้งหมด</button></div>
+    <div class="field"><label for="fName">ชื่อวิชา *</label><input id="fName" maxlength="80" placeholder="เช่น ฟิสิกส์ 2" autocomplete="off"></div>
+    <div class="field"><label for="fCode">รหัสวิชา</label><input id="fCode" maxlength="20" placeholder="เช่น ว31201" autocomplete="off"></div>
     <div class="field"><label>ไอคอนวิชา</label><div class="icg" id="icg"><button class="ict auto" data-ic="" aria-pressed="true" type="button">อัตโนมัติ</button>${Object.keys(SUBJ_ICONS).map(k => `<button class="ict" data-ic="${k}" aria-pressed="false" type="button">${subjIcon(k)}</button>`).join('')}</div></div>
-    <div class="field"><label for="fId">ชื่อโฟลเดอร์ (อังกฤษ — เว้นว่างให้ตั้งอัตโนมัติ)</label><input id="fId" maxlength="60" placeholder="เช่น physics-2" autocapitalize="none"></div>
+    <div class="field"><label for="fId">ชื่อโฟลเดอร์ (อังกฤษ — เว้นว่างให้ตั้งอัตโนมัติ)</label><input id="fId" maxlength="60" placeholder="เช่น physics-2" autocapitalize="none" autocomplete="off"></div>
     <label class="chk"><input type="checkbox" id="fNotify" checked><span>แจ้งเตือนผู้ใช้ว่ามีวิชาใหม่</span></label>
-    <button class="pri" id="fGo" type="button">สร้างวิชา</button><div id="fOut"></div>`);
+    <button class="pri yb" id="fGo" type="button">สร้างวิชา</button><div id="fOut"></div>`;
+  $('msBack').onclick = msList;
   $('icg').addEventListener('click', e => { const t = e.target.closest('[data-ic]'); if (!t) return; ICON_SEL = t.dataset.ic; $('icg').querySelectorAll('.ict').forEach(x => x.setAttribute('aria-pressed', x === t)); });
   $('fGo').onclick = async () => {
     const name = $('fName').value.trim(); if (!name) { $('fName').focus(); return; }
@@ -497,49 +537,57 @@ function subjectSheet(){
     const g = $('fGo'); g.disabled = true; g.textContent = 'กำลังสร้าง...'; $('fOut').innerHTML = '';
     try {
       const j = await api('addSubject', { id, name, code, icon: ICON_SEL, order });
-      let note = DEPLOY + ' แล้ววิชาจะขึ้น';
+      let note = DEPLOY + ' แล้ววิชาจะขึ้นหน้าเว็บ';
       if ($('fNotify').checked) { try { note = pushRes(await sendPush('มีวิชาใหม่: ' + name, 'เข้าไปดูเนื้อหาวิชาใหม่ได้เลย', '/?s=' + encodeURIComponent(id))) + '<br>' + note; } catch(e){ note = 'ส่งแจ้งเตือนไม่สำเร็จ: ' + esc(e.message) + '<br>' + note; } }
-      $('fOut').innerHTML = okMsg(`สร้างวิชา “${esc(name)}” แล้ว (commit ${esc(j.commit)})`, note);
-      g.textContent = 'เสร็จแล้ว'; setTimeout(() => loadSubjects().catch(() => {}), 70000);
+      if (!SUBJECTS.some(s => s.id === id)) SUBJECTS.push({ id, name, code, icon: ICON_SEL, order, chapters: [], _new: true });
+      statsUpdate();
+      $('fOut').innerHTML = okMsg(`สร้างวิชา “${esc(name)}” แล้ว (commit ${esc(j.commit)})`, note) + `<button class="pri yb" id="goSub" type="button" style="margin-top:12px">${M_PLUS} เข้าไปเพิ่มบทในวิชานี้</button>`;
+      $('goSub').onclick = () => msSubject(id);
+      g.textContent = 'สร้างแล้ว'; setTimeout(() => loadSubjects().then(msRefresh).catch(() => {}), 70000);
     } catch(e){ $('fOut').innerHTML = badMsg(e.message); g.disabled = false; g.textContent = 'สร้างวิชา'; }
   };
 }
 
-/* ---------- 2) เพิ่มบทเรียน ---------- */
-function lessonSheet(){
-  FILES = [];
-  const b = openSheet('เพิ่มบทเรียน', `
-    <label class="pick" id="drop"><span class="ic" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 8.5a4 4 0 0 1-.5 7.97"/><path d="M12 12v8M8.5 15.5 12 12l3.5 3.5"/></svg></span><b>เลือกไฟล์ .html</b><span class="sub">แตะเพื่อเลือก (เลือกได้หลายไฟล์) หรือลากมาวางที่นี่</span><span class="cta">เลือกไฟล์</span><input id="file" type="file" accept=".html,text/html" multiple></label>
-    <div id="fileList"></div>
-    <div class="hint">ชื่อไฟล์ซ้ำจะถูกเขียนทับ · ชื่อบทดึงจากแท็ก &lt;title&gt; · ขึ้นต้นชื่อไฟล์ด้วยเลขเพื่อกำหนดลำดับ</div>
-    <label class="chk"><input type="checkbox" id="fNotify"><span>แจ้งเตือนผู้ใช้ว่ามีบทเรียนใหม่</span></label>
-    <div class="sticky"><button class="pri" id="upBtn" type="button">เลือกไฟล์ .html</button></div><div id="fOut"></div>`);
-  subjectBar(b, renderFiles);
+/* ----- ในวิชา: บททั้งหมด + จัดการ + เพิ่มบท อยู่ที่เดียว ----- */
+function msSubject(id){
+  CUR = id; const s = curSubject(); if (!s) return msList();
+  MS.v = 'subj'; SEL.clear(); FILES = []; msTitle(s.name);
+  $('msMain').innerHTML = `<div class="ms-top"><button class="ghost" id="msBack" type="button">${M_BACK} วิชาทั้งหมด</button><button class="ghost" id="refBtn" type="button">${M_REF} รีเฟรช</button></div>
+    <div class="ms-cur" style="--c:${catOf(s).color}"><span class="si">${subjIcon(s.icon, s.name)}</span><div class="tx"><b>${esc(s.name)}</b><small>${esc(s.code || '')}</small></div><span id="msCnt"></span></div>
+    <button class="pri yb" id="msAdd" type="button">${M_PLUS} เพิ่มบท</button>
+    <input type="file" id="file" accept=".html,text/html" multiple hidden>
+    <div id="pend"></div>
+    <div class="tools"><button class="ghost" id="selAll" type="button">เลือกทั้งหมด</button><span class="sel" id="selInfo"></span></div>
+    <div class="chs" id="chs"></div>
+    <div class="hint">แตะที่บทเพื่อเลือกหลายบท แล้วกดลบ · “แก้ชื่อ” ใช้เปลี่ยนชื่อไฟล์ (ลำดับบทเรียงตามชื่อไฟล์)</div>
+    <div class="sticky"><button class="pri dangerbtn hidden" id="delBtn" type="button">ลบที่เลือก</button></div><div id="fOut"></div>`;
+  $('msBack').onclick = async () => { if (FILES.length && !(await ask({ title: 'ยังไม่ได้อัปโหลด', body: 'ออกโดยไม่อัปโหลดไฟล์ที่เลือกไว้?', ok: 'ออกเลย', danger: true }))) return; msList(); };
+  $('msAdd').onclick = () => $('file').click();
   $('file').addEventListener('change', async e => { await addFiles(e.target.files); e.target.value = ''; });
-  const d = $('drop');
-  ['dragenter','dragover'].forEach(t => d.addEventListener(t, e => { e.preventDefault(); d.classList.add('drag'); }));
-  ['dragleave','drop'].forEach(t => d.addEventListener(t, e => { e.preventDefault(); d.classList.remove('drag'); }));
-  d.addEventListener('drop', e => { if (e.dataTransfer && e.dataTransfer.files) addFiles(e.dataTransfer.files); });
-  $('fileList').addEventListener('click', e => { const x = e.target.closest('[data-rm]'); if (x) { FILES.splice(+x.dataset.rm, 1); renderFiles(); } });
-  $('fileList').addEventListener('input', e => { const i = e.target.dataset && e.target.dataset.name; if (i === undefined) return; FILES[+i].name = e.target.value.trim(); const pos = e.target.selectionStart; renderFiles(); const n = document.querySelector(`[data-name="${i}"]`); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch(_){} } });
-  $('upBtn').onclick = doUpload; renderFiles();
+  $('selAll').onclick = () => { const c = curSubject(), l = c ? c.chapters : []; if (SEL.size === l.length) SEL.clear(); else l.forEach(x => SEL.add(x.file)); renderChs(); };
+  $('refBtn').onclick = async () => {
+    const r = $('refBtn'); r.disabled = true;
+    try { await loadSubjects(); if (!curSubject()) return msList(); renderChs(); $('fOut').innerHTML = okMsg('อัปเดตรายการบทแล้ว'); setTimeout(() => { if ($('fOut')) $('fOut').innerHTML = ''; }, 2200); }
+    catch(e){ $('fOut').innerHTML = badMsg('รีเฟรชไม่สำเร็จ ลองใหม่อีกครั้ง'); }
+    r.disabled = false;
+  };
+  $('pend').addEventListener('click', e => { const x = e.target.closest('[data-rm]'); if (x) { FILES.splice(+x.dataset.rm, 1); renderPend(); } if (e.target.closest('#addMore')) $('file').click(); });
+  $('pend').addEventListener('input', e => {
+    const t = e.target;
+    if (t.id === 'fNotify') { NOTIFY = t.checked; return; }
+    if (t.dataset.name === undefined) return;
+    const base = t.value.replace(/\.html?$/i, '').trim(); FILES[+t.dataset.name].name = base ? base + '.html' : ''; pendCheck();
+  });
+  $('pend').addEventListener('change', e => { if (e.target.id === 'fNotify') NOTIFY = e.target.checked; });
+  $('chs').addEventListener('click', onChsClick); $('delBtn').onclick = doDelete;
+  renderChs();
 }
-function renderFiles(){
-  if (!$('fileList')) return;
-  const s = curSubject(), have = new Set((s ? s.chapters : []).map(c => c.file.toLowerCase())), names = FILES.map(f => f.name.toLowerCase());
-  $('drop').classList.toggle('has', FILES.length > 0);
-  $('drop').querySelector('b').textContent = FILES.length ? `เลือกแล้ว ${FILES.length} ไฟล์ · แตะเพื่อเพิ่ม` : 'เลือกไฟล์ .html';
-  $('fileList').innerHTML = FILES.map((f, i) => {
-    const bad = !FILE_RE.test(f.name) || /^[._]/.test(f.name) || names.indexOf(f.name.toLowerCase()) !== i;
-    const tag = bad ? '<span class="tag warn">ชื่อไฟล์ไม่ถูกต้องหรือซ้ำ</span>' : have.has(f.name.toLowerCase()) ? '<span class="tag over">จะเขียนทับไฟล์เดิม</span>' : '<span class="tag new">บทใหม่</span>';
-    return `<div class="fl${bad ? ' bad' : ''}"><span class="fic" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/></svg></span><div class="fb"><input data-name="${i}" value="${esc(f.name)}" aria-label="ชื่อไฟล์"><div class="t">ชื่อบท: <b>${f.title ? esc(f.title) : '(ไม่พบ &lt;title&gt; จะใช้ชื่อไฟล์แทน)'}</b> · ${(f.size / 1024).toFixed(0)} KB</div>${tag}</div><button class="rm" data-rm="${i}" type="button" aria-label="เอาออก">×</button></div>`;
-  }).join('');
-  const ok = FILES.length && FILES.every((f, i) => FILE_RE.test(f.name) && !/^[._]/.test(f.name) && names.indexOf(f.name.toLowerCase()) === i);
-  $('upBtn').disabled = FILES.length ? !ok : false;
-  $('upBtn').textContent = FILES.length ? (s ? `อัปโหลด ${FILES.length} ไฟล์เข้า “${s.name}”` : 'แตะเพื่อเลือกวิชา แล้วอัปโหลด') : 'เลือกไฟล์ .html';
+function msRefresh(){
+  if (MS.v === 'list') return msGrid();
+  if (MS.v === 'subj' && curSubject() && $('chs')) renderChs();
 }
-const toB64 = buf => { const u = new Uint8Array(buf); let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); };
-function titleOf(buf){ try { const t = new TextDecoder('utf-8').decode(buf).replace(/<!--[\s\S]*?-->/g, '').match(/<title>([\s\S]*?)<\/title>/i); return t ? t[1].replace(/\s+/g, ' ').trim().split('|')[0].trim() : ''; } catch(e){ return ''; } }
+
+/* ----- เลือกไฟล์ → ตั้งชื่อ → อัปโหลด ----- */
 async function addFiles(list){
   for (const f of list) {
     if (!/\.html?$/i.test(f.name)) continue;
@@ -547,50 +595,60 @@ async function addFiles(list){
     FILES = FILES.filter(x => x.name.toLowerCase() !== name.toLowerCase());
     FILES.push({ name, b64: toB64(buf), size: buf.byteLength, title: titleOf(buf) });
   }
-  renderFiles();
+  renderPend();
+  const p = $('pend'); if (p && FILES.length) p.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+const fileBad = (f, i, names) => !FILE_RE.test(f.name) || /^[._]/.test(f.name) || names.indexOf(f.name.toLowerCase()) !== i;
+function renderPend(){
+  const o = $('pend'); if (!o) return;
+  if (!FILES.length) { o.innerHTML = ''; return; }
+  o.innerHTML = `<div class="pend"><div class="pend-h"><b>ตั้งชื่อบทก่อนอัปโหลด</b><button class="ghost" id="addMore" type="button">${M_PLUS} ไฟล์เพิ่ม</button></div>
+    ${FILES.map((f, i) => `<div class="fl" data-r="${i}"><span class="fic" aria-hidden="true">${M_FILE}</span><div class="fb"><div class="nmrow"><input data-name="${i}" value="${esc(f.name.replace(/\.html$/i, ''))}" placeholder="ตั้งชื่อบท" aria-label="ชื่อบท" autocomplete="off"><span class="ext">.html</span></div><div class="t">หัวข้อในไฟล์: <b>${f.title ? esc(f.title) : '(ไม่มี &lt;title&gt; จะใช้ชื่อไฟล์แทน)'}</b> · ${(f.size / 1024).toFixed(0)} KB</div><span data-tg="${i}"></span></div><button class="rm" data-rm="${i}" type="button" aria-label="เอาออก">×</button></div>`).join('')}
+    <div class="hint" style="margin-top:8px">ขึ้นต้นชื่อด้วยตัวเลขเพื่อกำหนดลำดับ เช่น 05-เรื่องใหม่ · ชื่อซ้ำกับบทเดิมจะเขียนทับ</div>
+    <label class="chk"><input type="checkbox" id="fNotify"${NOTIFY ? ' checked' : ''}><span>แจ้งเตือนผู้ใช้ว่ามีบทเรียนใหม่</span></label>
+    <button class="pri yb" id="upBtn" type="button"></button></div>`;
+  $('upBtn').onclick = doUpload; pendCheck();
+}
+function pendCheck(){
+  const s = curSubject(); if (!s || !$('upBtn')) return;
+  const have = new Set(s.chapters.map(c => c.file.toLowerCase())), names = FILES.map(f => f.name.toLowerCase());
+  let ok = FILES.length > 0;
+  FILES.forEach((f, i) => {
+    const bad = fileBad(f, i, names); if (bad) ok = false;
+    const tg = document.querySelector(`[data-tg="${i}"]`), row = document.querySelector(`[data-r="${i}"]`);
+    if (row) row.classList.toggle('bad', bad);
+    if (tg) tg.innerHTML = bad ? '<span class="tag warn">ชื่อไม่ถูกต้องหรือซ้ำ</span>' : have.has(f.name.toLowerCase()) ? '<span class="tag over">จะเขียนทับบทเดิม</span>' : '<span class="tag new">บทใหม่</span>';
+  });
+  $('upBtn').disabled = !ok; $('upBtn').textContent = `อัปโหลด ${FILES.length} ไฟล์เข้า “${s.name}”`;
 }
 async function doUpload(){
-  const s = curSubject(); if (!FILES.length) return $('file').click();
-  if (!s) { const c = document.querySelector('.cur'); if (c) { c.classList.add('nudge'); setTimeout(() => c.classList.remove('nudge'), 900); c.click(); } return; }
+  const s = curSubject(); if (!s || !FILES.length) return;
   if (FILES.reduce((a, f) => a + f.size, 0) > 3 * 1024 * 1024) { $('fOut').innerHTML = badMsg('ไฟล์รวมใหญ่เกิน 3 MB ให้แบ่งอัปโหลดทีละชุด'); return; }
   const b = $('upBtn'); b.disabled = true; b.textContent = 'กำลังอัปโหลด...'; $('fOut').innerHTML = '';
-  const titles = FILES.map(f => f.title || f.name.replace(/\.html$/i, ''));
-  const lessonUrl = '/?s=' + encodeURIComponent(s.id) + (FILES.length === 1 ? '&c=' + encodeURIComponent(FILES[0].name) : '');
+  const sent = FILES.slice(), titles = sent.map(f => f.title || f.name.replace(/\.html$/i, ''));
+  const lessonUrl = '/?s=' + encodeURIComponent(s.id) + (sent.length === 1 ? '&c=' + encodeURIComponent(sent[0].name) : '');
   try {
-    const j = await api('upload', { subject: s.id, files: FILES.map(f => ({ name: f.name, b64: f.b64 })) });
-    let note = DEPLOY + ' แล้วบทเรียนจะขึ้น';
-    if ($('fNotify').checked) { try { note = pushRes(await sendPush('มีบทเรียนใหม่: ' + s.name, titles.slice(0, 3).join(', ') + (titles.length > 3 ? ` และอีก ${titles.length - 3} บท` : ''), lessonUrl)) + '<br>' + note; } catch(e){ note = 'ส่งแจ้งเตือนไม่สำเร็จ: ' + esc(e.message) + '<br>' + note; } }
+    const j = await api('upload', { subject: s.id, files: sent.map(f => ({ name: f.name, b64: f.b64 })) });
+    let note = DEPLOY + ' แล้วบทเรียนจะขึ้นหน้าเว็บ';
+    if (NOTIFY) { try { note = pushRes(await sendPush('มีบทเรียนใหม่: ' + s.name, titles.slice(0, 3).join(', ') + (titles.length > 3 ? ` และอีก ${titles.length - 3} บท` : ''), lessonUrl)) + '<br>' + note; } catch(e){ note = 'ส่งแจ้งเตือนไม่สำเร็จ: ' + esc(e.message) + '<br>' + note; } }
+    sent.forEach(f => { const t = f.title || f.name.replace(/\.html$/i, ''), ex = s.chapters.find(c => c.file.toLowerCase() === f.name.toLowerCase()); if (ex) ex.title = t; else s.chapters.push({ file: f.name, title: t }); });
+    sortCh(s); FILES = []; renderPend(); renderChs();
     $('fOut').innerHTML = okMsg(`อัปโหลด ${j.count} ไฟล์สำเร็จ (commit ${esc(j.commit)})`, note);
-    FILES = []; renderFiles(); $('upBtn').textContent = 'เสร็จแล้ว'; $('upBtn').disabled = true; setTimeout(() => loadSubjects().catch(() => {}), 70000);
-  } catch(e){ $('fOut').innerHTML = badMsg(e.message); renderFiles(); }
+    setTimeout(() => loadSubjects().then(msRefresh).catch(() => {}), 70000);
+  } catch(e){ $('fOut').innerHTML = badMsg(e.message); if ($('upBtn')) pendCheck(); }
 }
 
-/* ---------- 3) จัดการบทเรียน (มีปุ่มรีเฟรชอยู่ที่นี่) ---------- */
-function manageSheet(){
-  SEL.clear();
-  const b = openSheet('จัดการบทเรียน', `
-    <div class="tools"><button class="ghost" id="selAll" type="button">เลือกทั้งหมด</button><button class="ghost" id="refBtn" type="button"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14-4M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14 4M20 20v-4h-4"/></svg> รีเฟรชรายการ</button><span class="sel" id="selInfo"></span></div>
-    <div class="chs" id="chs"></div>
-    <div class="hint">แตะที่บทเพื่อเลือกหลายบท แล้วกดลบ · ปุ่ม “แก้ชื่อ” ใช้เปลี่ยนชื่อไฟล์ (ลำดับบทเรียงตามชื่อไฟล์)</div>
-    <div class="sticky"><button class="pri dangerbtn hidden" id="delBtn" type="button">ลบที่เลือก</button></div><div id="fOut"></div>`);
-  subjectBar(b, () => { SEL.clear(); renderChs(); });
-  $('selAll').onclick = () => { const s = curSubject(), l = s ? s.chapters : []; if (SEL.size === l.length) SEL.clear(); else l.forEach(c => SEL.add(c.file)); renderChs(); };
-  $('refBtn').onclick = async () => {
-    const r = $('refBtn'); r.disabled = true; r.textContent = 'กำลังโหลด...';
-    try { await loadSubjects(); renderChs(); $('fOut').innerHTML = okMsg('อัปเดตรายการบทแล้ว'); setTimeout(() => { if ($('fOut')) $('fOut').innerHTML = ''; }, 2200); }
-    catch(e){ $('fOut').innerHTML = badMsg('รีเฟรชไม่สำเร็จ ลองใหม่อีกครั้ง'); }
-    r.disabled = false; r.innerHTML = '<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14-4M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14 4M20 20v-4h-4"/></svg> รีเฟรชรายการ';
-  };
-  $('chs').addEventListener('click', onChsClick); $('delBtn').onclick = doDelete; renderChs();
-}
+/* ----- รายการบท: เลือก / แก้ชื่อ / ลบ ----- */
 function renderChs(){
   if (!$('chs')) return;
   const s = curSubject(), list = s ? s.chapters : [];
   SEL = new Set([...SEL].filter(f => list.some(c => c.file === f)));
-  $('chs').innerHTML = !s ? '<div class="empty">เลือกวิชาด้านบนก่อน</div>' : list.length ? list.map((c, i) => `<div class="row${SEL.has(c.file) ? ' on' : ''}" data-i="${i}"><span class="ck" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></span><span class="n">${i + 1}</span><div class="tx" title="${esc(c.file)}"><div class="tt">${esc(c.title)}</div><div class="ff">${esc(c.file)}</div></div><button class="edit" data-edit="${i}" type="button">แก้ชื่อ</button></div>`).join('') : '<div class="empty">ยังไม่มีบทเรียนในวิชานี้<br>กลับไปกด “เพิ่มบทเรียน” เพื่อเพิ่ม</div>';
-  $('selInfo').textContent = s ? (SEL.size ? `เลือก ${SEL.size} จาก ${list.length} บท` : `ทั้งหมด ${list.length} บท`) : '';
+  $('chs').innerHTML = list.length ? list.map((c, i) => `<div class="row${SEL.has(c.file) ? ' on' : ''}" data-i="${i}"><span class="ck" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></span><span class="n">${i + 1}</span><div class="tx" title="${esc(c.file)}"><div class="tt">${esc(c.title)}</div><div class="ff">${esc(c.file)}</div></div><button class="edit" data-edit="${i}" type="button">แก้ชื่อ</button></div>`).join('') : '<div class="empty">ยังไม่มีบทเรียนในวิชานี้<br>กด “+ เพิ่มบท” ด้านบนเพื่อเพิ่ม</div>';
+  $('msCnt').innerHTML = cntHtml(list.length);
+  $('selInfo').textContent = SEL.size ? `เลือก ${SEL.size} จาก ${list.length} บท` : (list.length ? `ทั้งหมด ${list.length} บท` : '');
   $('selAll').textContent = list.length && SEL.size === list.length ? 'ยกเลิกทั้งหมด' : 'เลือกทั้งหมด'; $('selAll').classList.toggle('hidden', !list.length);
   $('delBtn').classList.toggle('hidden', !SEL.size); $('delBtn').textContent = `ลบที่เลือก (${SEL.size} บท)`;
+  statsUpdate();
 }
 async function onChsClick(e){
   const s = curSubject(); if (!s) return;
@@ -602,7 +660,7 @@ async function onChsClick(e){
     if (!FILE_RE.test(nn) || /^[._]/.test(nn) || s.chapters.some(x => x !== c && x.file.toLowerCase() === nn.toLowerCase())) { $('fOut').innerHTML = badMsg('ชื่อไฟล์ไม่ถูกต้องหรือซ้ำกับบทอื่น (ต้องลงท้าย .html)'); return; }
     try {
       const j = await api('rename', { subject: s.id, from: c.file, to: nn });
-      c.file = nn; s.chapters.sort((a, b) => a.file.localeCompare(b.file, 'th', { numeric:true })); SEL.clear(); renderChs();
+      c.file = nn; sortCh(s); SEL.clear(); renderChs();
       $('fOut').innerHTML = okMsg(`เปลี่ยนชื่อเป็น ${esc(nn)} แล้ว${j && j.commit ? ' (commit ' + esc(j.commit) + ')' : ''}`, DEPLOY);
     } catch(err){ if ($('fOut')) $('fOut').innerHTML = badMsg(err.message); }
     return;
@@ -840,7 +898,7 @@ async function fmExpandZip(file, pre){
     if (path.length > 200) continue;
     const u8 = new Uint8Array(await x.ent.async('uint8array'));
     if (u8.length > 3 * 1024 * 1024) throw new Error('ใน zip: “' + rel + '” ใหญ่เกิน 3 MB');
-    out.push({ path, size: u8.length, b64: fmB64(u8), from: file.name });
+    out.push({ path, size: u8.length, b64: fmB64(u8), from: file.name, z: true });
   }
   if (!out.length) throw new Error('ใน “' + file.name + '” ไม่เหลือไฟล์ที่ใช้ได้หลังกรอง');
   return out;
@@ -875,14 +933,10 @@ async function fmUpload(list){
   { const m = new Map(); items.forEach(it => m.set(it.path, it)); items = [...m.values()]; }
   if (items.length > 300) return fmToast('ไฟล์รวมเกิน 300 ไฟล์ (ตอนนี้ ' + items.length + ') — แบ่งอัปโหลดทีละชุด', true);
 
-  const dup = items.filter(it => fmByPath(it.path)).map(it => it.path);
-  const fromZip = items.filter(it => zips.some(z => z.name === it.from)).length;
-  const bodyLines = items.slice(0, 12).map(it => '• ' + it.path + ' (' + fmSize(it.size) + ')').join('\n')
-    + (items.length > 12 ? '\n… และอีก ' + (items.length - 12) + ' ไฟล์' : '')
-    + (fromZip ? '\n\nจาก .zip: ' + fromZip + ' ไฟล์ (path ตามโครงสร้างใน zip' + (pre ? ' ภายใต้ /' + FM.dir : ' ที่ราก') + ')' : '')
-    + (dup.length ? '\n\nจะเขียนทับไฟล์เดิม ' + dup.length + ' ไฟล์: ' + dup.slice(0, 6).join(', ') + (dup.length > 6 ? ' …' : '') : '');
-  const ok = await ask({ title: `อัปโหลด ${items.length} ไฟล์`, body: bodyLines, ok: 'อัปโหลด' });
-  if (!ok) return;
+  const fromZip = items.filter(it => it.z).length;
+  const named = await fmNaming(items, pre);
+  if (!named) return fmToast('ยกเลิกการอัปโหลดแล้ว', true);
+  items = named;
 
   prog('กำลังเตรียมอัปโหลด…');
   try {
@@ -902,6 +956,36 @@ async function fmUpload(list){
     items.forEach(it => touchP(it.path)); fmMerge(r.entries); FM.sel.clear(); fmList();
     fmToast(`อัปโหลด ${items.length} ไฟล์สำเร็จ` + (fromZip ? ` (จาก zip ${fromZip})` : '') + ` · ${DEPLOY}`);
   } catch(e){ fmToast(e.message, true); }
+}
+
+/* ---------- ตั้งชื่อไฟล์ก่อนอัปโหลด (จัดการไฟล์) ---------- */
+const okP = p => typeof p === 'string' && p.length > 0 && p.length <= 200 && !p.startsWith('/') && !p.endsWith('/') && p.split('/').every(x => x && x !== '.' && x !== '..' && x.toLowerCase() !== '.git' && !/[\\:*?"<>|\u0000-\u001f]/.test(x));
+function fmNaming(items, pre){
+  return new Promise(res => {
+    const plain = items.filter(x => !x.z), nz = items.length - plain.length;
+    const ov = document.createElement('div'); ov.className = 'ov'; ov.style.zIndex = 30;
+    ov.innerHTML = `<div class="dlg sheet" role="dialog" aria-modal="true" aria-label="ตั้งชื่อไฟล์"><div class="sh"><h3>ตั้งชื่อไฟล์ก่อนอัปโหลด</h3><button class="x" data-c type="button" aria-label="ปิด">${MI('<path d="M6 6l12 12M18 6L6 18"/>')}</button></div><div class="sbody">
+      <div class="hint" style="margin:0 0 10px">อัปโหลดไปที่ /${esc(FM.dir)} · แก้ชื่อได้ตามต้องการ (ใส่ / เพื่อสร้างโฟลเดอร์ย่อย)</div>
+      ${plain.map((x, i) => `<div class="fl"><span class="fic" aria-hidden="true">${M_FILE}</span><div class="fb"><input data-n="${i}" value="${esc(x.path.slice(pre.length))}" aria-label="ชื่อไฟล์" autocomplete="off" autocapitalize="off"><div class="t">${fmSize(x.size)}</div><span data-g="${i}"></span></div></div>`).join('')}
+      ${nz ? `<div class="hint">+ จาก .zip อีก ${nz} ไฟล์ (ใช้ path ตามโครงสร้างใน zip)</div>` : ''}
+      <div class="btns"><button class="ghost" data-c type="button">ยกเลิก</button><button class="pri yb" id="nmGo" type="button" style="min-height:48px"></button></div></div></div>`;
+    document.body.appendChild(ov);
+    const ins = [...ov.querySelectorAll('[data-n]')], go = ov.querySelector('#nmGo');
+    const pathOf = i => pre + ins[i].value.trim().replace(/^\/+|\/+$/g, '');
+    const check = () => {
+      const all = plain.map((_, i) => pathOf(i)), zp = items.filter(x => x.z).map(x => x.path); let ok = true;
+      all.forEach((p, i) => {
+        const bad = !okP(p) || all.indexOf(p) !== i || zp.includes(p), g = ov.querySelector(`[data-g="${i}"]`);
+        if (bad) ok = false; ins[i].closest('.fl').classList.toggle('bad', bad);
+        g.innerHTML = bad ? '<span class="tag warn">ชื่อไม่ถูกต้องหรือซ้ำ</span>' : fmByPath(p) ? '<span class="tag over">จะเขียนทับไฟล์เดิม</span>' : '<span class="tag new">ไฟล์ใหม่</span>';
+      });
+      go.disabled = !ok; go.textContent = `อัปโหลด ${items.length} ไฟล์`;
+    };
+    const done = v => { ov.remove(); res(v); };
+    ov.addEventListener('input', check); check();
+    ov.addEventListener('click', e => { if (e.target === ov || e.target.closest('[data-c]')) return done(null); });
+    go.onclick = () => { plain.forEach((x, i) => { x.path = pathOf(i); }); done(items); };
+  });
 }
 async function fmNewFile(){
   const n = await ask({ title: 'ไฟล์ใหม่', body: `สร้างใน /${FM.dir} · ใส่ / ในชื่อเพื่อสร้างโฟลเดอร์ย่อยพร้อมกัน`, input: '', ok: 'สร้าง' });
@@ -1106,7 +1190,7 @@ window.addEventListener('beforeunload', e => { if (FM.dirty) { e.preventDefault(
 
 document.querySelector('.home').addEventListener('click', e => {
   const g = e.target.closest('[data-go]'); if (!g) return;
-  ({ subject: subjectSheet, lesson: lessonSheet, manage: manageSheet, push: pushSheet, files: filesSheet, backup: backupSheet })[g.dataset.go]();
+  ({ subjects: subjectsSheet, push: pushSheet, files: filesSheet, backup: backupSheet })[g.dataset.go]();
 });
 /* ติดตั้งเป็นแอปแยก (Hub Admin) */
 let installEv = null;
