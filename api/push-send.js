@@ -1,7 +1,5 @@
-const crypto = require('crypto');
-const webpush = require('web-push');
-const clean = v => String(v || '').trim().replace(/^["']|["']$/g, '').replace(/=+$/, '');
 const { validToken } = require('./_auth');
+const P = require('./_push');
 
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
@@ -20,53 +18,18 @@ module.exports = async (req, res) => {
     if (!targetUrl.startsWith('/') || targetUrl.startsWith('//') || targetUrl.includes('\\'))
       return res.status(400).json({ error: 'URL ต้องเป็นเส้นทางภายในเว็บ' });
 
-    const sUrl = process.env.SUPABASE_URL, sKey = process.env.SUPABASE_SECRET_KEY;
-    const pub = clean(process.env.VAPID_PUBLIC_KEY), priv = clean(process.env.VAPID_PRIVATE_KEY), subj = String(process.env.VAPID_SUBJECT || '').trim().replace(/^["']|["']$/g, '');
-    if (!sUrl || !sKey || !pub || !priv || !subj) return res.status(500).json({ error: 'กรุณาตรวจสอบ Environment Variables ใน Vercel' });
-    // ตรวจว่า Public/Private เป็นคู่เดียวกันจริง
-    try {
-      const ecdh = crypto.createECDH('prime256v1');
-      ecdh.setPrivateKey(Buffer.from(priv, 'base64url'));
-      if (ecdh.getPublicKey().toString('base64url') !== pub)
-        return res.status(500).json({ error: 'VAPID_PUBLIC_KEY กับ VAPID_PRIVATE_KEY ไม่ใช่คู่เดียวกัน — ตั้งใหม่ทั้งสองค่าใน Vercel แล้ว Redeploy' });
-    } catch (e) {
-      return res.status(500).json({ error: 'VAPID_PRIVATE_KEY รูปแบบไม่ถูกต้อง (ต้องเป็น base64url ยาว 43 ตัว)' });
-    }
-    webpush.setVapidDetails(subj, pub, priv);
+    const cfg = P.setup();                       // ตรวจ env + VAPID คู่กันจริง + subject ถูกรูปแบบ
+    if (cfg.error) return res.status(500).json({ error: cfg.error });
 
-    const H = { apikey: sKey, Authorization: `Bearer ${sKey}` };
-    // ดึงทั้งหมดเป็นหน้า ๆ (PostgREST จำกัดต่อคำขอ)
-    const rows = [];
-    for (let off = 0; off < 10000; off += 1000) {
-      const r = await fetch(`${sUrl}/rest/v1/push_subscriptions?select=endpoint,subscription&order=created_at.asc&limit=1000&offset=${off}`, { headers: H });
-      if (!r.ok) { console.error('Supabase query failed:', r.status); return res.status(502).json({ error: 'อ่านข้อมูลผู้รับแจ้งเตือนไม่สำเร็จ' }); }
-      const part = await r.json();
-      rows.push(...part);
-      if (part.length < 1000) break;
-    }
+    let rows;
+    try { rows = await P.fetchAll(cfg, 'push_subscriptions', 'endpoint,subscription', 'created_at.asc'); }
+    catch (e) { console.error('Supabase query failed:', e.message); return res.status(502).json({ error: 'อ่านข้อมูลผู้รับแจ้งเตือนไม่สำเร็จ' }); }
 
     const payload = JSON.stringify({ title, body: message, url: targetUrl });
-    let sent = 0, failed = 0; const dead = [], reasons = {};
-    for (let i = 0; i < rows.length; i += 20) {
-      const batch = rows.slice(i, i + 20);
-      const out = await Promise.allSettled(batch.map(row => webpush.sendNotification(row.subscription, payload, { TTL: 86400, urgency: 'normal' })));
-      out.forEach((o, k) => {
-        if (o.status === 'fulfilled') sent++;
-        else {
-          failed++;
-          const code = o.reason && o.reason.statusCode;
-          const why = String(code || (o.reason && o.reason.message) || 'unknown').slice(0, 80) + (o.reason && o.reason.body ? ' | ' + String(o.reason.body).slice(0, 120) : '');
-          reasons[why] = (reasons[why] || 0) + 1;
-          if (code === 404 || code === 410) dead.push(batch[k].endpoint);
-          else console.error('Push delivery failed:', code || (o.reason && o.reason.message));
-        }
-      });
-    }
+    const r = await P.sendAll(rows.map(x => ({ endpoint: x.endpoint, subscription: x.subscription, payload })), { ttl: 86400, urgency: 'normal' });
+    await P.removeEndpoints(cfg, r.dead);
 
-    // ลบ subscription ที่หมดอายุ
-    await Promise.allSettled(dead.map(ep => fetch(`${sUrl}/rest/v1/push_subscriptions?endpoint=eq.${encodeURIComponent(ep)}`, { method: 'DELETE', headers: H })));
-
-    return res.status(200).json({ ok: true, total: rows.length, sent, failed, removed: dead.length, reasons });
+    return res.status(200).json({ ok: true, total: rows.length, sent: r.sent, failed: r.failed, removed: r.dead.length, remaining: r.remaining, reasons: r.reasons });
   } catch (e) {
     console.error('Push send error:', e.message);
     return res.status(500).json({ error: 'เกิดข้อผิดพลาดในการส่งแจ้งเตือน' });

@@ -572,6 +572,7 @@ html[data-theme="light"] #ntBox{box-shadow:0 -8px 30px #1b2a5026}
 @media(min-width:640px){#ntBg{align-items:center;padding:20px}#ntBox{border-radius:28px;border-bottom:1px solid var(--line2);height:min(80dvh,680px);animation:mpop .25s ease}#ntBox.out{transform:translateY(12px) scale(.97);opacity:0}}
 #ntBox .grab{width:44px;height:5px;border-radius:9px;background:var(--line2);margin:4px auto 8px;flex:none}
 .nt-h{display:flex;align-items:center;gap:10px;padding:4px 2px 10px;flex:none}
+#ntBox .grab,#ntBox .nt-h,.sheet h3{touch-action:none}
 .nt-h b{flex:1;font-size:19px}
 .nt-x{width:36px;height:36px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);display:grid;place-items:center;padding:0}
 .nt-x svg{width:16px;height:16px}
@@ -1775,24 +1776,62 @@ $('hwBg').addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key ===
 window.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('hwBg').classList.contains('hidden')) { if ($('hwPick')) hwPickClose(); else if ($('hwNew')) hwNewClose(); else hwClose(); } });
 
 /* ปัดรายการ: ขวา = เสร็จ / ซ้าย = ลบ */
-/* ลากหัวป็อปอัพลงเพื่อปิด */
-(function(){
-  const box = $('hwBox'), back = () => $('hwBg').querySelector('.mback'); let on = false, sy = 0, dy = 0, pid = null;
-  box.addEventListener('pointerdown', e => {
-    if (!matchMedia('(max-width:639px)').matches || !e.target.closest('.hw-top') || e.target.closest('button')) return;
-    on = true; sy = e.clientY; dy = 0; pid = e.pointerId; try { box.setPointerCapture(pid); } catch(_) {} box.style.transition = 'none';
-  });
-  box.addEventListener('pointermove', e => {
-    if (!on || e.pointerId !== pid) return;
-    dy = Math.max(0, e.clientY - sy); box.style.transform = `translate3d(0,${dy}px,0)`; back().style.opacity = String(Math.max(0, 1 - dy / 320));
-  });
-  const end = () => {
-    if (!on) return; on = false;
-    if (dy > 110) hwClose();
-    else { box.style.transition = 'transform .25s cubic-bezier(.22,1,.36,1)'; box.style.transform = ''; back().style.opacity = ''; setTimeout(() => box.style.transition = '', 260); }
+/* ปัดลงเพื่อปิดแผ่นล่าง (มือถือ) — ใช้ร่วมกัน: การบ้าน / การแจ้งเตือน / รายการบทเรียน
+   ปัดได้จากทุกจุดเมื่อเนื้อหาอยู่บนสุด (หรือจากหัว/แถบจับได้เสมอ) · ปัดขึ้น/ปัดข้างจะไม่ถูกนับว่าเป็นการปิด */
+function sheetSwipe(box, getBack, onClose, opt){
+  opt = opt || {};
+  let sx = 0, sy = 0, ly = 0, lt = 0, vel = 0, dy = 0, drag = false, armed = false, raf = 0, busy = false;
+  const mob = () => matchMedia('(max-width:639px)').matches;
+  const paint = () => {
+    raf = 0; box.style.transform = dy ? `translate3d(0,${dy}px,0)` : '';
+    const b = getBack(); if (b) b.style.opacity = String(Math.max(0, 1 - dy / Math.max(260, box.offsetHeight)));
   };
-  box.addEventListener('pointerup', end); box.addEventListener('pointercancel', end);
-})();
+  const scrolled = el => { for (; el && el !== box; el = el.parentElement) if (el.scrollTop > 0 && el.scrollHeight > el.clientHeight) return true; return box.scrollTop > 0; };
+  box.addEventListener('touchstart', e => {
+    armed = false;
+    if (busy || !mob() || e.touches.length !== 1 || e.target.closest('input,textarea,select,.wheel') || (opt.skip && opt.skip(e))) return;
+    if (!(opt.handle && e.target.closest(opt.handle)) && scrolled(e.target)) return;   // กำลังเลื่อนรายการอยู่ ไม่ใช่การปิด
+    sx = e.touches[0].clientX; sy = ly = e.touches[0].clientY; lt = e.timeStamp; dy = 0; vel = 0; drag = false; armed = true;
+  }, {passive:true});
+  box.addEventListener('touchmove', e => {
+    if (!armed) return;
+    const t = e.touches[0];
+    if (!drag) {
+      const mx = t.clientX - sx, my = t.clientY - sy;
+      if (my < -6 || (Math.abs(mx) > 12 && Math.abs(mx) > Math.abs(my))) { armed = false; return; }
+      if (my < 8) return;
+      drag = true; sy = ly = t.clientY; lt = e.timeStamp;                 // sy=ตำแหน่งปัจจุบัน → ไม่กระโดดตอนเริ่มลาก
+      box.style.transition = 'none'; const b = getBack(); if (b) b.style.transition = 'none';
+    }
+    dy = Math.max(0, t.clientY - sy);
+    const dt = e.timeStamp - lt; if (dt > 0) vel = 0.7 * vel + 0.3 * ((t.clientY - ly) / dt);
+    ly = t.clientY; lt = e.timeStamp;
+    if (!raf) raf = requestAnimationFrame(paint);
+    if (e.cancelable) e.preventDefault();
+  }, {passive:false});
+  const end = () => {
+    armed = false;
+    if (!drag) return;
+    drag = false; if (raf) { cancelAnimationFrame(raf); raf = 0; }
+    const h = box.offsetHeight || 1, b = getBack();
+    if (dy > Math.min(120, h * 0.25) || vel > 0.6) {
+      busy = true;
+      const dur = Math.max(0.16, Math.min(0.26, 0.26 * (1 - dy / h)));
+      box.style.transition = `transform ${dur}s cubic-bezier(.3,.7,.4,1)`; if (b) b.style.transition = `opacity ${dur}s linear`;
+      box.style.transform = 'translate3d(0,100%,0)'; if (b) b.style.opacity = '0';
+      setTimeout(() => { busy = false; onClose(); }, dur * 1000);
+    } else {
+      box.style.transition = 'transform .28s cubic-bezier(.22,1,.36,1)'; if (b) b.style.transition = 'opacity .28s';
+      box.style.transform = ''; if (b) b.style.opacity = ''; dy = 0;
+      setTimeout(() => { if (!drag) { box.style.transition = ''; if (b) b.style.transition = ''; } }, 300);
+    }
+  };
+  box.addEventListener('touchend', end); box.addEventListener('touchcancel', end);
+}
+sheetSwipe($('hwBox'), () => $('hwBg').querySelector('.mback'), () => hwClose(), { handle: '.hw-top', skip: () => !!($('hwNew') || $('hwPick')) });
+sheetSwipe($('ntBox'), () => $('ntBg').querySelector('.mback'), () => ntClose(true), { handle: '.grab,.nt-h' });
+const _sh = $('sheet');
+sheetSwipe(_sh, () => null, () => { closeSheet(); _sh.style.transition = _sh.style.transform = ''; }, { handle: 'h3' });
 hwBadge();
 
 /* ปิดซูม (pinch / double-tap) */
@@ -1805,7 +1844,12 @@ document.addEventListener('touchend', e => {
   _lastTouchEnd = now;
 }, {passive:false});
 
-if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+if ('serviceWorker' in navigator) window.addEventListener('load', () => {
+  const regSW = n => navigator.serviceWorker.register('/sw.js').then(r => {
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) r.update().catch(() => {}); });   // ดึง sw.js ตัวใหม่เมื่อกลับมาที่แอป
+  }).catch(() => { if (n < 2) setTimeout(() => regSW(n + 1), 4000 * (n + 1)); });                              // ลงทะเบียนพลาด → ลองใหม่เอง
+  regSW(0);
+});
 
 /* ---------- Push Notifications (เร็วขึ้น: โหลดคีย์ล่วงหน้า + บันทึกเบื้องหลัง) ---------- */
 const BELL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>';
@@ -1813,15 +1857,30 @@ const pushOK = 'serviceWorker' in navigator && 'PushManager' in window && 'Notif
 const b64u = s => { const p = '='.repeat((4 - s.length % 4) % 4), r = atob((s + p).replace(/-/g, '+').replace(/_/g, '/')); return Uint8Array.from(r, c => c.charCodeAt(0)); };
 let pushKeyP = null, pushBusy = false;
 const regP = pushOK ? navigator.serviceWorker.ready : null;   // เตรียมไว้ล่วงหน้า
-function getPushKey(){
-  if (pushKeyP) return pushKeyP;
+const getReg = () => Promise.race([regP, new Promise((_, rej) => setTimeout(() => rej(new Error('sw timeout')), 8000))]);   // sw.js มีปัญหา → ไม่ค้างตลอดไป
+function fetchT(url, opt, ms){ const ac = new AbortController(), t = setTimeout(() => ac.abort(), ms || 8000); return fetch(url, { ...opt, signal: ac.signal }).finally(() => clearTimeout(t)); }
+// คีย์ VAPID: จำไว้ 6 ชม. แล้วตรวจใหม่ (กันคีย์เก่าค้างเมื่อเปลี่ยนคีย์ฝั่งเซิร์ฟเวอร์) / เน็ตหลุดก็ยังใช้ค่าที่จำไว้ได้
+function getPushKey(force){
+  if (pushKeyP && !force) return pushKeyP;
   pushKeyP = (async () => {
-    const c = store.get('pushKey'); if (c) return c;
-    const k = await (await fetch('/api/push-key')).json();
-    if (!k.publicKey) throw new Error('no key');
-    store.set('pushKey', k.publicKey); return k.publicKey;
+    let c = null; try { c = JSON.parse(store.get('pushKey2') || 'null'); } catch(e) {}
+    if (!force && c && c.k && Date.now() - c.t < 6 * 36e5) return c.k;
+    try {
+      const r = await fetchT('/api/push-key', { cache: 'no-store' }), k = await r.json();
+      if (!r.ok || !k.publicKey) throw new Error('no key');
+      store.set('pushKey2', JSON.stringify({ k: k.publicKey, t: Date.now() })); store.remove('pushKey');
+      return k.publicKey;
+    } catch(e) { if (c && c.k) return c.k; throw e; }
   })().catch(e => { pushKeyP = null; throw e; });
   return pushKeyP;
+}
+// subscription เดิมถูกสร้างด้วยคีย์ตัวเดียวกับที่เซิร์ฟเวอร์ใช้อยู่หรือไม่ (ถ้าไม่ตรง ส่งแจ้งเตือนไม่เข้าเลย)
+function keyEq(sub, k){
+  try {
+    const cur = sub.options && sub.options.applicationServerKey; if (!cur) return true;
+    const a = new Uint8Array(cur), b = b64u(k);
+    return a.length === b.length && a.every((v, i) => v === b[i]);
+  } catch(e) { return true; }
 }
 function pushToast(msg){
   const o = document.getElementById('pToast'); if (o) o.remove();
@@ -1841,27 +1900,62 @@ function pushPaint(on, busy){
 async function pushState(){
   if (!pushOK) { $('pushBtn').innerHTML = BELL; $('pushBtn').classList.add('hidden'); return; }
   pushPaint(pushOn);                                             // วาดจากค่าที่จำไว้ทันที ไม่กะพริบ
-  let on = false;
-  try { const reg = await regP; on = !!(await reg.pushManager.getSubscription()) && Notification.permission === 'granted'; } catch(e) {}
+  let on;
+  try { const reg = await getReg(); on = !!(await reg.pushManager.getSubscription()) && Notification.permission === 'granted'; }
+  catch(e) { return; }                                           // อ่านสถานะไม่ได้ → คงค่าเดิมไว้ ไม่สลับเป็น "ปิด" มั่ว ๆ
+  if (on && store.get('pushWant') == null) store.set('pushWant', '1');                          // ผู้ใช้ที่เปิดไว้ก่อนอัปเดต
+  if (!on && store.get('pushWant') === '1' && Notification.permission === 'granted') on = await pushEnsure();   // subscription หาย (เบราว์เซอร์ล้าง/หมดอายุ) → สมัครใหม่ให้เอง
+  else if (on) pushEnsure();                                                                    // ซิงก์ขึ้นเซิร์ฟเวอร์ให้ครบ (ทุก 12 ชม. หรือเมื่อค้างอยู่)
   pushPaint(on);
 }
-async function pushSave(sub){
-  // บันทึกขึ้นเซิร์ฟเวอร์เบื้องหลัง (ลองซ้ำ 3 ครั้ง) — ผู้ใช้ไม่ต้องรอ
-  const body = JSON.stringify({ subscription: sub.toJSON ? sub.toJSON() : sub });
-  for (let i = 0; i < 3; i++) {
-    try { const r = await fetch('/api/push-subscribe', { method:'POST', headers:{'Content-Type':'application/json'}, body }); if (r.ok) { store.remove('pushPend'); hwSync(true); return true; } } catch(e) {}
-    await new Promise(r => setTimeout(r, 1200 * (i + 1)));
+let pushSaving = null;
+function pushSave(sub){
+  // บันทึกขึ้นเซิร์ฟเวอร์เบื้องหลัง (ลองซ้ำ 3 ครั้ง, ไม่ยิงซ้อนกัน) — ผู้ใช้ไม่ต้องรอ
+  return pushSaving || (pushSaving = (async () => {
+    const body = JSON.stringify({ subscription: sub.toJSON ? sub.toJSON() : sub });
+    for (let i = 0; i < 3; i++) {
+      try {
+        const r = await fetchT('/api/push-subscribe', { method:'POST', headers:{'Content-Type':'application/json'}, body });
+        if (r.ok) { store.remove('pushPend'); store.set('pushSyncT', String(Date.now())); hwSync(true); return true; }
+        if (r.status >= 400 && r.status < 500 && r.status !== 429) { store.set('pushSyncT', String(Date.now())); return false; }   // ข้อมูลผิดถาวร ลองซ้ำไม่ช่วย
+      } catch(e) {}
+      await new Promise(r => setTimeout(r, 1200 * (i + 1)));
+    }
+    store.set('pushPend', '1'); return false;                    // ไว้ลองใหม่ตอนกลับมาที่แอป / ออนไลน์อีกครั้ง
+  })().finally(() => { pushSaving = null; }));
+}
+async function pushServerDel(ep){
+  for (let i = 0; i < 2; i++) {
+    try { const r = await fetchT('/api/push-subscribe', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ unsubscribe: true, endpoint: ep }) }); if (r.ok) return; } catch(e) {}
+    await new Promise(r => setTimeout(r, 1500));
   }
-  store.set('pushPend', '1'); return false;
+}
+// ทำให้ "มี subscription ที่ใช้ได้ และเซิร์ฟเวอร์รู้จัก" เสมอ (ซ่อมเองเมื่อคีย์เปลี่ยน / subscription หาย / บันทึกไม่ขึ้น)
+async function pushEnsure(force){
+  if (!pushOK || Notification.permission !== 'granted' || (!force && (pushBusy || store.get('pushWant') !== '1'))) return false;
+  try {
+    const reg = await getReg(); let k = await getPushKey(), sub = await reg.pushManager.getSubscription();
+    if (sub && !keyEq(sub, k)) {
+      let fresh = false; try { k = await getPushKey(true); fresh = true; } catch(e) {}          // ยืนยันกับเซิร์ฟเวอร์ก่อนค่อยตัดสินใจ
+      if (fresh && !keyEq(sub, k)) { await sub.unsubscribe().catch(() => {}); sub = null; }
+    }
+    if (!sub) {
+      try { sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64u(k) }); }
+      catch(e) { k = await getPushKey(true); sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64u(k) }); }
+      store.set('pushPend', '1');                                // subscription ใหม่ ต้องบันทึกขึ้นเซิร์ฟเวอร์
+    }
+    if (store.get('pushPend') || Date.now() - Number(store.get('pushSyncT') || 0) > 12 * 36e5) pushSave(sub);
+    return true;
+  } catch(e) { return false; }
 }
 async function pushToggle(){
   if (pushBusy) return; pushBusy = true;
   const btn = $('pushBtn');
   try {
-    // ปิด: ตอบสนองทันที แล้วค่อยยกเลิกเบื้องหลัง
+    // ปิด: ตอบสนองทันที แล้วค่อยยกเลิกเบื้องหลัง (และแจ้งเซิร์ฟเวอร์ให้ลบ ไม่ต้องรอให้ส่งพลาดก่อน)
     if (pushOn && Notification.permission === 'granted') {
-      pushPaint(false); pushToast('ปิดการแจ้งเตือนแล้ว');
-      regP.then(r => r.pushManager.getSubscription()).then(c => c && c.unsubscribe()).then(() => hwSync(true)).catch(() => {});
+      pushPaint(false); store.set('pushWant', '0'); pushToast('ปิดการแจ้งเตือนแล้ว');
+      getReg().then(async r => { const c = await r.pushManager.getSubscription(); if (!c) return; const ep = c.endpoint; await c.unsubscribe(); pushServerDel(ep); }).catch(() => {});
       return;
     }
     // เปิด: ขอสิทธิ์ทันทีในจังหวะที่กด (ต้องอยู่ใน gesture) ขนานกับโหลดคีย์
@@ -1870,22 +1964,19 @@ async function pushToggle(){
     if (perm !== 'granted') { pushToast('ไม่ได้รับอนุญาต เปิดได้ที่การตั้งค่าเบราว์เซอร์'); return pushPaint(false); }
     pushPaint(true); btn.classList.remove('ring'); void btn.offsetWidth; btn.classList.add('ring');
     pushToast('เปิดการแจ้งเตือนแล้ว 🔔');                          // แสดงผลทันที (optimistic)
-    const reg = await regP;
-    let sub = await reg.pushManager.getSubscription();
-    if (!sub) {
-      try { sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64u(await keyP) }); }
-      catch(e) { store.remove('pushKey'); pushKeyP = null; sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64u(await getPushKey()) }); }
-    }
-    pushSave(sub);                                                 // บันทึกเบื้องหลัง
+    store.set('pushWant', '1');
+    if (!(await pushEnsure(true))) throw new Error('subscribe failed');
     setTimeout(hwAlerts, 300);
-  } catch(e) { pushToast('เปิดการแจ้งเตือนไม่สำเร็จ ลองใหม่อีกครั้ง'); pushPaint(false); pushState(); }
+  } catch(e) { store.set('pushWant', '0'); pushToast('เปิดการแจ้งเตือนไม่สำเร็จ ลองใหม่อีกครั้ง'); pushPaint(false); pushState(); }
   finally { pushBusy = false; }
 }
 pushState();
-if (pushOK) setTimeout(() => {
-  getPushKey().catch(() => {});                                   // โหลดคีย์ไว้ล่วงหน้า กดแล้วไม่ต้องรอ
-  if (store.get('pushPend')) navigator.serviceWorker.ready.then(r => r.pushManager.getSubscription()).then(s => s && pushSave(s)).catch(() => {});
-}, 700);
+if (pushOK) {
+  setTimeout(() => { getPushKey().catch(() => {}); }, 700);       // โหลดคีย์ไว้ล่วงหน้า กดแล้วไม่ต้องรอ
+  const heal = () => { pushEnsure(); if (store.get('hwPend')) hwSync(true); };
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) heal(); });
+  window.addEventListener('online', heal);
+}
 
 
 /* ---------- กล่องประวัติการแจ้งเตือน (กดกระดิ่ง) ---------- */
@@ -1913,6 +2004,7 @@ function ntSave(){
 }
 function ntAdd(n){
   n.ts = n.ts || Date.now();
+  if (n.ts <= Number(store.get('ntClr') || 0)) return false;    // ผู้ใช้เพิ่งกดล้างแล้ว ห้ามดึงของเก่าในถาดกลับมาอีก
   if (NT.some(x => x.title === n.title && x.body === n.body && Math.abs(x.ts - n.ts) < 120000)) return false;   // กันซ้ำ
   NT.push({ id: n.ts.toString(36) + Math.random().toString(36).slice(2, 6), title: n.title, body: n.body || '', url: n.url || '/', kind: n.kind || ntKind(n.title, n.url), ts: n.ts, read: false });
   return true;
@@ -1926,7 +2018,7 @@ function ntBadge(){
 async function ntCapture(){
   if (!pushOK) return;
   try {
-    const reg = await regP, list = await reg.getNotifications(); let ch = false;
+    const reg = await getReg(), list = await reg.getNotifications(); let ch = false;
     list.forEach(n => {
       if (n.data && n.data.local) return;                       // แจ้งเตือนการบ้านในเครื่อง บันทึกไว้เองแล้ว
       const url = (n.data && n.data.url) || '/';
@@ -1983,8 +2075,10 @@ function ntRender(){
     <div class="nt-list">${list}</div>`;
   ntPaintSwitch();
 }
+let ntCloseT = 0;
 function ntOpen(){
-  const bg = $('ntBg'), box = $('ntBox'); box.classList.remove('out');
+  const bg = $('ntBg'), box = $('ntBox'); clearTimeout(ntCloseT); box.classList.remove('out');
+  box.style.transition = box.style.transform = ''; bg.querySelector('.mback').style.cssText = '';   // ล้างค่าที่เหลือจากการปัดปิดครั้งก่อน
   ntFresh = new Set(NT.filter(x => !x.read).map(x => x.id));
   ntRender(); bg.classList.remove('hidden');
   if (ntFresh.size) { NT.forEach(x => x.read = true); ntSave(); }
@@ -1994,13 +2088,13 @@ function ntClose(instant){
   const bg = $('ntBg'), box = $('ntBox'); if (bg.classList.contains('hidden')) return;
   if (instant) { bg.classList.add('hidden'); return; }
   box.classList.add('out'); bg.querySelector('.mback').style.cssText = 'transition:opacity .22s;opacity:0';
-  setTimeout(() => { bg.classList.add('hidden'); box.classList.remove('out'); bg.querySelector('.mback').style.cssText = ''; }, 220);
+  ntCloseT = setTimeout(() => { bg.classList.add('hidden'); box.classList.remove('out'); bg.querySelector('.mback').style.cssText = ''; }, 220);   // (เปิดซ้ำภายใน 220ms จะยกเลิกตัวนี้ ไม่ให้ปิดทับ)
 }
 $('pushBtn').onclick = ntOpen;
 $('ntBg').addEventListener('click', e => {
   if (e.target.classList.contains('mback') || e.target.closest('[data-ntclose]')) return ntClose();
   if (e.target.closest('#ntSw')) return pushToggle();
-  if (e.target.closest('[data-ntclear]')) { NT = []; ntFresh = new Set(); ntSave(); return ntRender(); }
+  if (e.target.closest('[data-ntclear]')) { NT = []; ntFresh = new Set(); store.set('ntClr', String(Date.now())); ntSave(); return ntRender(); }
   const it = e.target.closest('[data-nt]'); if (!it) return;
   const n = NT.find(x => x.id === it.dataset.nt); if (!n) return;
   ntClose(true); ntGo(n);
@@ -2025,10 +2119,11 @@ function hwSync(now){
   hwSyncT = setTimeout(async () => {
     if (!pushOK || Notification.permission !== 'granted') return;
     try {
-      const reg = await navigator.serviceWorker.ready, sub = await reg.pushManager.getSubscription(); if (!sub) return;
+      const reg = await getReg(), sub = await reg.pushManager.getSubscription(); if (!sub) return;
       const items = hwLoad().filter(x => x.due && !x.done).slice(0, 60).map(x => ({ id: x.id, title: x.title, subj: ((SUBJECTS || []).find(s => s.id === x.subj) || {}).name || '', due: x.due, time: x.time || '' }));
-      await fetch('/api/hw-sync', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ subscription: sub.toJSON(), items }) });
-    } catch(e) {}
+      const r = await fetchT('/api/hw-sync', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ subscription: sub.toJSON(), items }) }, 10000);
+      if (r.ok) store.remove('hwPend'); else if (r.status >= 500 || r.status === 429) store.set('hwPend', '1');
+    } catch(e) { store.set('hwPend', '1'); }     // ไว้ลองใหม่ตอนกลับมาที่แอป / ออนไลน์อีกครั้ง
   }, now ? 0 : 1500);
 }
 async function hwAlerts(){

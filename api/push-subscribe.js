@@ -1,4 +1,4 @@
-const ALLOWED = [/^fcm\.googleapis\.com$/, /(^|\.)push\.services\.mozilla\.com$/, /(^|\.)notify\.windows\.com$/, /(^|\.)push\.apple\.com$/];
+const P = require('./_push');
 
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
@@ -9,22 +9,25 @@ module.exports = async (req, res) => {
     catch (e) { return res.status(400).json({ error: 'ข้อมูลไม่ถูกต้อง' }); }
     if (JSON.stringify(body).length > 4000) return res.status(413).json({ error: 'ข้อมูลใหญ่เกินไป' });
 
+    const cfg = P.supa();
+    if (!cfg) return res.status(500).json({ error: 'ยังไม่ได้ตั้งค่า Supabase บน Vercel' });
+
+    // ผู้ใช้ปิดแจ้งเตือน → ลบ subscription ออกจากเซิร์ฟเวอร์ทันที (endpoint เป็น URL ลับเฉพาะเครื่อง จึงใช้ยืนยันความเป็นเจ้าของได้)
+    if (body.unsubscribe) {
+      if (typeof body.endpoint !== 'string' || !P.validEndpoint(body.endpoint)) return res.status(400).json({ error: 'endpoint ไม่ถูกต้อง' });
+      await P.removeEndpoints(cfg, [body.endpoint]);
+      return res.status(200).json({ ok: true, removed: true });
+    }
+
     const sub = body.subscription;
     if (!sub || typeof sub.endpoint !== 'string' || !sub.keys || typeof sub.keys.p256dh !== 'string' || typeof sub.keys.auth !== 'string')
       return res.status(400).json({ error: 'ข้อมูล Push Subscription ไม่ถูกต้อง' });
-
-    let host;
-    try { const u = new URL(sub.endpoint); if (u.protocol !== 'https:') throw 0; host = u.hostname; }
-    catch (e) { return res.status(400).json({ error: 'endpoint ไม่ถูกต้อง' }); }
-    if (!ALLOWED.some(re => re.test(host))) return res.status(400).json({ error: 'ไม่รองรับ push service นี้' });
-
-    const url = process.env.SUPABASE_URL, key = process.env.SUPABASE_SECRET_KEY;
-    if (!url || !key) return res.status(500).json({ error: 'ยังไม่ได้ตั้งค่า Supabase บน Vercel' });
+    if (!P.validEndpoint(sub.endpoint)) return res.status(400).json({ error: 'endpoint ไม่ถูกต้องหรือไม่รองรับ push service นี้' });
 
     const clean = { endpoint: sub.endpoint, keys: { p256dh: sub.keys.p256dh, auth: sub.keys.auth } };
-    const r = await fetch(`${url}/rest/v1/push_subscriptions?on_conflict=endpoint`, {
+    const r = await P.sb(cfg, 'push_subscriptions?on_conflict=endpoint', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', apikey: key, Authorization: `Bearer ${key}`, Prefer: 'resolution=merge-duplicates,return=minimal' },
+      headers: { 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=minimal' },
       body: JSON.stringify({ endpoint: sub.endpoint, subscription: clean })
     });
     if (!r.ok) {
