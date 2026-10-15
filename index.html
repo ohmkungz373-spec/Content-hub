@@ -935,6 +935,32 @@ html[data-theme="light"] header.top .refbtn{color:#2563eb;background:linear-grad
 header.top .refbtn:active{transform:scale(.93)}
 header.top #pushBtn{color:var(--cyan)}
 #pushBtn + #themeBtn{margin-left:0}
+
+/* ===== ประสิทธิภาพ: ลื่น/เสถียรขึ้น (ปิดของหนัก คงหน้าตาเดิมให้มากที่สุด) ===== */
+html{scroll-behavior:auto;touch-action:manipulation;-webkit-text-size-adjust:100%}
+/* เบลอพื้นหลัง (backdrop-filter) กินเครื่องที่สุดตอนเลื่อน → เปลี่ยนเป็นพื้นทึบแทน */
+.top,header.top,.vbar,.pill,.tools,.sheet-bg{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+header.top{background:color-mix(in srgb,var(--bg) 97%,transparent)}
+.tools{background:linear-gradient(color-mix(in srgb,var(--bg) 98%,transparent) 0%,color-mix(in srgb,var(--bg) 94%,transparent) 72%,color-mix(in srgb,var(--bg) 0%,transparent) 100%)}
+.sheet-bg{background:#000c}
+/* อนิเมชันวนไม่รู้จบ = ปลุก GPU ตลอดเวลา → หยุด */
+body:after{animation:none!important;will-change:auto;transform:none}
+.kicker:before,.startcard::after{animation:none!important}
+.startcard::after{display:none}
+.card,.chap{animation:none!important}
+.card{transition:transform .16s,border-color .16s,box-shadow .16s}
+.chap{transition:transform .16s,border-color .16s,background-color .16s}
+/* ข้ามการเรนเดอร์ของรายการที่อยู่นอกจอ */
+.card,.chap{content-visibility:auto}
+.card{contain-intrinsic-size:auto 136px}
+.chap{contain-intrinsic-size:auto 70px}
+.ico .sic,.pin.on,.pin.on .ic,.hero:before{filter:none!important}
+/* จอสัมผัส: ไม่มี hover ค้าง/เอฟเฟกต์เงาวิ่ง */
+@media(hover:none){
+  .card:hover,.chap:hover{transform:none}
+  .card:before{display:none}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
@@ -1372,7 +1398,8 @@ $('logo').onclick = () => {   // หน้าแรก: กดโลโก้ = 
   if (location.pathname === '/') { $('logo').animate([{transform:'scale(1)'},{transform:'scale(.9)'},{transform:'scale(1)'}], {duration:160}); setTimeout(() => location.reload(), 170); }
   else go('/');
 };
-$('q').addEventListener('input', renderGrid);
+let _qT = 0;   // พิมพ์ค้นหา: วาดใหม่อย่างมาก 1 ครั้งต่อเฟรม (ไม่สะดุดเวลาพิมพ์เร็ว)
+$('q').addEventListener('input', () => { cancelAnimationFrame(_qT); _qT = requestAnimationFrame(() => renderGrid(true)); });
 $('clr').onclick = () => { $('q').value = ''; renderGrid(); $('q').focus(); };
 window.addEventListener('popstate', () => {
   // ย้อนจากบทเรียนมาเจอ popup รายการบท → ข้ามไปหน้าหลักเลย
@@ -1842,12 +1869,7 @@ hwBadge();
 /* ปิดซูม (pinch / double-tap) */
 document.addEventListener('gesturestart', e => e.preventDefault(), {passive:false});
 document.addEventListener('gesturechange', e => e.preventDefault(), {passive:false});
-let _lastTouchEnd = 0;
-document.addEventListener('touchend', e => {
-  const now = Date.now();
-  if (now - _lastTouchEnd <= 300) e.preventDefault();
-  _lastTouchEnd = now;
-}, {passive:false});
+/* กันดับเบิลแท็ปซูมทำด้วย CSS (touch-action:manipulation) แล้ว — ไม่ต้องดักทุก touchend ซึ่งเคยกลืนการแตะรัว ๆ */
 
 if ('serviceWorker' in navigator) window.addEventListener('load', () => {
   const regSW = n => navigator.serviceWorker.register('/sw.js').then(r => {
@@ -2113,7 +2135,7 @@ if (pushOK) {
   });
   setTimeout(ntCapture, 1200);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) ntCapture(); });
-  setInterval(ntCapture, 60000);
+  setInterval(() => { if (!document.hidden) ntCapture(); }, 60000);
 }
 ntBadge();
 
@@ -2153,11 +2175,14 @@ async function hwAlerts(){
     fire.slice(0, 3).forEach(({ x, st }) => reg.showNotification(st === 'over' ? 'เลยกำหนดส่งการบ้านแล้ว' : st === 'h1' ? 'การบ้านเหลือไม่ถึง 1 ชั่วโมง' : 'ใกล้ถึงกำหนดส่งการบ้าน', { body: x.title + (x.time ? ' · ' + x.time + ' น.' : ''), icon: '/icon-192.png', badge: '/icon-192.png', tag: 'hw-' + x.id, data: { url: '/?hw=' + encodeURIComponent(x.id), local: true } }));
   } catch(e) {}
 }
-setTimeout(hwAlerts, 2500); setInterval(hwAlerts, 60000);
+setTimeout(hwAlerts, 2500); setInterval(() => { if (!document.hidden) hwAlerts(); }, 60000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) hwAlerts(); });
 
 /* กันการดึงหน้าจอลงจนสุด (pull-to-refresh / ยางยืด) ทุกกรณี */
 (function(){
+  // เบราว์เซอร์อื่นใช้ CSS overscroll-behavior ได้ลื่นกว่า (ตัวดักนี้ทำให้เลื่อนต้องรอ JS ทุกครั้ง) → เปิดเฉพาะ iOS
+  const ios = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if (!ios) return;
   let y0 = 0;
   const scrolledInside = el => { for (; el && el !== document.body && el !== document.documentElement; el = el.parentElement) { if (el.scrollTop > 0 && el.scrollHeight > el.clientHeight) return true; } return false; };
   document.addEventListener('touchstart', e => { y0 = e.touches[0].clientY; }, {passive:true});
