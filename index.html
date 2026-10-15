@@ -573,6 +573,8 @@ html[data-theme="light"] #ntBox{box-shadow:0 -8px 30px #1b2a5026}
 #ntBox .grab{width:44px;height:5px;border-radius:9px;background:var(--line2);margin:4px auto 8px;flex:none}
 .nt-h{display:flex;align-items:center;gap:10px;padding:4px 2px 10px;flex:none}
 #ntBox .grab,#ntBox .nt-h,.sheet h3{touch-action:none}
+html.sdrag .sheet-bg{backdrop-filter:none}
+html.sdrag body:after,html.sdrag .kicker:before{animation:none}
 .nt-h b{flex:1;font-size:19px}
 .nt-x{width:36px;height:36px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);display:grid;place-items:center;padding:0}
 .nt-x svg{width:16px;height:16px}
@@ -1780,50 +1782,53 @@ window.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('hwBg').c
    ปัดได้จากทุกจุดเมื่อเนื้อหาอยู่บนสุด (หรือจากหัว/แถบจับได้เสมอ) · ปัดขึ้น/ปัดข้างจะไม่ถูกนับว่าเป็นการปิด */
 function sheetSwipe(box, getBack, onClose, opt){
   opt = opt || {};
-  let sx = 0, sy = 0, ly = 0, lt = 0, vel = 0, dy = 0, drag = false, armed = false, raf = 0, busy = false;
+  const root = document.documentElement;
+  let sx = 0, sy = 0, ly = 0, lt = 0, vel = 0, dy = 0, base = 0, h = 1, drag = false, armed = false, busy = false, back = null;
   const mob = () => matchMedia('(max-width:639px)').matches;
-  const paint = () => {
-    raf = 0; box.style.transform = dy ? `translate3d(0,${dy}px,0)` : '';
-    const b = getBack(); if (b) b.style.opacity = String(Math.max(0, 1 - dy / Math.max(260, box.offsetHeight)));
-  };
   const scrolled = el => { for (; el && el !== box; el = el.parentElement) if (el.scrollTop > 0 && el.scrollHeight > el.clientHeight) return true; return box.scrollTop > 0; };
+  const fin = () => { root.classList.remove('sdrag'); box.style.willChange = ''; if (back) back.style.willChange = ''; };
   box.addEventListener('touchstart', e => {
     armed = false;
     if (busy || !mob() || e.touches.length !== 1 || e.target.closest('input,textarea,select,.wheel') || (opt.skip && opt.skip(e))) return;
-    if (!(opt.handle && e.target.closest(opt.handle)) && scrolled(e.target)) return;   // กำลังเลื่อนรายการอยู่ ไม่ใช่การปิด
-    sx = e.touches[0].clientX; sy = ly = e.touches[0].clientY; lt = e.timeStamp; dy = 0; vel = 0; drag = false; armed = true;
+    if (!(opt.handle && e.target.closest(opt.handle)) && scrolled(e.target)) return;
+    base = 0;   // จับซ้อนตอนกำลังเด้งกลับ → เริ่มจากตำแหน่งปัจจุบัน ไม่กระโดด
+    if (box.style.transform) { try { base = new DOMMatrix(getComputedStyle(box).transform).m42 || 0; } catch(_) {} }
+    h = box.offsetHeight || 1;   // อ่านความสูงครั้งเดียว (ไม่อ่านทุกเฟรม = ไม่บังคับ layout)
+    sx = e.touches[0].clientX; sy = ly = e.touches[0].clientY; lt = e.timeStamp; dy = base; vel = 0; drag = false; armed = true;
   }, {passive:true});
   box.addEventListener('touchmove', e => {
     if (!armed) return;
-    const t = e.touches[0];
+    const t = e.touches[0], y = t.clientY;
     if (!drag) {
-      const mx = t.clientX - sx, my = t.clientY - sy;
+      const mx = t.clientX - sx, my = y - sy;
       if (my < -6 || (Math.abs(mx) > 12 && Math.abs(mx) > Math.abs(my))) { armed = false; return; }
-      if (my < 8) return;
-      drag = true; sy = ly = t.clientY; lt = e.timeStamp;                 // sy=ตำแหน่งปัจจุบัน → ไม่กระโดดตอนเริ่มลาก
-      box.style.transition = 'none'; const b = getBack(); if (b) b.style.transition = 'none';
+      if (my < 4 && !base) return;
+      drag = true; sy = ly = y; lt = e.timeStamp; back = getBack();
+      root.classList.add('sdrag');   // หยุดอนิเมชัน/เบลอพื้นหลังระหว่างลาก
+      box.style.transition = 'none'; box.style.willChange = 'transform';
+      if (back) { back.style.transition = 'none'; back.style.willChange = 'opacity'; }
     }
-    dy = Math.max(0, t.clientY - sy);
-    const dt = e.timeStamp - lt; if (dt > 0) vel = 0.7 * vel + 0.3 * ((t.clientY - ly) / dt);
-    ly = t.clientY; lt = e.timeStamp;
-    if (!raf) raf = requestAnimationFrame(paint);
+    dy = Math.max(0, base + y - sy);
+    box.style.transform = 'translate3d(0,' + dy + 'px,0)';   // เขียนตรง ๆ ทันที ไม่รอ rAF
+    if (back) back.style.opacity = (1 - dy / Math.max(260, h)).toFixed(3);
+    const dt = e.timeStamp - lt; if (dt > 0) vel = 0.6 * vel + 0.4 * ((y - ly) / dt);
+    ly = y; lt = e.timeStamp;
     if (e.cancelable) e.preventDefault();
   }, {passive:false});
   const end = () => {
     armed = false;
     if (!drag) return;
-    drag = false; if (raf) { cancelAnimationFrame(raf); raf = 0; }
-    const h = box.offsetHeight || 1, b = getBack();
-    if (dy > Math.min(120, h * 0.25) || vel > 0.6) {
+    drag = false;
+    if (dy > Math.min(120, h * 0.25) || vel > 0.5) {
       busy = true;
-      const dur = Math.max(0.16, Math.min(0.26, 0.26 * (1 - dy / h)));
-      box.style.transition = `transform ${dur}s cubic-bezier(.3,.7,.4,1)`; if (b) b.style.transition = `opacity ${dur}s linear`;
-      box.style.transform = 'translate3d(0,100%,0)'; if (b) b.style.opacity = '0';
-      setTimeout(() => { busy = false; onClose(); }, dur * 1000);
+      const dur = Math.round(Math.min(300, Math.max(150, (h - dy) / Math.max(vel, 0.9))));   // เร็วตามแรงปัด
+      box.style.transition = 'transform ' + dur + 'ms cubic-bezier(.25,.8,.3,1)'; if (back) back.style.transition = 'opacity ' + dur + 'ms linear';
+      box.style.transform = 'translate3d(0,100%,0)'; if (back) back.style.opacity = '0';
+      setTimeout(() => { busy = false; fin(); onClose(); }, dur);
     } else {
-      box.style.transition = 'transform .28s cubic-bezier(.22,1,.36,1)'; if (b) b.style.transition = 'opacity .28s';
-      box.style.transform = ''; if (b) b.style.opacity = ''; dy = 0;
-      setTimeout(() => { if (!drag) { box.style.transition = ''; if (b) b.style.transition = ''; } }, 300);
+      box.style.transition = 'transform .32s cubic-bezier(.32,.72,0,1)'; if (back) back.style.transition = 'opacity .32s';
+      box.style.transform = ''; if (back) back.style.opacity = ''; dy = 0;
+      setTimeout(() => { if (!drag) { box.style.transition = ''; if (back) back.style.transition = ''; fin(); } }, 340);
     }
   };
   box.addEventListener('touchend', end); box.addEventListener('touchcancel', end);
@@ -2157,7 +2162,7 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden) hwAl
   const scrolledInside = el => { for (; el && el !== document.body && el !== document.documentElement; el = el.parentElement) { if (el.scrollTop > 0 && el.scrollHeight > el.clientHeight) return true; } return false; };
   document.addEventListener('touchstart', e => { y0 = e.touches[0].clientY; }, {passive:true});
   document.addEventListener('touchmove', e => {
-    if (e.touches.length !== 1) return;
+    if (e.touches.length !== 1 || document.documentElement.classList.contains('sdrag')) return;   // ระหว่างลากแผ่นล่าง ไม่ต้องไล่ตรวจ DOM ทุก touchmove
     const pullingDown = e.touches[0].clientY - y0 > 0;
     if (pullingDown && (window.scrollY || document.documentElement.scrollTop) <= 0 && !scrolledInside(e.target) && e.cancelable) e.preventDefault();
   }, {passive:false});
