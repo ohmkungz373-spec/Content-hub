@@ -865,6 +865,89 @@ html[data-theme=light] .mbtn{box-shadow:0 2px 8px #1b2a5012}
  body.has-bnav{padding-bottom:calc(68px + env(safe-area-inset-bottom,0))}
  body.has-bnav .totop{bottom:calc(84px + env(safe-area-inset-bottom,0))}
 }
+
+/* ===== สไตล์กระจก (แบบ iOS 26) — เฉพาะแถบหัว ปุ่ม แถบล่าง กล่องบนหน้า main ค้นหา/ชิป popup วิชา แถบบทเรียน ===== */
+:root{
+ --gl-bg:color-mix(in srgb,#1c2a4d 52%,transparent);
+ --gl-strong:color-mix(in srgb,#141f3c 74%,transparent);
+ --gl-bd:#ffffff26;
+ --gl-hi:inset 0 1px 0 #ffffff2e,inset 0 -1px 0 #ffffff0d;
+ --gl-sh:0 10px 30px #00000059;
+ --gl-sheen:linear-gradient(135deg,#ffffff1f,#ffffff05 45%,#ffffff0a);
+ --gl-blur:blur(22px) saturate(180%);
+}
+html[data-theme=light]{
+ --gl-bg:#ffffff80;
+ --gl-strong:#ffffffc4;
+ --gl-bd:#ffffffd9;
+ --gl-hi:inset 0 1px 0 #fffffff2,inset 0 -1px 1px #ffffff66;
+ --gl-sh:0 10px 30px #1f387824,0 1px 3px #1f387814;
+ --gl-sheen:linear-gradient(135deg,#ffffff8c,#ffffff1a 45%,#ffffff40);
+}
+/* พื้นหลังมีสีอ่อน ๆ ให้กระจกเห็นชัด */
+html body:before{background:
+ radial-gradient(520px 420px at 0% 8%,#3b82f640,transparent 70%),
+ radial-gradient(460px 380px at 100% 30%,#a855f730,transparent 70%),
+ radial-gradient(520px 420px at 30% 100%,#06b6d430,transparent 70%),
+ linear-gradient(color-mix(in srgb,var(--ink) 3%,transparent) 1px,transparent 1px) 0 0/44px 44px,
+ linear-gradient(90deg,color-mix(in srgb,var(--ink) 3%,transparent) 1px,transparent 1px) 0 0/44px 44px}
+html[data-theme=light] body:before{background:
+ radial-gradient(520px 420px at 0% 8%,#60a5fa47,transparent 70%),
+ radial-gradient(460px 380px at 100% 30%,#c084fc38,transparent 70%),
+ radial-gradient(520px 420px at 30% 100%,#22d3ee38,transparent 70%),
+ linear-gradient(#0b1b400d 1px,transparent 1px) 0 0/44px 44px,
+ linear-gradient(90deg,#0b1b400d 1px,transparent 1px) 0 0/44px 44px}
+
+/* ชุดกระจก */
+html header.top #backBtn,html header.top #themeBtn,.bnav,.mbtn,.mbox,.fav,.pill,.kicker,.search,.chip:not(.on),html #subjBox,html .vbar .t,.totop,.sheet{
+ background:var(--gl-sheen),var(--gl-bg)!important;
+ -webkit-backdrop-filter:var(--gl-blur)!important;backdrop-filter:var(--gl-blur)!important;
+ border:1px solid var(--gl-bd)!important;
+ box-shadow:var(--gl-hi),var(--gl-sh)!important}
+.pill,.kicker,.chip:not(.on){box-shadow:var(--gl-hi)!important}
+
+/* แถบหัว: กระจกใส ไม่มีเส้นสี */
+html header.top{background:color-mix(in srgb,var(--bg) 45%,transparent)!important;-webkit-backdrop-filter:var(--gl-blur)!important;backdrop-filter:var(--gl-blur)!important;border-bottom:1px solid var(--gl-bd);box-shadow:none}
+header.top::after{display:none}
+
+/* ปุ่มย้อนกลับ / ปุ่มธีม: เม็ดกระจก */
+html header.top #backBtn{color:var(--ink)!important;border-radius:999px;padding:5px 14px 5px 6px!important}
+header.top #backBtn::before,header.top #backBtn::after{display:none}
+header.top #backBtn .bk-ic{background:var(--blue);color:#fff}
+html header.top #themeBtn{border-radius:50%}
+
+/* ชิปที่เลือก: กระจกสีฟ้า */
+.chip.on{background:linear-gradient(135deg,#ffffff40,#ffffff00 55%),linear-gradient(135deg,#2563ebe6,#0891b2e6)!important;-webkit-backdrop-filter:var(--gl-blur);backdrop-filter:var(--gl-blur);border:1px solid #ffffff59!important;box-shadow:inset 0 1px 0 #ffffff66,0 6px 16px #2563eb40!important}
+.search{border-radius:18px}
+
+/* popup วิชา: กระจกทึบขึ้นเพื่อให้อ่านง่าย */
+html #subjBox{background:var(--gl-sheen),var(--gl-strong)!important}
+html #subjBg .mback{background:#0b1b4040}
+html:not([data-theme=light]) #subjBg .mback{background:#00000066}
+
+/* แถบบทเรียน */
+html .vbar{background:color-mix(in srgb,var(--bg) 50%,transparent)!important;-webkit-backdrop-filter:var(--gl-blur)!important;backdrop-filter:var(--gl-blur)!important;border-bottom:1px solid var(--gl-bd)!important;box-shadow:none!important}
+html[data-theme=light] .vbar .t{color:var(--ink)}
+
+/* ปุ่มเลื่อนขึ้นบน */
+.totop{color:var(--blue)}
+
+/* แถบล่าง: ลอยเป็นแคปซูล */
+@media(max-width:899px){
+ .bnav{left:16px;right:16px;bottom:calc(12px + env(safe-area-inset-bottom,0));padding:6px;border-radius:30px}
+ .bnav button{border-radius:24px;padding:7px 2px;transition:background .2s}
+ .bnav button.on{background:color-mix(in srgb,var(--blue) 14%,transparent);box-shadow:inset 0 1px 0 #ffffff33}
+ html[data-theme=light] .bnav button.on{background:#ffffffb3;box-shadow:inset 0 1px 0 #fff,0 2px 8px #1f387814}
+ body.has-bnav{padding-bottom:calc(92px + env(safe-area-inset-bottom,0))}
+ body.has-bnav .totop{bottom:calc(96px + env(safe-area-inset-bottom,0))}
+}
+
+/* ===== แถบด้านบน: แคปซูลกลมลอย ===== */
+body{padding-top:10px}
+html header.top{top:10px;margin:0 max(12px,calc((100% - 1100px)/2));border-radius:28px;border:1px solid var(--gl-bd)!important;
+ background:var(--gl-sheen),var(--gl-bg)!important;box-shadow:var(--gl-hi),var(--gl-sh)!important}
+html header.top .top-in{padding:8px 10px 8px 16px;min-height:58px}
+.viewer{height:calc(100dvh - 80px);margin-top:10px}
 </style>
 </head>
 <body>
@@ -877,7 +960,7 @@ html[data-theme=light] .mbtn{box-shadow:0 2px 8px #1b2a5012}
   </div>
 </header>
 
-<main id="mainView" class="wrap">
+<main id="mainView" class="wrap hidden">
   <section class="mhero">
     <span class="kicker" id="tagline">เนื้อหา ม.4 เทอม 2</span>
     <h1>CONTENT <span>HUB</span></h1>
