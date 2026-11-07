@@ -827,17 +827,6 @@ body:after{will-change:auto;transform:none}
 html[data-theme=light] .mhead .more{color:#1d4ed8}
 .mbox{background:var(--panel);border:1px solid var(--line);border-radius:18px}
 html[data-theme=light] .mbox{box-shadow:0 2px 8px #1b2a5012}
-.tdy{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.tcard{position:relative;overflow:hidden;text-align:left;width:100%;padding:13px 14px 13px 18px;background:var(--panel);border:1px solid var(--line);border-radius:18px}
-html[data-theme=light] .tcard{box-shadow:0 2px 8px #1b2a5012}
-.tcard.live{border-color:var(--blue)}
-.tcard .bar{position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--c,transparent)}
-.tcard small{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;font-weight:600;color:var(--muted)}
-.tcard.live small{color:var(--blue)}
-.tcard b{display:block;font-size:17px;line-height:1.3;margin-top:3px}
-.tcard span.m{display:block;font-size:13px;color:var(--muted);margin-top:1px}
-.tcard .pg{height:5px;border-radius:5px;background:color-mix(in srgb,var(--ink) 8%,transparent);margin-top:9px;overflow:hidden}
-.tcard .pg i{display:block;height:100%;background:var(--blue)}
 .hwmini{padding:4px 0}
 .hwrow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 14px;border-top:1px solid var(--line)}
 .hwrow:first-child{border-top:0}
@@ -855,41 +844,14 @@ html[data-theme=light] .hwrow small.late{color:#dc2626}html[data-theme=light] .h
 .fav .ico{width:40px;height:40px;border-radius:12px}
 .fav b{font-size:13.5px;line-height:1.3;font-weight:600}
 .mmenu{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-@media(min-width:640px){.mmenu{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:640px){.mmenu{grid-template-columns:repeat(3,1fr)}}
 .mbtn{display:flex;flex-direction:column;align-items:flex-start;gap:10px;text-align:left;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:18px;min-height:104px}
 html[data-theme=light] .mbtn{box-shadow:0 2px 8px #1b2a5012}
-.mbtn:active,.fav:active,.tcard:active,.hwrow:active{transform:scale(.97)}
+.mbtn:active,.fav:active,.hwrow:active{transform:scale(.97)}
 .mbtn .mi{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:#fff;background:var(--c)}
 .mbtn .mi svg{width:22px;height:22px}
 .mbtn b{font-size:15.5px;font-weight:600;line-height:1.25}
 .mbtn small{display:block;font-size:12px;color:var(--muted);font-weight:400}
-@media(max-width:639px){.tdy{grid-template-columns:1fr}}
-
-/* ===== หน้าตารางเรียน ===== */
-.tthead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:20px 2px 12px}
-.tthead h2{margin:0;font-size:20px;font-weight:700}
-.tthead small{color:var(--muted);font-size:13px}
-.ttfit{overflow:hidden;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:4px}
-.tt{border-collapse:separate;border-spacing:4px;width:1100px;table-layout:fixed;transform-origin:top left}
-.tt th,.tt td{text-align:center;vertical-align:middle}
-.tt thead th{font-weight:600;font-size:13px;color:var(--muted);padding:6px 2px 2px}
-.tt thead th .t{display:block;font-size:11px;font-weight:400}
-.tt thead th.dc{width:70px}.tt thead th.bc{width:36px}
-.tt thead th.now{color:var(--blue)}
-.tt tbody th{font-weight:700;font-size:14px}
-.tt tbody tr.today th{color:var(--blue)}
-.tt tbody tr.today th:after{content:"วันนี้";display:block;font-size:10px;font-weight:600}
-.tt td.s{background:color-mix(in srgb,var(--ink) 4%,var(--panel));border-radius:9px;padding:6px 4px;height:74px;position:relative;border-top:3px solid var(--c,transparent)}
-.tt td.s.e{background:transparent;border:1px dashed var(--line)}
-.tt td.s.l{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--ink) 4%,transparent) 0 6px,transparent 6px 12px);border:1px solid var(--line);color:var(--muted);font-size:13px}
-.tt td.s .nm{font-weight:600;font-size:13px;line-height:1.2}
-.tt td.s .cd{font-size:11px;font-weight:700;color:var(--c);margin-top:2px}
-.tt td.s .tc{font-size:11.5px;color:var(--muted)}
-.tt td.s .rm.x{color:#f59e0b;font-weight:700}
-html[data-theme=light] .tt td.s .cd{color:color-mix(in srgb,var(--c) 70%,#000)}
-html[data-theme=light] .tt td.s .rm.x{color:#b45309}
-.tt td.s.now{outline:2px solid var(--blue);background:color-mix(in srgb,var(--blue) 12%,var(--panel))}
-.tt td.b{border-radius:9px;background:color-mix(in srgb,var(--ink) 4%,var(--panel));color:var(--muted);font-size:13px;writing-mode:vertical-rl;letter-spacing:.3em}
 
 /* ===== แถบเมนูล่างจอ (มือถือ) ===== */
 .bnav{display:none}
@@ -911,8 +873,6 @@ html[data-theme=light] .tt td.s .rm.x{color:#b45309}
     <button class="btn hidden" id="backBtn" aria-label="ย้อนกลับ"></button>
     <div class="logo" id="logo">◆ CONTENT <span>HUB</span></div>
     <div class="crumb" id="crumb"></div>
-    <button class="btn themebtn" id="pushBtn" type="button" aria-label="เปิดการแจ้งเตือน" title="เปิดการแจ้งเตือน"></button>
-    <button class="btn hwbtn" id="hwBtn" type="button" aria-label="บันทึกการบ้าน" title="บันทึกการบ้าน"></button>
     <button class="btn themebtn" id="themeBtn" type="button"></button>
   </div>
 </header>
@@ -922,11 +882,6 @@ html[data-theme=light] .tt td.s .rm.x{color:#b45309}
     <span class="kicker" id="tagline">เนื้อหา ม.4 เทอม 2</span>
     <h1>CONTENT <span>HUB</span></h1>
     <div class="pills"><span class="pill"><b id="sSub">0</b> วิชา</span><span class="pill"><b id="sChap">0</b> บทเรียน</span></div>
-  </section>
-
-  <section class="msec">
-    <div class="mhead"><h2>วันนี้</h2><button class="more" data-nav="/timetable">ตารางเรียน ›</button></div>
-    <div class="tdy" id="today"></div>
   </section>
 
   <section class="msec">
@@ -942,7 +897,6 @@ html[data-theme=light] .tt td.s .rm.x{color:#b45309}
   <section class="msec">
     <div class="mmenu">
       <button class="mbtn" data-nav="/subjects" style="--c:#2563eb"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 21.5v-16"/><path d="M9 8h7"/></svg></span><b>วิชาทั้งหมด<small>เนื้อหาทุกวิชา</small></b></button>
-      <button class="mbtn" data-nav="/timetable" style="--c:#0891b2"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 10h18M9 4v16M15 4v16"/></svg></span><b>ตารางเรียน<small>ทั้งสัปดาห์</small></b></button>
       <button class="mbtn" data-act="hw" style="--c:#7c3aed"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4h6v2H9z"/><rect x="5" y="5" width="14" height="16" rx="2.5"/><path d="M9 12l2 2 4-4"/></svg></span><b>การบ้าน<small>จดและเช็กงานค้าง</small></b></button>
       <button class="mbtn" data-act="nt" style="--c:#ea580c"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span><b>แจ้งเตือน<small>ข่าวและการแจ้งเตือน</small></b></button>
     </div>
@@ -958,10 +912,6 @@ html[data-theme=light] .tt td.s .rm.x{color:#b45309}
   <div class="groups" id="grid"></div>
 </main>
 
-<main id="ttView" class="wrap hidden">
-  <div class="tthead"><h2>ตารางเรียน</h2><small id="ttSub"></small></div>
-  <div class="ttfit" id="ttFit"><table class="tt" id="tt"></table></div>
-</main>
 
 <section id="chapterView" class="viewer hidden">
   <div class="vbar">
@@ -977,12 +927,11 @@ html[data-theme=light] .tt td.s .rm.x{color:#b45309}
 <div class="hidden" id="subjBg"><div class="mback"></div><div id="subjBox" role="dialog" aria-modal="true"></div></div>
 <div class="sheet-bg hidden" id="sheetBg"><div class="sheet" id="sheet"></div></div>
 <button class="totop" id="toTop" type="button" aria-label="กลับขึ้นข้างบน"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button>
+<div class="hidden"><button id="pushBtn" type="button"></button><button id="hwBtn" type="button"></button></div>
 <footer id="foot">◆ CONTENT HUB</footer>
 <nav class="bnav" id="bnav">
   <button data-nav="/" data-k="main"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7"/><path d="M6 9.5V20h12V9.5"/><path d="M10 20v-5h4v5"/></svg>หน้าหลัก</button>
   <button data-nav="/subjects" data-k="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 21.5v-16"/><path d="M9 8h7"/></svg>วิชา</button>
-  <button data-nav="/timetable" data-k="ttView"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 10h18M9 4v16M15 4v16"/></svg>ตาราง</button>
-  <button data-act="hw" id="bnHw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4h6v2H9z"/><rect x="5" y="5" width="14" height="16" rx="2.5"/><path d="M9 12l2 2 4-4"/></svg>การบ้าน</button>
 </nav>
 
 <script>
@@ -1038,7 +987,7 @@ const CATS = [
 const catOf = s => CATS.slice(2).find(c => c.test((s.code || '')[0] || '')) || CATS[CATS.length - 1];
 let activeCat = 'all';
 
-const views = ['mainView','home','ttView','chapterView'];
+const views = ['mainView','home','chapterView'];
 function show(v){
   views.forEach(x => $(x).classList.toggle('hidden', x !== v));
   $('foot').classList.toggle('hidden', v === 'chapterView');
@@ -1309,7 +1258,6 @@ function route(){
     if (homeUp) { if (gridDirty) { renderGrid(); gridDirty = false; } $('crumb').textContent = 'วิชาทั้งหมด'; return; }   // กลับมาจาก popup: ไม่เด้งขึ้นบนสุด
     return renderHome();
   }
-  if (parts[0] === 'timetable' && !s) { hideSubjModal(); return renderTT(); }
   if (!s) {
     hideSubjModal();
     if (up('mainView')) { renderMainParts(); return; }        // กลับมาจาก popup: ไม่เด้งขึ้นบนสุด
@@ -1395,99 +1343,7 @@ fetch('/subjects.json').then(r => r.json()).then(d => {
   if (dlGo) setTimeout(() => ntGo({ url: '/' + dl }), 80);      // เปิดจากการกดแจ้งเตือน → ไปวิชา/บท/การบ้านนั้นเลย
 }).catch(() => { $('grid').innerHTML = '<div class="msg">โหลดรายการวิชาไม่สำเร็จ ลองรีเฟรชหน้านี้</div>'; });
 
-/* =========================================================
-   ตารางเรียน ม.4/14 (แก้ชื่อวิชา/ครูที่ TT_SUBJ, แก้ตารางที่ TT_WEEK)
-   ========================================================= */
-const TT_ROOM = '136';
-const TT_PERIODS = [
-  {no:0, s:'08:00', e:'08:20'}, {no:1, s:'08:20', e:'09:05'}, {no:2, s:'09:05', e:'09:50'}, {no:3, s:'09:50', e:'10:35'},
-  {no:'พัก', s:'10:35', e:'10:55', brk:true},
-  {no:4, s:'10:55', e:'11:40'}, {no:5, s:'11:40', e:'12:25'}, {no:6, s:'12:25', e:'13:10'}, {no:7, s:'13:10', e:'13:55'},
-  {no:8, s:'13:55', e:'14:40'}, {no:9, s:'14:40', e:'15:25'}, {no:10, s:'15:25', e:'16:10'}
-];
-const TT_SUBJ = {
-  'ว31202':['ฟิสิกส์ 1','ครูวัชรินทร์'], 'ว31222':['เคมี 1','ครูปาริชาต'], 'ว31242':['ชีววิทยา 1','ครูชัญญานุช'],
-  'ว31262':['โลก ดาราศาสตร์และอวกาศ 1','ครูพงศ์ศิวะ'], 'ว31182':['วิทยาการคำนวณ 1','ครูนันธิญาณ์'],
-  'ค31102':['คณิตศาสตร์พื้นฐาน 1','ครูเทวัญ'], 'ค31202':['คณิตศาสตร์เพิ่มเติม 1','ครูเทวัญ'],
-  'ท31102':['ภาษาไทย 1','ครูกิจศิลป์เนศฐ์'], 'ส31102':['สังคมศึกษา 1','ครูภานุวัฒน์'], 'ส31112':['ประวัติศาสตร์ 1','ครูณัฐวัฒน์'],
-  'อ31102':['ภาษาอังกฤษ 1','ครูยศพันธ์'], 'อ31202':['ภาษาอังกฤษอ่าน-เขียน 1','ครูกมลสินีย์'], 'อ31212':['ภาษาอังกฤษเพื่อการสื่อสาร 1','ครู Joshua'],
-  'พ31102':['สุขศึกษา 1','ครูชัยพงศ์'], 'พ31202':['พลศึกษา','ครูศิวพร'], 'ศ31102':['ดนตรี','ครูมีนา'],
-  'ง31101':['งานบ้าน-งานประดิษฐ์','ครูปิยฉัตร'], 'ก31902':['แนะแนว','ครูพวงแก้ว'],
-  'ก31903':['บูรณาการ 1','ม.4',1], 'จิตศึกษา':['จิตศึกษา','ม.4',1], 'เลือกเสรี':['เลือกเสรี','ม.4',1], 'ชุมนุม':['ชุมนุม','ม.4',1], 'อบรม':['อบรมคุณธรรม','ม.4',1]
-};
-// 11 ช่องต่อวัน = คาบ 0–10 · null = ว่าง · 'L' = พักกลางวัน · ['รหัส','ห้อง'] ถ้าไม่ใช่ห้อง 136
-const TT_WEEK = [
-  ['จันทร์',   [null,'ว31242','ว31242',['ศ31102','534'],'ว31202','ว31202','L','ว31222','ว31222','อ31212','อบรม']],
-  ['อังคาร',   ['จิตศึกษา','อ31202','อ31202','ก31902','ส31112','ง31101','L',['ว31182','127'],['ว31182','127'],'ค31102','ค31102']],
-  ['พุธ',      [null,'เลือกเสรี','เลือกเสรี','ท31102','ค31202','ค31202','L','อ31102','อ31102','ว31242','ว31242']],
-  ['พฤหัสบดี', [null,'ว31202','ว31202','ว31222','ว31222','L',null,'ชุมนุม','ชุมนุม',null,null]],
-  ['ศุกร์',    [null,'ค31202','ค31202','พ31102','ท31102','L','ส31102','ส31102','พ31202','ว31262','ก31903']]
-];
-const ttMin = t => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
-const TT_LESSON = TT_PERIODS.filter(p => !p.brk);
-function ttInfo(raw){
-  if (raw === null) return {type:'e'};
-  if (raw === 'L') return {type:'l'};
-  const [code, room] = Array.isArray(raw) ? raw : [raw, null];
-  const [name, teacher, act] = TT_SUBJ[code];
-  const color = act ? '#94a3b8' : (catOf({code}).color || '#3b82f6');
-  return {type: act ? 'a' : 's', code, name, teacher, room: act ? '' : (room || TT_ROOM), color};
-}
-// รวมคาบติดกันที่เป็นวิชาเดียวกัน (ไม่ข้ามช่วงพักเช้า)
-function ttBlocks(d){
-  const out = [];
-  TT_PERIODS.forEach(p => {
-    if (p.brk) { out.push({brk:true, s:p.s, e:p.e}); return; }
-    const x = ttInfo(TT_WEEK[d][1][TT_LESSON.indexOf(p)]);
-    const key = x.type === 'e' ? 'e' : x.type === 'l' ? 'l' : x.code + '|' + x.room;
-    const last = out[out.length - 1];
-    if (last && !last.brk && last.key === key && x.type !== 'e') { last.e = p.e; last.count++; return; }
-    out.push({key, x, s:p.s, e:p.e, count:1});
-  });
-  return out;
-}
-function bkkNow(){
-  const parts = new Intl.DateTimeFormat('en-GB', {timeZone:'Asia/Bangkok', weekday:'short', hour:'2-digit', minute:'2-digit', hour12:false}).formatToParts(new Date());
-  const g = t => parts.find(p => p.type === t).value;
-  return {wd: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].indexOf(g('weekday')), min: (+g('hour') % 24) * 60 + (+g('minute'))};
-}
-const TT_DAYS = ['จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์','อาทิตย์'];
-const ttDur = m => { const h = Math.floor(m / 60), r = m % 60; return h ? `${h} ชม. ${r} นาที` : `${r} นาที`; };
-
 /* ---------- หน้า main ---------- */
-function renderToday(){
-  const now = bkkNow();
-  const isClass = b => !b.brk && (b.x.type === 's' || b.x.type === 'a');
-  const meta = b => b.x.type === 'a' ? `${b.s}–${b.e} น.` : `${b.x.teacher} · ห้อง ${b.x.room} · ${b.s}–${b.e} น.`;
-  let cur = now.wd < 5 ? ttBlocks(now.wd).find(b => now.min >= ttMin(b.s) && now.min < ttMin(b.e)) : null;
-  let a;
-  if (cur && isClass(cur)) {
-    const pct = Math.min(100, (now.min - ttMin(cur.s)) / (ttMin(cur.e) - ttMin(cur.s)) * 100);
-    a = `<button class="tcard live" data-nav="/timetable" style="--c:${cur.x.color}"><span class="bar"></span><small><span>ตอนนี้</span><span>เหลือ ${ttDur(ttMin(cur.e) - now.min)}</span></small><b>${esc(cur.x.name)}</b><span class="m">${esc(meta(cur))}</span><span class="pg"><i style="width:${pct}%"></i></span></button>`;
-  } else {
-    let t = 'ไม่มีเรียน', m = '';
-    if (now.wd > 4) { t = 'วันหยุด'; m = 'ไม่มีเรียนวันนี้'; }
-    else if (cur && cur.brk) { t = 'พักเช้า'; m = `${cur.s}–${cur.e} น.`; }
-    else if (cur && cur.x.type === 'l') { t = 'พักกลางวัน'; m = `${cur.s}–${cur.e} น.`; }
-    else if (now.min < ttMin('08:00')) { t = 'ยังไม่ถึงเวลาเรียน'; m = 'เริ่ม 08:00 น.'; }
-    else if (now.min >= ttMin('16:10')) { t = 'เลิกเรียนแล้ว'; m = ''; }
-    else if (cur) { t = 'ว่าง'; m = `${cur.s}–${cur.e} น.`; }
-    a = `<button class="tcard" data-nav="/timetable"><span class="bar"></span><small><span>ตอนนี้</span></small><b>${t}</b><span class="m">${m}</span></button>`;
-  }
-  let nx = null;
-  for (let k = 0; k < 8 && !nx; k++) {
-    const wd = (now.wd + k) % 7; if (wd > 4) continue;
-    const b = ttBlocks(wd).find(b => isClass(b) && (k > 0 || ttMin(b.s) > now.min));
-    if (b) nx = {b, k, wd};
-  }
-  let z = '';
-  if (nx) {
-    const lbl = nx.k === 0 ? 'ถัดไป' : nx.k === 1 ? 'พรุ่งนี้ คาบแรก' : `วัน${TT_DAYS[nx.wd]} คาบแรก`;
-    const right = nx.k === 0 ? `<span>อีก ${ttDur(ttMin(nx.b.s) - now.min)}</span>` : '';
-    z = `<button class="tcard" data-nav="/timetable" style="--c:${nx.b.x.color}"><span class="bar"></span><small><span>${lbl}</span>${right}</small><b>${esc(nx.b.x.name)}</b><span class="m">${esc(meta(nx.b))}</span></button>`;
-  }
-  $('today').innerHTML = a + z;
-}
 function renderHwMini(){
   const el = $('hwMini'); if (!el) return;
   const todo = hwLoad().filter(x => !x.done).sort((a, b) => (a.due || '9999').localeCompare(b.due || '9999') || a.ts - b.ts);
@@ -1505,7 +1361,7 @@ function renderFav(){
 function renderMainParts(){
   $('sSub').textContent = SUBJECTS.length;
   $('sChap').textContent = SUBJECTS.reduce((n, s) => n + s.chapters.length, 0);
-  renderToday(); renderHwMini(); renderFav();
+  renderHwMini(); renderFav();
   $('crumb').textContent = '';
 }
 function renderMain(){ renderMainParts(); show('mainView'); }
@@ -1522,47 +1378,6 @@ document.addEventListener('click', e => {
   if (a && a.dataset.act === 'hw') hwOpen();
   if (a && a.dataset.act === 'nt') ntOpen();
 });
-
-/* ---------- หน้าตารางเรียน (ย่อให้พอดีจอ) ---------- */
-function renderTT(){
-  const now = bkkNow();
-  const curP = TT_PERIODS.findIndex(p => now.min >= ttMin(p.s) && now.min < ttMin(p.e));
-  let h = `<thead><tr><th class="dc"></th>${TT_PERIODS.map((p, i) => `<th class="${p.brk ? 'bc' : ''} ${now.wd < 5 && i === curP ? 'now' : ''}">${p.brk ? '' : 'คาบ ' + p.no}<span class="t">${p.s}–${p.e}</span></th>`).join('')}</tr></thead><tbody>`;
-  TT_WEEK.forEach(([d], di) => {
-    h += `<tr class="${di === now.wd ? 'today' : ''}"><th>${d}</th>`;
-    ttBlocks(di).forEach(b => {
-      if (b.brk) { if (di === 0) h += `<td class="b" rowspan="5">พักเช้า</td>`; return; }
-      const live = di === now.wd && now.min >= ttMin(b.s) && now.min < ttMin(b.e) ? 'now' : '';
-      const sp = b.count > 1 ? ` colspan="${b.count}"` : '';
-      const x = b.x;
-      if (x.type === 'e') { h += `<td class="s e"${sp}></td>`; return; }
-      if (x.type === 'l') { h += `<td class="s l ${live}"${sp}>พักกลางวัน</td>`; return; }
-      const room = x.type === 's' ? ` · <span class="rm ${x.room !== TT_ROOM ? 'x' : ''}">${x.room}</span>` : '';
-      h += `<td class="s ${live}"${sp} style="--c:${x.color}"><div class="nm">${esc(x.name)}</div>${x.type === 's' ? `<div class="cd">${x.code}</div>` : ''}<div class="tc">${esc(x.teacher)}${room}</div></td>`;
-    });
-    h += '</tr>';
-  });
-  $('tt').innerHTML = h + '</tbody>';
-  $('ttSub').textContent = 'ม.4/14 · ภาคเรียนที่ 2/2569';
-  $('crumb').textContent = 'ตารางเรียน';
-  show('ttView');
-  fitTT();
-}
-function fitTT(){
-  if ($('ttView').classList.contains('hidden')) return;
-  const t = $('tt'), f = $('ttFit');
-  t.style.transform = 'none';
-  const sc = Math.min(1, (f.clientWidth - 8) / t.offsetWidth);
-  t.style.transform = `scale(${sc})`;
-  f.style.height = (t.offsetHeight * sc + 8) + 'px';
-}
-window.addEventListener('resize', fitTT);
-
-// อัปเดตการ์ดวันนี้ / ไฮไลต์คาบในตารางทุก 30 วินาที
-setInterval(() => {
-  if (!$('mainView').classList.contains('hidden')) renderToday();
-  if (!$('ttView').classList.contains('hidden')) { const y = window.scrollY; renderTT(); window.scrollTo(0, y); }
-}, 30000);
 
 /* ---------- โหมดสว่าง/มืด ---------- */
 const SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
@@ -1695,8 +1510,6 @@ function hwBadge(){
   const n = hwLoad().filter(x => !x.done).length, b = $('hwBtn');
   const old = b.querySelector('.bd'); if (old) old.remove();
   if (n) { const e = document.createElement('span'); e.className = 'bd'; e.textContent = n > 99 ? '99+' : n; b.appendChild(e); }
-  const bn = $('bnHw'), ob = bn.querySelector('.bd'); if (ob) ob.remove();
-  if (n) { const e = document.createElement('span'); e.className = 'bd'; e.textContent = n > 99 ? '99+' : n; bn.appendChild(e); }
 }
 
 const CHEV_D = '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
